@@ -23,5 +23,6 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         indent: 'off', // 4个空格缩进
         '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
     },
 };

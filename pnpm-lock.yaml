@@ -8,26 +8,31 @@ specifiers:
   '@nestjs/platform-express': ^8.0.0
   '@nestjs/schematics': ^8.0.0
   '@nestjs/testing': ^8.0.0
+  '@nestjs/throttler': ^4.0.0
   '@nestjs/typeorm': ^9.0.1
   '@types/express': ^4.17.13
   '@types/jest': 27.5.0
   '@types/node': ^16.0.0
   '@types/supertest': ^2.0.11
+  '@types/uuid': ^9.0.1
   '@typescript-eslint/eslint-plugin': ^5.0.0
   '@typescript-eslint/parser': ^5.0.0
   class-transformer: ^0.5.1
   class-validator: ^0.14.0
+  crypto: ^1.0.1
   dotenv: ^16.0.3
   eslint: ^8.0.1
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
   jest: 28.0.3
+  md5-node: ^1.0.1
   mysql2: ^3.2.0
   prettier: ^2.3.2
   reflect-metadata: ^0.1.13
   rimraf: ^3.0.2
   rxjs: ^7.2.0
   source-map-support: ^0.5.20
+  string-random: ^0.1.3
   supertest: ^6.1.3
   ts-jest: 28.0.1
   ts-loader: ^9.2.3
@@ -35,6 +40,7 @@ specifiers:
   tsconfig-paths: 4.0.0
   typeorm: ^0.3.12
   typescript: ^4.3.5
+  uuid: ^9.0.0
   webpack: ^5.76.1
 
 dependencies:
@@ -42,15 +48,21 @@ dependencies:
   '@nestjs/config': 2.3.1_q6tehokzwy3z4akuawpn6kiwbe
   '@nestjs/core': 8.4.7_tdkocbskemo2uwka4xhsbznrba
   '@nestjs/platform-express': 8.4.7_7tsmhnugyerf5okgqzer2mfqme
+  '@nestjs/throttler': 4.0.0_zysgbzrbqurgi5bpxpfkrj3lie
   '@nestjs/typeorm': 9.0.1_bblm5tcjrog7bxbc4otwdyrzem
+  '@types/uuid': 9.0.1
   class-transformer: 0.5.1
   class-validator: 0.14.0
+  crypto: 1.0.1
   dotenv: 16.0.3
+  md5-node: 1.0.1
   mysql2: 3.2.0
   reflect-metadata: 0.1.13
   rimraf: 3.0.2
   rxjs: 7.8.0
+  string-random: 0.1.3
   typeorm: 0.3.12_whtkxgjovpexsp3lganr4chdua
+  uuid: 9.0.0
 
 devDependencies:
   '@nestjs/cli': 8.2.8
@@ -1040,6 +1052,19 @@ packages:
       tslib: 2.4.0
     dev: true
 
+  /@nestjs/throttler/4.0.0_zysgbzrbqurgi5bpxpfkrj3lie:
+    resolution: {integrity: sha512-2T2S/hFhxROa/PZRZhHWFkrukxg3T8Db32Y04m6U6j6N2XqFGSKXhjfIbORO8kk/S2jswa9oTX/K12E120tgaQ==}
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
+      '@nestjs/core': ^7.0.0 || ^8.0.0 || ^9.0.0
+      reflect-metadata: ^0.1.13
+    dependencies:
+      '@nestjs/common': 8.4.7_welcnyot5bzd5wa2aovbkxpi4i
+      '@nestjs/core': 8.4.7_tdkocbskemo2uwka4xhsbznrba
+      md5: 2.3.0
+      reflect-metadata: 0.1.13
+    dev: false
+
   /@nestjs/typeorm/9.0.1_bblm5tcjrog7bxbc4otwdyrzem:
     resolution: {integrity: sha512-A2BgLIPsMtmMI0bPKEf4bmzgFPsnvHqNBx3KkvaJ7hJrBQy0OqYOb+Rr06ifblKWDWS2tUPNrAFQbZjtk3PI+g==}
     peerDependencies:
@@ -1289,6 +1314,10 @@ packages:
     dependencies:
       '@types/superagent': 4.1.16
     dev: true
+
+  /@types/uuid/9.0.1:
+    resolution: {integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==}
+    dev: false
 
   /@types/validator/13.7.14:
     resolution: {integrity: sha512-J6OAed6rhN6zyqL9Of6ZMamhlsOEU/poBVvbHr/dKOYKTeuYYMlDkMv+b6UUV0o2i0tw73cgyv/97WTWaUl0/g==}
@@ -1941,6 +1970,10 @@ packages:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
     dev: true
 
+  /charenc/0.0.2:
+    resolution: {integrity: sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==}
+    dev: false
+
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -2159,6 +2192,15 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /crypt/0.0.2:
+    resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
+    dev: false
+
+  /crypto/1.0.1:
+    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
+    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
+    dev: false
 
   /date-fns/2.29.3:
     resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
@@ -3059,6 +3101,10 @@ packages:
       binary-extensions: 2.2.0
     dev: true
 
+  /is-buffer/1.1.6:
+    resolution: {integrity: sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==}
+    dev: false
+
   /is-core-module/2.11.0:
     resolution: {integrity: sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw==}
     dependencies:
@@ -3792,6 +3838,18 @@ packages:
     dependencies:
       tmpl: 1.0.5
     dev: true
+
+  /md5-node/1.0.1:
+    resolution: {integrity: sha512-y9nI7Wfnq6fxTf5zaZO+XaCE2rP9cuvuxLj3E9a3aAKVxcKdEZIWjoc1uFXZb1jrbUMx+0hd/SIAad6DW9xuSA==}
+    dev: false
+
+  /md5/2.3.0:
+    resolution: {integrity: sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==}
+    dependencies:
+      charenc: 0.0.2
+      crypt: 0.0.2
+      is-buffer: 1.1.6
+    dev: false
 
   /media-typer/0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
@@ -4608,6 +4666,10 @@ packages:
       char-regex: 1.0.2
       strip-ansi: 6.0.1
     dev: true
+
+  /string-random/0.1.3:
+    resolution: {integrity: sha512-g+UsIwzKhNi+9/+Q3Q7hP8R4HkQxiIkQlttnxw6GRdk9pnnkGIv53C6H8dvh8wxAVDhkqpnWeauaPXS1b2sBJg==}
+    dev: false
 
   /string-width/4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}

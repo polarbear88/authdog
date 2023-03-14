@@ -1,14 +1,7 @@
-import {
-    registerDecorator,
-    ValidationArguments,
-    ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
 import { StringUtils } from '../utils/string.utils';
 
-export function UserName(
-    property: string,
-    validationOptions?: ValidationOptions,
-) {
+export function UserName(property: string, validationOptions?: ValidationOptions) {
     return function (object: any, propertyName: string) {
         registerDecorator({
             name: 'UserName（',
