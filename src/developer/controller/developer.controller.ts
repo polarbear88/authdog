@@ -1,13 +1,13 @@
 import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Throttle } from '@nestjs/throttler';
-import { JwtExpiresInConfig } from 'src/common/config/jwtExpiresIn.config';
+import { JwtExpiresInConfig } from 'src/common/config/jwt-expiresIn.config';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { CreateDeveloperDto, LoginDeveloperDto } from './developer.dto';
-import { DeveloperService } from './developer.service';
+import { CreateDeveloperDto, LoginDeveloperDto } from '../developer.dto';
+import { DeveloperService } from '../developer.service';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })

@@ -20,4 +20,9 @@ export class Developer extends BaseEntity {
 
     @Column(() => IP)
     ip: IP;
+
+    _serialization() {
+        const data = super._serialization();
+        return this.deleteConfidential(['password', 'salt', 'ip'], data);
+    }
 }
