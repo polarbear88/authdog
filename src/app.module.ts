@@ -20,6 +20,7 @@ import { RolesGuard } from './auth/roles.guard';
             isGlobal: true,
             // 缓存配置
             cache: true,
+            envFilePath: ['.env.dev', '.env'],
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
