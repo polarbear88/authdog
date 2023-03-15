@@ -12,3 +12,11 @@ export class CreateDeveloperDto {
     @Length(11, 11, { message: '手机号必须为11位' })
     mobile: string;
 }
+
+export class LoginDeveloperDto {
+    @Length(6, 16, { message: '用户名长度必须在6-16位之间' })
+    name: string;
+
+    @Length(8, 16, { message: '密码长度必须在8-16位之间' })
+    password: string;
+}

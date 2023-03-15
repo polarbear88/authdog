@@ -10,4 +10,14 @@ export class StringUtils {
         const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
         return alphaNumericRegex.test(str);
     }
+
+    // 判断首个字符是否是数字
+    public static charIsNumber(char: string) {
+        const firstChar = parseInt(char.charAt(0), 10);
+        if (!isNaN(firstChar)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
