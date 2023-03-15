@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { RandomUtils } from 'src/common/utils/random.utils';
+import { StringUtils } from 'src/common/utils/string.utils';
 import { Repository } from 'typeorm';
-import { CreateDeveloperDto } from './developer.dto';
+import { CreateDeveloperDto, LoginDeveloperDto } from './developer.dto';
 import { Developer } from './developer.entity';
 
 @Injectable()
@@ -45,5 +46,24 @@ export class DeveloperService extends BaseService {
             city: null,
         };
         return this.developerRepository.save(developer);
+    }
+
+    /**
+     * 验证用户登录
+     * @param name 名称或手机号
+     * @param password 密码md5值
+     * @returns 结果
+     */
+    async validateUser(loginDeveloperDto: LoginDeveloperDto) {
+        let developer: Developer;
+        if (StringUtils.charIsNumber(loginDeveloperDto.name)) {
+            developer = await this.findByMobile(loginDeveloperDto.name);
+        } else {
+            developer = await this.findByName(loginDeveloperDto.name);
+        }
+        if (developer && CryptoUtils.validatePassword(loginDeveloperDto.password, developer.salt, developer.password)) {
+            return developer;
+        }
+        return null;
     }
 }

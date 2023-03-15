@@ -9,6 +9,9 @@ import { DeveloperModule } from './developer/developer.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { RolesGuard } from './auth/roles.guard';
 
 @Module({
     imports: [
@@ -48,13 +51,25 @@ import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
             }),
         }),
         DeveloperModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [
         AppService,
+        // 为请求频率限制器设置全局守卫
         {
             provide: APP_GUARD,
             useClass: ThrottlerBehindProxyGuard,
+        },
+        // 为jwt授权设置全局守卫
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+        // 为角色授权设置全局守卫
+        {
+            provide: APP_GUARD,
+            useClass: RolesGuard,
         },
     ],
 })

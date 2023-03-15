@@ -64,6 +64,17 @@ export class CryptoUtils {
      * @returns 加密密码
      */
     public static encryptPassword(password: string, salt: string): string {
-        return this.md5(password + salt);
+        return this.md5(this.md5(password) + salt);
+    }
+
+    /**
+     * 验证密码
+     * @param password 用户输入的密码md5
+     * @param salt 盐
+     * @param encryptPassword 数据库中的密码
+     * @returns 结果
+     */
+    public static validatePassword(password: string, salt: string, encryptPassword: string): boolean {
+        return this.md5(password + salt) === encryptPassword;
     }
 }

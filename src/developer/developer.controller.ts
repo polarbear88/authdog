@@ -1,13 +1,18 @@
 import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Throttle } from '@nestjs/throttler';
+import { JwtExpiresInConfig } from 'src/common/config/jwtExpiresIn.config';
 import { BaseController } from 'src/common/controller/base.controller';
+import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
-import { CreateDeveloperDto } from './developer.dto';
+import { Role } from 'src/common/enums/role.enum';
+import { CreateDeveloperDto, LoginDeveloperDto } from './developer.dto';
 import { DeveloperService } from './developer.service';
 
+@Public()
 @Controller({ version: '1', path: 'auth' })
 export class DeveloperController extends BaseController {
-    constructor(private developerService: DeveloperService) {
+    constructor(private developerService: DeveloperService, private jwtService: JwtService) {
         super();
     }
 
@@ -26,5 +31,21 @@ export class DeveloperController extends BaseController {
             throw new InternalServerErrorException();
         }
         return this.buildResponse();
+    }
+
+    // 开发者登录
+    @Post('login')
+    async login(@Body() loginDeveloperDto: LoginDeveloperDto) {
+        // 验证用户
+        const developer = await this.developerService.validateUser(loginDeveloperDto);
+        if (!developer) {
+            throw new NotAcceptableException('用户名或密码错误');
+        }
+        // 生成token
+        const payload = { name: developer.name, id: developer.id, roles: [Role.Developer] };
+        const access_token = this.jwtService.sign(payload, {
+            expiresIn: JwtExpiresInConfig.developer,
+        });
+        return this.buildResponse('success', { access_token });
     }
 }
