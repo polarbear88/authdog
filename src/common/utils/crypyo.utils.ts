@@ -11,7 +11,7 @@ export class CryptoUtils {
      * @param autoPadding 自动填充
      * @returns 结果
      */
-    public static aesCBCEncode(
+    public static aesCBCEncrypt(
         data: Buffer,
         key: string | Buffer,
         algorithm: 'aes-128-cbc' | 'aes-256-cbc',
@@ -34,7 +34,7 @@ export class CryptoUtils {
      * @param autoPadding 填充模式
      * @returns 数据
      */
-    public static aesCBCDecode(
+    public static aesCBCDecrypt(
         data: Buffer,
         key: string | Buffer,
         algorithm: 'aes-128-cbc' | 'aes-256-cbc',
@@ -55,5 +55,15 @@ export class CryptoUtils {
      */
     public static md5(data: any): string {
         return _md5(data);
+    }
+
+    /**
+     * 密码加密
+     * @param password 密码
+     * @param salt 盐
+     * @returns 加密密码
+     */
+    public static encryptPassword(password: string, salt: string): string {
+        return this.md5(password + salt);
     }
 }

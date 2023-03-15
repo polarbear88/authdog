@@ -37,7 +37,7 @@ export class DeveloperService extends BaseService {
         developer.name = createDeveloperDto.name;
         developer.mobile = createDeveloperDto.mobile;
         developer.salt = RandomUtils.getHexString(8);
-        developer.password = CryptoUtils.md5(createDeveloperDto.password + developer.salt);
+        developer.password = CryptoUtils.encryptPassword(createDeveloperDto.password, developer.salt);
         developer.ip = {
             ipv4: ip,
             country: null,

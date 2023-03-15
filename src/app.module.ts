@@ -8,6 +8,7 @@ import { Developer } from './developer/developer.entity';
 import { DeveloperModule } from './developer/developer.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
+import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 
 @Module({
     imports: [
@@ -39,6 +40,11 @@ import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
             useFactory: (configService: ConfigService) => ({
                 ttl: +configService.get('THROTTLE_TTL'),
                 limit: +configService.get('THROTTLE_LIMIT'),
+                storage: new ThrottlerStorageRedisService({
+                    host: configService.get('REDIS_HOST'),
+                    port: +configService.get('REDIS_PORT'),
+                    password: configService.get('REDIS_PASSWORD'),
+                }),
             }),
         }),
         DeveloperModule,
