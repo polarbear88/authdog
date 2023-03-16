@@ -6,12 +6,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Developer } from './developer/developer.entity';
 import { DeveloperModule } from './developer/developer.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
+import { ResponseInterceptor } from './response.interceptor';
+import { HttpExceptionFilter } from './http-exception.filter';
 
 @Module({
     imports: [
@@ -71,6 +73,14 @@ import { RolesGuard } from './auth/roles.guard';
         {
             provide: APP_GUARD,
             useClass: RolesGuard,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseInterceptor,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
         },
     ],
 })

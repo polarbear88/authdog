@@ -30,7 +30,7 @@ export class DeveloperController extends BaseController {
         if (!developer) {
             throw new InternalServerErrorException();
         }
-        return this.buildResponse();
+        return null;
     }
 
     // 开发者登录
@@ -46,6 +46,6 @@ export class DeveloperController extends BaseController {
         const access_token = this.jwtService.sign(payload, {
             expiresIn: JwtExpiresInConfig.developer,
         });
-        return this.buildResponse('success', { access_token });
+        return { access_token };
     }
 }

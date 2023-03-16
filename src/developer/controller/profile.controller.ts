@@ -16,6 +16,6 @@ export class ProfileController extends BaseController {
 
     @Get()
     async getProfile(@TakeDeveloper(ParseDeveloperPipe) developer: Developer) {
-        return this.buildResponse('success', developer);
+        return developer;
     }
 }
