@@ -35,7 +35,7 @@ export class DeveloperService extends BaseService {
 
     async createDeveloper(createDeveloperDto: CreateDeveloperDto, ip: string) {
         const developer = new Developer();
-        developer.name = createDeveloperDto.name;
+        developer.name = createDeveloperDto.username;
         developer.mobile = createDeveloperDto.mobile;
         developer.salt = RandomUtils.getHexString(8);
         developer.password = CryptoUtils.encryptPassword(createDeveloperDto.password, developer.salt);
@@ -56,10 +56,10 @@ export class DeveloperService extends BaseService {
      */
     async validateUser(loginDeveloperDto: LoginDeveloperDto) {
         let developer: Developer;
-        if (StringUtils.charIsNumber(loginDeveloperDto.name)) {
-            developer = await this.findByMobile(loginDeveloperDto.name);
+        if (StringUtils.charIsNumber(loginDeveloperDto.username)) {
+            developer = await this.findByMobile(loginDeveloperDto.username);
         } else {
-            developer = await this.findByName(loginDeveloperDto.name);
+            developer = await this.findByName(loginDeveloperDto.username);
         }
         if (developer && CryptoUtils.validatePassword(loginDeveloperDto.password, developer.salt, developer.password)) {
             return developer;

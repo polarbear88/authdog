@@ -3,7 +3,7 @@ import { UserName } from '../common/validate/username.validate';
 
 export class CreateDeveloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
-    name: string;
+    username: string;
 
     @Length(8, 16, { message: '密码长度必须在8-16位之间' })
     password: string;
@@ -15,7 +15,7 @@ export class CreateDeveloperDto {
 
 export class LoginDeveloperDto {
     @Length(6, 16, { message: '用户名长度必须在6-16位之间' })
-    name: string;
+    username: string;
 
     @Length(32, 32, { message: '密码错误' })
     password: string;

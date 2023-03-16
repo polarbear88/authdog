@@ -20,7 +20,7 @@ export class DeveloperController extends BaseController {
     @Throttle(20, 3600) // 限制一小时内只能请求20次
     @Post('register')
     async register(@Body() createDeveloperDto: CreateDeveloperDto, @RealIP() ip: string) {
-        if (await this.developerService.existsByName(createDeveloperDto.name)) {
+        if (await this.developerService.existsByName(createDeveloperDto.username)) {
             throw new NotAcceptableException('用户名已存在');
         }
         if (await this.developerService.existsByMobile(createDeveloperDto.mobile)) {
@@ -42,7 +42,7 @@ export class DeveloperController extends BaseController {
             throw new NotAcceptableException('用户名或密码错误');
         }
         // 生成token
-        const payload = { name: developer.name, id: developer.id, roles: [Role.Developer] };
+        const payload = { username: developer.name, id: developer.id, roles: [Role.Developer] };
         const access_token = this.jwtService.sign(payload, {
             expiresIn: JwtExpiresInConfig.developer,
         });
