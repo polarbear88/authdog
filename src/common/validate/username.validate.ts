@@ -4,7 +4,7 @@ import { StringUtils } from '../utils/string.utils';
 export function UserName(property: string, validationOptions?: ValidationOptions) {
     return function (object: any, propertyName: string) {
         registerDecorator({
-            name: 'UserName（',
+            name: 'UserName',
             target: object.constructor,
             propertyName: propertyName,
             constraints: [property],
