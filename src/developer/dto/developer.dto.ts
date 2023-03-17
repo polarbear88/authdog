@@ -1,5 +1,5 @@
 import { IsNumberString, Length } from 'class-validator';
-import { UserName } from '../common/validate/username.validate';
+import { UserName } from '../../common/validate/username.validate';
 
 export class CreateDeveloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })

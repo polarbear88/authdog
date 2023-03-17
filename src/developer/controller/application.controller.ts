@@ -1,11 +1,14 @@
-import { Body, Controller, Get, InternalServerErrorException, NotAcceptableException, Post } from '@nestjs/common';
+import { Body, Controller, Get, InternalServerErrorException, NotAcceptableException, Post, UseGuards } from '@nestjs/common';
+import { Application } from 'src/application/application.entity';
 import { ApplicationService } from 'src/application/application.service';
 import { CreateApplicationDto } from 'src/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
+import { TakeApplication } from '../decorator/take-application.decorator';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
+import { AppActionGuard } from '../guard/app-action.guard';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'app' })
@@ -31,5 +34,35 @@ export class ApplicationController extends BaseController {
     @Get('list')
     async list(@TakeDeveloper() developer: any) {
         return await this.applicationService.getListByDeveloperId(developer.id);
+    }
+
+    @UseGuards(AppActionGuard)
+    @Get('detail')
+    async detail(@TakeApplication() app: Application) {
+        return app;
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置应用公告')
+    @Post('set-notice')
+    async setNotice(@Body() setApplicationNoticeDto: any, @TakeApplication() app: Application) {
+        await this.applicationService.setNotice(app.id, setApplicationNoticeDto.notice);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('启用应用')
+    @Get('enable')
+    async enable(@TakeApplication() app: Application) {
+        await this.applicationService.setStatus(app.id, 'published');
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('禁用应用')
+    @Get('disable')
+    async disable(@TakeApplication() app: Application) {
+        await this.applicationService.setStatus(app.id, 'disabled');
+        return this.setAffected({}, app.name);
     }
 }

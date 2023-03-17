@@ -28,7 +28,7 @@ export class Application extends BaseEntity {
 
     // 通知
     @Column({ type: 'text', nullable: true })
-    nitice: string;
+    notice: string;
 
     // 加密模式
     @Column({ length: 8 })

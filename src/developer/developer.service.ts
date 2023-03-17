@@ -5,7 +5,7 @@ import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { RandomUtils } from 'src/common/utils/random.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { Repository } from 'typeorm';
-import { CreateDeveloperDto, LoginDeveloperDto } from './developer.dto';
+import { CreateDeveloperDto, LoginDeveloperDto } from './dto/developer.dto';
 import { Developer } from './developer.entity';
 
 @Injectable()

@@ -7,7 +7,7 @@ import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
-import { CreateDeveloperDto, LoginDeveloperDto } from '../developer.dto';
+import { CreateDeveloperDto, LoginDeveloperDto } from '../dto/developer.dto';
 import { DeveloperService } from '../developer.service';
 
 @Public()

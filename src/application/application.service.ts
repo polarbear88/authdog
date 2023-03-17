@@ -5,6 +5,7 @@ import { RandomUtils } from 'src/common/utils/random.utils';
 import { RSAUtils } from 'src/common/utils/rsa.utils';
 import { Repository } from 'typeorm';
 import { Application } from './application.entity';
+import { AppStatus } from './application.type';
 import { CreateApplicationDto } from './dto/application.dto';
 
 @Injectable()
@@ -53,5 +54,17 @@ export class ApplicationService extends BaseService {
 
     async getListByDeveloperId(developerId: number) {
         return await this.applicationRepository.find({ where: { developerId }, order: { id: 'DESC' } });
+    }
+
+    async getApplicationByIdAndDeveloperId(id: number, developerId: number) {
+        return await this.applicationRepository.findOne({ where: { id, developerId } });
+    }
+
+    async setNotice(id: number, notice: string) {
+        await this.applicationRepository.update(id, { notice });
+    }
+
+    async setStatus(id: number, status: AppStatus) {
+        await this.applicationRepository.update(id, { status });
     }
 }
