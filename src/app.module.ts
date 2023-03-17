@@ -14,6 +14,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { ResponseInterceptor } from './response.interceptor';
 import { HttpExceptionFilter } from './http-exception.filter';
+import { DeveloperActionLog } from './developer/action-log/developer-action-log.entity';
 
 @Module({
     imports: [
@@ -36,7 +37,7 @@ import { HttpExceptionFilter } from './http-exception.filter';
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer],
+                entities: [Developer, DeveloperActionLog],
             }),
         }),
         // 导入请求频率限制器

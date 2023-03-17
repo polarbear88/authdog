@@ -1,4 +1,4 @@
-import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post } from '@nestjs/common';
+import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Request } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Throttle } from '@nestjs/throttler';
 import { JwtExpiresInConfig } from 'src/common/config/jwt-expiresIn.config';
@@ -6,6 +6,7 @@ import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
 import { Role } from 'src/common/enums/role.enum';
+import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { CreateDeveloperDto, LoginDeveloperDto } from '../developer.dto';
 import { DeveloperService } from '../developer.service';
 
@@ -34,8 +35,9 @@ export class DeveloperController extends BaseController {
     }
 
     // 开发者登录
+    @WriteDeveloperActionLog('登录')
     @Post('login')
-    async login(@Body() loginDeveloperDto: LoginDeveloperDto) {
+    async login(@Body() loginDeveloperDto: LoginDeveloperDto, @Request() req: any) {
         // 验证用户
         const developer = await this.developerService.validateUser(loginDeveloperDto);
         if (!developer) {
@@ -46,6 +48,8 @@ export class DeveloperController extends BaseController {
         const access_token = this.jwtService.sign(payload, {
             expiresIn: JwtExpiresInConfig.developer,
         });
-        return { access_token };
+        req.user = developer;
+        (developer as any).access_token = access_token;
+        return developer;
     }
 }
