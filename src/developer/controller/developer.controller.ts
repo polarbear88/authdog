@@ -29,7 +29,7 @@ export class DeveloperController extends BaseController {
         }
         const developer = await this.developerService.createDeveloper(createDeveloperDto, ip);
         if (!developer) {
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException('注册失败');
         }
         return null;
     }

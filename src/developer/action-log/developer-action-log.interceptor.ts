@@ -24,8 +24,8 @@ export class DeveloperActionLogInterceptor implements NestInterceptor {
                 developerActionLog.ip = ExpressUtils.getIp(req);
                 developerActionLog.action = action;
                 let affected = null;
-                if (data && data.statusCode === 200 && data.data && data.data.affected) {
-                    affected = data.data.affected;
+                if (data && data.affected) {
+                    affected = data.affected;
                 }
                 developerActionLog.affected = affected;
                 this.developerActionLogService.createDeveloperActionLog(developerActionLog);

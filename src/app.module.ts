@@ -15,6 +15,8 @@ import { RolesGuard } from './auth/roles.guard';
 import { ResponseInterceptor } from './response.interceptor';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { DeveloperActionLog } from './developer/action-log/developer-action-log.entity';
+import { ApplicationModule } from './application/application.module';
+import { Application } from './application/application.entity';
 
 @Module({
     imports: [
@@ -37,7 +39,7 @@ import { DeveloperActionLog } from './developer/action-log/developer-action-log.
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer, DeveloperActionLog],
+                entities: [Developer, DeveloperActionLog, Application],
             }),
         }),
         // 导入请求频率限制器
@@ -56,6 +58,7 @@ import { DeveloperActionLog } from './developer/action-log/developer-action-log.
         }),
         DeveloperModule,
         AuthModule,
+        ApplicationModule,
     ],
     controllers: [AppController],
     providers: [

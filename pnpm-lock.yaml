@@ -14,7 +14,7 @@ specifiers:
   '@nestjs/typeorm': ^9.0.1
   '@types/express': ^4.17.13
   '@types/jest': 27.5.0
-  '@types/node': ^16.0.0
+  '@types/node': ^16.18.14
   '@types/passport-jwt': ^3.0.8
   '@types/passport-local': ^1.0.35
   '@types/supertest': ^2.0.11
@@ -23,7 +23,6 @@ specifiers:
   '@typescript-eslint/parser': ^5.0.0
   class-transformer: ^0.5.1
   class-validator: ^0.14.0
-  crypto: ^1.0.1
   dotenv: ^16.0.3
   eslint: ^8.0.1
   eslint-config-prettier: ^8.3.0
@@ -63,7 +62,6 @@ dependencies:
   '@nestjs/typeorm': 9.0.1_bblm5tcjrog7bxbc4otwdyrzem
   class-transformer: 0.5.1
   class-validator: 0.14.0
-  crypto: 1.0.1
   dotenv: 16.0.3
   ioredis: 5.3.1
   md5-node: 1.0.1
@@ -2280,11 +2278,6 @@ packages:
 
   /crypt/0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
-    dev: false
-
-  /crypto/1.0.1:
-    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
-    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
     dev: false
 
   /date-fns/2.29.3:

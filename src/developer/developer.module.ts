@@ -7,12 +7,14 @@ import { MODULE_PATH } from '@nestjs/common/constants';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProfileController } from './controller/profile.controller';
 import { DeveloperActionLogModule } from './action-log/developer-action-log.module';
+import { ApplicationModule } from 'src/application/application.module';
+import { ApplicationController } from './controller/application.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
 @Module({
-    imports: [TypeOrmModule.forFeature([Developer]), AuthModule, DeveloperActionLogModule],
-    controllers: [DeveloperController, ProfileController],
+    imports: [TypeOrmModule.forFeature([Developer]), AuthModule, DeveloperActionLogModule, ApplicationModule],
+    controllers: [DeveloperController, ProfileController, ApplicationController],
     providers: [DeveloperService],
 })
 export class DeveloperModule {}
