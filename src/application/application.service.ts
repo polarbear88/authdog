@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
+import { ECDHUtils } from 'src/common/utils/ecdh.utils';
 import { RandomUtils } from 'src/common/utils/random.utils';
 import { RSAUtils } from 'src/common/utils/rsa.utils';
 import { Repository } from 'typeorm';
@@ -33,6 +34,9 @@ export class ApplicationService extends BaseService {
         if (application.cryptoMode === 'rsa') {
             this.makeRSAKeyPair(app);
         }
+        if (application.cryptoMode === 'ecdh') {
+            this.makeECDHKeyPair(app);
+        }
         app.authMode = application.authMode;
         app.developerId = developerId;
         return await this.applicationRepository.save(app);
@@ -42,6 +46,12 @@ export class ApplicationService extends BaseService {
         const rsa = new RSAUtils();
         app.cryptoSecret = rsa.getPrivateKey();
         app.cryptoPublicKey = rsa.getPublicKey();
+    }
+
+    private makeECDHKeyPair(app: Application) {
+        const ecdh = new ECDHUtils();
+        app.cryptoSecret = ecdh.getPrivateKey().toString('hex');
+        app.cryptoPublicKey = ecdh.getPublicKey().toString('hex');
     }
 
     async findByDeveloperIdAndName(developerId: number, name: string) {
