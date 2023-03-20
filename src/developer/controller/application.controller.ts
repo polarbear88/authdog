@@ -12,6 +12,10 @@ import {
     SetApplicationUnbindDeductTimeDto,
     SetApplicationUnbindDeductCountDto,
     SetApplicationMaxUnbindCountDto,
+    SetApplicationAllowMultiDeviceDto,
+    SetApplicationMaxMultiDeviceDto,
+    SetApplicationUseCountModeDto,
+    SetApplicationAllowLoginWhenCountUsedUpDto,
 } from 'src/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -162,6 +166,41 @@ export class ApplicationController extends BaseController {
     @Post('set-maxUnbindCount')
     async setMaxUnbindCount(@Body() setApplicationMaxUnbindCountDto: SetApplicationMaxUnbindCountDto, @TakeApplication() app: Application) {
         await this.applicationService.setMaxUnbindCount(app.id, setApplicationMaxUnbindCountDto.maxUnbindCount);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置是否允许多设备登录')
+    @Post('set-allowMultiDevice')
+    async setAllowMultiDevice(@Body() setApplicationAllowMultiDeviceDto: SetApplicationAllowMultiDeviceDto, @TakeApplication() app: Application) {
+        await this.applicationService.setAllowMultiDevice(app.id, setApplicationAllowMultiDeviceDto.allowUnbind);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置最大同时登录设备数')
+    @Post('set-maxMultiDevice')
+    async setMaxMultiDevice(@Body() setApplicationMaxMultiDeviceDto: SetApplicationMaxMultiDeviceDto, @TakeApplication() app: Application) {
+        await this.applicationService.setMaxMultiDevice(app.id, setApplicationMaxMultiDeviceDto.maxUnbindCount);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置是否使用按次收费')
+    @Post('set-useCountMode')
+    async setUseCountMode(@Body() setApplicationUseCountModeDto: SetApplicationUseCountModeDto, @TakeApplication() app: Application) {
+        await this.applicationService.setUseCountMode(app.id, setApplicationUseCountModeDto.useCountMode);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置次数用尽是否允许登录')
+    @Post('set-allowLoginWhenCountUsedUp')
+    async setAllowLoginWhenCountUsedUp(
+        @Body() setApplicationAllowLoginWhenCountUsedUpDto: SetApplicationAllowLoginWhenCountUsedUpDto,
+        @TakeApplication() app: Application,
+    ) {
+        await this.applicationService.setAllowLoginWhenCountUsedUp(app.id, setApplicationAllowLoginWhenCountUsedUpDto.allowLoginWhenCountUsedUp);
         return this.setAffected({}, app.name);
     }
 }

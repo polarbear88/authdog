@@ -75,11 +75,11 @@ export class Application extends BaseEntity {
     maxUnbindCount: number;
 
     // 如果在用户模式下且不绑定机器码是否允许多设备登录
-    @Column({ nullable: true })
+    @Column({ default: false })
     allowMultiDevice: boolean;
 
     // 如果允许多设备登录，最大同时登录设备数
-    @Column({ nullable: true })
+    @Column({ default: 0 })
     maxMultiDevice: number;
 
     // 是否使用按次模式
@@ -87,6 +87,6 @@ export class Application extends BaseEntity {
     useCountMode: boolean;
 
     // 次数用尽是否允许登录
-    @Column({ nullable: true })
+    @Column({ default: true })
     allowLoginWhenCountUsedUp: boolean;
 }

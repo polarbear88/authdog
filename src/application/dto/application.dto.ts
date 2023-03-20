@@ -68,3 +68,23 @@ export class SetApplicationMaxUnbindCountDto {
     @IsNumber({}, { message: '最大解绑次数必须是数字' })
     maxUnbindCount: number;
 }
+
+export class SetApplicationAllowMultiDeviceDto {
+    @IsBoolean({ message: '是否允许多设备登录是布尔值' })
+    allowUnbind: boolean;
+}
+
+export class SetApplicationMaxMultiDeviceDto {
+    @IsNumber({}, { message: '最大同时登录设备数是数字' })
+    maxUnbindCount: number;
+}
+
+export class SetApplicationUseCountModeDto {
+    @IsBoolean({ message: '是否使用按次收费是布尔值' })
+    useCountMode: boolean;
+}
+
+export class SetApplicationAllowLoginWhenCountUsedUpDto {
+    @IsBoolean({ message: '次数用尽后允许登录是布尔值' })
+    allowLoginWhenCountUsedUp: boolean;
+}

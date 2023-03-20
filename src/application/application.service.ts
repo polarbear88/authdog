@@ -135,4 +135,20 @@ export class ApplicationService extends BaseService {
     async setMaxUnbindCount(id: number, maxUnbindCount: number) {
         await this.applicationRepository.update(id, { maxUnbindCount });
     }
+
+    async setAllowMultiDevice(id: number, allowMultiDevice: boolean) {
+        await this.applicationRepository.update(id, { allowMultiDevice });
+    }
+
+    async setMaxMultiDevice(id: number, maxMultiDevice: number) {
+        await this.applicationRepository.update(id, { maxMultiDevice });
+    }
+
+    async setUseCountMode(id: number, useCountMode: boolean) {
+        await this.applicationRepository.update(id, { useCountMode });
+    }
+
+    async setAllowLoginWhenCountUsedUp(id: number, allowLoginWhenCountUsedUp: boolean) {
+        await this.applicationRepository.update(id, { allowLoginWhenCountUsedUp });
+    }
 }
