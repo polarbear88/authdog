@@ -71,7 +71,7 @@ export class Application extends BaseEntity {
     unbindDeductCount: number;
 
     // 最大解绑次数
-    @Column({ nullable: true })
+    @Column({ default: 0 })
     maxUnbindCount: number;
 
     // 如果在用户模式下且不绑定机器码是否允许多设备登录

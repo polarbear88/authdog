@@ -6,7 +6,7 @@ import { RandomUtils } from 'src/common/utils/random.utils';
 import { RSAUtils } from 'src/common/utils/rsa.utils';
 import { Repository } from 'typeorm';
 import { Application } from './application.entity';
-import { AppStatus } from './application.type';
+import { AppCryptoMode, AppStatus } from './application.type';
 import { CreateApplicationDto } from './dto/application.dto';
 
 @Injectable()
@@ -76,5 +76,63 @@ export class ApplicationService extends BaseService {
 
     async setStatus(id: number, status: AppStatus) {
         await this.applicationRepository.update(id, { status });
+    }
+
+    async setForceUpgrade(id: number, forceUpgrade: boolean) {
+        await this.applicationRepository.update(id, { forceUpgrade });
+    }
+
+    async setDownloadUrl(id: number, downloadUrl: string) {
+        await this.applicationRepository.update(id, { downloadUrl });
+    }
+
+    /**
+     * 重置加密模式
+     * @param id id
+     * @param cryptoMode 加密模式
+     */
+    async resetCryptoMode(id: number, cryptoMode: AppCryptoMode) {
+        const app = (await this.findById(id)) as Application;
+        app.cryptoSecret = null;
+        app.cryptoPublicKey = null;
+        if (cryptoMode === 'aes') {
+            app.cryptoSecret = RandomUtils.getHexString(32);
+        }
+        if (cryptoMode === 'rsa') {
+            this.makeRSAKeyPair(app);
+        }
+        if (cryptoMode === 'ecdh') {
+            this.makeECDHKeyPair(app);
+        }
+        app.cryptoMode = cryptoMode;
+        await this.applicationRepository.save(app);
+    }
+
+    async setIsFree(id: number, isFree: boolean) {
+        await this.applicationRepository.update(id, { free: isFree });
+    }
+
+    async setTrialTime(id: number, trialTime: number) {
+        await this.applicationRepository.update(id, { trialTime });
+    }
+
+    async setBindDevice(id: number, bindDevice: boolean) {
+        await this.applicationRepository.update(id, { bindDevice });
+    }
+
+    async setAllowUnbind(id: number, allowUnbind: boolean) {
+        await this.applicationRepository.update(id, { allowUnbind });
+    }
+
+    async setUnbindDeductTime(id: number, unbindDeductTime: number) {
+        await this.applicationRepository.update(id, { unbindDeductTime });
+    }
+
+    async setUnbindDeductCount(id: number, unbindDeductCount: number) {
+        await this.applicationRepository.update(id, { unbindDeductCount });
+    }
+
+    async setMaxUnbindCount(id: number, maxUnbindCount: number) {
+        await this.applicationRepository.update(id, { maxUnbindCount });
     }
 }

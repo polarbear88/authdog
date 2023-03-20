@@ -1,4 +1,4 @@
-import { IsIn, IsString, Length } from 'class-validator';
+import { IsBoolean, IsIn, IsNumber, IsString, Length } from 'class-validator';
 import { AppAuthMode, AppCryptoMode, AppStatus } from '../application.type';
 
 export class CreateApplicationDto {
@@ -21,4 +21,50 @@ export class SetApplicationNoticeDto {
     @IsString({ message: '应用公告必须是字符串' })
     @Length(1, 500, { message: '应用公告长度必须在1-500位之间' })
     notice: string;
+}
+
+export class SetApplicationDownloadUrlDto {
+    @IsString({ message: '下载地址必须是字符串' })
+    @Length(1, 500, { message: '下载地址长度必须在1-500位之间' })
+    downloadUrl: string;
+}
+
+export class ResetApplicationCryptoModeDto {
+    @IsIn(['none', 'aes', 'rsa', 'ecdh'], { message: '加密模式不正确' })
+    cryptoMode: AppCryptoMode;
+}
+
+export class SetApplicationIsFreeDto {
+    @IsBoolean({ message: '是否免费必须是布尔值' })
+    free: boolean;
+}
+
+export class SetApplicationtTrialTimeDto {
+    @IsNumber({}, { message: '试用时间必须是数字' })
+    trialTime: number;
+}
+
+export class SetApplicationIsBindDeviceDto {
+    @IsBoolean({ message: '是否绑定机器码必须是布尔值' })
+    bindDevice: boolean;
+}
+
+export class SetApplicationIsAllowUnbindDto {
+    @IsBoolean({ message: '是否允许解绑必须是布尔值' })
+    allowUnbind: boolean;
+}
+
+export class SetApplicationUnbindDeductTimeDto {
+    @IsNumber({}, { message: '解绑一次扣时间必须是数字' })
+    unbindDeductTime: number;
+}
+
+export class SetApplicationUnbindDeductCountDto {
+    @IsNumber({}, { message: '解绑一次扣次数必须是数字' })
+    unbindDeductCount: number;
+}
+
+export class SetApplicationMaxUnbindCountDto {
+    @IsNumber({}, { message: '最大解绑次数必须是数字' })
+    maxUnbindCount: number;
 }
