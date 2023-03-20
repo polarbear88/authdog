@@ -17,6 +17,8 @@ import { HttpExceptionFilter } from './http-exception.filter';
 import { DeveloperActionLog } from './developer/action-log/developer-action-log.entity';
 import { ApplicationModule } from './application/application.module';
 import { Application } from './application/application.entity';
+import { CloudvarModule } from './cloudvar/cloudvar.module';
+import { Cloudvar } from './cloudvar/cloudvar.entity';
 
 @Module({
     imports: [
@@ -39,7 +41,7 @@ import { Application } from './application/application.entity';
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer, DeveloperActionLog, Application],
+                entities: [Developer, DeveloperActionLog, Application, Cloudvar],
             }),
         }),
         // 导入请求频率限制器
@@ -59,6 +61,7 @@ import { Application } from './application/application.entity';
         DeveloperModule,
         AuthModule,
         ApplicationModule,
+        CloudvarModule,
     ],
     controllers: [AppController],
     providers: [

@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity, Index } from 'typeorm';
 
+@Index(['developerId', 'action'])
 @Entity()
 export class DeveloperActionLog extends BaseEntity {
     @Index()
