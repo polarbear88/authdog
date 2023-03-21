@@ -12,4 +12,7 @@ export class IP {
 
     @Column({ nullable: true })
     city: string;
+
+    @Column({ nullable: true })
+    isp: string;
 }

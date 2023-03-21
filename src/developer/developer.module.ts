@@ -11,12 +11,25 @@ import { ApplicationModule } from 'src/application/application.module';
 import { ApplicationController } from './controller/application.controller';
 import { CloudvarModule } from 'src/cloudvar/cloudvar.module';
 import { CloudvarController } from './controller/cloudvar.controller';
+import { DeveloperSubscriber } from './developer.subscriber';
+import { IPAddrService } from 'src/common/service/ipaddr.service';
+import { HttpModule } from '@nestjs/axios';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
 @Module({
-    imports: [TypeOrmModule.forFeature([Developer]), AuthModule, DeveloperActionLogModule, ApplicationModule, CloudvarModule],
+    imports: [
+        TypeOrmModule.forFeature([Developer]),
+        AuthModule,
+        DeveloperActionLogModule,
+        ApplicationModule,
+        CloudvarModule,
+        HttpModule.register({
+            timeout: 5000,
+            maxRedirects: 5,
+        }),
+    ],
     controllers: [DeveloperController, ProfileController, ApplicationController, CloudvarController],
-    providers: [DeveloperService],
+    providers: [DeveloperService, IPAddrService, DeveloperSubscriber],
 })
 export class DeveloperModule {}

@@ -7,6 +7,7 @@ import { StringUtils } from 'src/common/utils/string.utils';
 import { Repository } from 'typeorm';
 import { CreateDeveloperDto, LoginDeveloperDto } from './dto/developer.dto';
 import { Developer } from './developer.entity';
+import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
 
 @Injectable()
 export class DeveloperService extends BaseService {
@@ -44,6 +45,7 @@ export class DeveloperService extends BaseService {
             country: null,
             province: null,
             city: null,
+            isp: null,
         };
         return this.developerRepository.save(developer);
     }
@@ -65,5 +67,16 @@ export class DeveloperService extends BaseService {
             return developer;
         }
         return null;
+    }
+
+    async updateDeveloperIAP(id: number, iap: IPAddrAscriptionPlace) {
+        await this.developerRepository.update(id, {
+            ip: {
+                country: iap.country,
+                province: iap.region,
+                city: iap.city,
+                isp: iap.isp,
+            },
+        });
     }
 }
