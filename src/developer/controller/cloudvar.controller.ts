@@ -29,8 +29,8 @@ export class CloudvarController extends BaseController {
     }
 
     @Get('list')
-    async list(@TakeDeveloper() developer: any, @Query('word') word: string) {
-        return await this.cloudvarService.getList(developer.id, word);
+    async list(@TakeDeveloper() developer: any, @Query('word') word: string, @Query('appid') appid: string) {
+        return await this.cloudvarService.getList(developer.id, word, parseInt(appid));
     }
 
     @WriteDeveloperActionLog('删除云变量')

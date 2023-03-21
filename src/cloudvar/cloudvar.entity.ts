@@ -8,6 +8,7 @@ export class Cloudvar extends BaseEntity {
     @Column()
     developerId: number;
 
+    @Index()
     @Column()
     name: string;
 
@@ -25,4 +26,7 @@ export class Cloudvar extends BaseEntity {
 
     @Column({ default: 0 })
     applicationId: number;
+
+    @Column({ default: '' })
+    applicationName: string;
 }

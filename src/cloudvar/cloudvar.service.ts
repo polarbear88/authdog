@@ -1,5 +1,7 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Application } from 'src/application/application.entity';
+import { ApplicationService } from 'src/application/application.service';
 import { BaseService } from 'src/common/service/base.service';
 import { Like, Repository } from 'typeorm';
 import { CreateCloudvarDto, UpdateCloudvarDto } from './cloudvar.dto';
@@ -10,6 +12,7 @@ export class CloudvarService extends BaseService {
     constructor(
         @InjectRepository(Cloudvar)
         private cloudvarRepository: Repository<Cloudvar>,
+        private applicationService: ApplicationService,
     ) {
         super(cloudvarRepository);
     }
@@ -24,18 +27,26 @@ export class CloudvarService extends BaseService {
         cv.isPublic = cloudvar.isPublic;
         cv.isGlobal = cloudvar.isGlobal;
         if (cloudvar.applicationId && !cloudvar.isGlobal) {
+            const app = (await this.applicationService.findById(cloudvar.applicationId)) as Application;
+            if (!app || app.developerId !== developerId) {
+                throw new NotAcceptableException('应用不存在');
+            }
             cv.applicationId = parseInt(cloudvar.applicationId + '');
+            cv.applicationName = app.name;
         }
         cv.developerId = developerId;
         return await this.cloudvarRepository.save(cv);
     }
 
-    async getList(developerId: number, word?: string): Promise<Cloudvar[]> {
+    async getList(developerId: number, word?: string, appid?: number): Promise<Cloudvar[]> {
         const where = {
             developerId,
         };
         if (word) {
             where['name'] = Like(`%${word}%`);
+        }
+        if (appid) {
+            where['applicationId'] = appid;
         }
         return await this.cloudvarRepository.find({
             where,
@@ -97,7 +108,12 @@ export class CloudvarService extends BaseService {
         cv.isPublic = cloudvar.isPublic;
         cv.isGlobal = cloudvar.isGlobal;
         if (cloudvar.applicationId && !cloudvar.isGlobal) {
+            const app = (await this.applicationService.findById(cloudvar.applicationId)) as Application;
+            if (!app || app.developerId !== developerId) {
+                throw new NotAcceptableException('应用不存在');
+            }
             cv.applicationId = parseInt(cloudvar.applicationId + '');
+            cv.applicationName = app.name;
         }
         return await this.cloudvarRepository.save(cv);
     }
