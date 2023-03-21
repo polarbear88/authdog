@@ -13,6 +13,7 @@ async function bootstrap() {
     );
     app.enableVersioning({
         type: VersioningType.URI,
+        defaultVersion: '1',
     });
     app.setGlobalPrefix('api');
     await app.listen(+configService.get('APP_PORT'));

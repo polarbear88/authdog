@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/entity/base.entity';
 import { IP } from 'src/common/entity/ip.entity';
 import { Column, Entity, Unique } from 'typeorm';
+import { DeveloperStatus } from './developer.type';
 
 @Unique(['name'])
 @Unique(['mobile'])
@@ -20,6 +21,12 @@ export class Developer extends BaseEntity {
 
     @Column(() => IP)
     ip: IP;
+
+    @Column({ default: () => 'NOW()' })
+    lastLoginTime: Date;
+
+    @Column({ default: 'normal' })
+    status: DeveloperStatus;
 
     _serialization() {
         const data = super._serialization();

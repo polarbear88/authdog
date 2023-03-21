@@ -16,6 +16,7 @@ import {
     SetApplicationMaxMultiDeviceDto,
     SetApplicationUseCountModeDto,
     SetApplicationAllowLoginWhenCountUsedUpDto,
+    SetApplicationtTrialCountDto,
 } from 'src/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -201,6 +202,14 @@ export class ApplicationController extends BaseController {
         @TakeApplication() app: Application,
     ) {
         await this.applicationService.setAllowLoginWhenCountUsedUp(app.id, setApplicationAllowLoginWhenCountUsedUpDto.allowLoginWhenCountUsedUp);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置试用次数')
+    @Post('set-trialCount')
+    async setTrialCount(@Body() setApplicationtTrialCountDto: SetApplicationtTrialCountDto, @TakeApplication() app: Application) {
+        await this.applicationService.setTrialCount(app.id, setApplicationtTrialCountDto.trialCount);
         return this.setAffected({}, app.name);
     }
 }

@@ -88,3 +88,8 @@ export class SetApplicationAllowLoginWhenCountUsedUpDto {
     @IsBoolean({ message: '次数用尽后允许登录是布尔值' })
     allowLoginWhenCountUsedUp: boolean;
 }
+
+export class SetApplicationtTrialCountDto {
+    @IsNumber({}, { message: '试用次数必须是数字' })
+    trialCount: number;
+}

@@ -19,6 +19,13 @@ import { ApplicationModule } from './application/application.module';
 import { Application } from './application/application.entity';
 import { CloudvarModule } from './cloudvar/cloudvar.module';
 import { Cloudvar } from './cloudvar/cloudvar.entity';
+import { UserModule } from './user/user.module';
+import { DeviceModule } from './device/device.module';
+import { UserDeviceModule } from './user-device/user-device.module';
+import { User } from './user/user.entity';
+import { Device } from './device/device.entity';
+import { UserDevice } from './user-device/user-device.entity';
+import { ApiModule } from './api/api.module';
 
 @Module({
     imports: [
@@ -41,7 +48,7 @@ import { Cloudvar } from './cloudvar/cloudvar.entity';
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer, DeveloperActionLog, Application, Cloudvar],
+                entities: [Developer, DeveloperActionLog, Application, Cloudvar, User, Device, UserDevice],
             }),
         }),
         // 导入请求频率限制器
@@ -62,6 +69,10 @@ import { Cloudvar } from './cloudvar/cloudvar.entity';
         AuthModule,
         ApplicationModule,
         CloudvarModule,
+        UserModule,
+        DeviceModule,
+        UserDeviceModule,
+        ApiModule,
     ],
     controllers: [AppController],
     providers: [

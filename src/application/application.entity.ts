@@ -89,4 +89,8 @@ export class Application extends BaseEntity {
     // 次数用尽是否允许登录
     @Column({ default: true })
     allowLoginWhenCountUsedUp: boolean;
+
+    // 试用次数
+    @Column({ default: 0 })
+    trialCount: number;
 }

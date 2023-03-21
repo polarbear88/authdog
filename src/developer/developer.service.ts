@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
@@ -64,6 +64,10 @@ export class DeveloperService extends BaseService {
             developer = await this.findByName(loginDeveloperDto.username);
         }
         if (developer && CryptoUtils.validatePassword(loginDeveloperDto.password, developer.salt, developer.password)) {
+            if (developer.status !== 'normal') {
+                throw new ForbiddenException('账号状态异常');
+            }
+            this.developerRepository.update(developer.id, { lastLoginTime: new Date() });
             return developer;
         }
         return null;
@@ -78,5 +82,16 @@ export class DeveloperService extends BaseService {
                 isp: iap.isp,
             },
         });
+    }
+
+    async getStatus(id: number) {
+        const developer = await this.developerRepository.findOne({
+            where: { id },
+            select: ['status'],
+        });
+        if (developer) {
+            return developer.status;
+        }
+        return null;
     }
 }

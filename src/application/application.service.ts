@@ -151,4 +151,8 @@ export class ApplicationService extends BaseService {
     async setAllowLoginWhenCountUsedUp(id: number, allowLoginWhenCountUsedUp: boolean) {
         await this.applicationRepository.update(id, { allowLoginWhenCountUsedUp });
     }
+
+    async setTrialCount(id: number, trialCount: number) {
+        await this.applicationRepository.update(id, { trialCount });
+    }
 }
