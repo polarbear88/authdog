@@ -8,7 +8,7 @@ import { DateUtils } from 'src/common/utils/date.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
 import { Repository } from 'typeorm';
-import { CreateUserDto, LoginUserDto } from './user.dto';
+import { ChangePasswordDto, CreateUserDto, LoginUserDto } from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -58,6 +58,21 @@ export class UserService extends BaseService {
         return true;
     }
 
+    async getCurrentDeviceId(id: number) {
+        const user = await this.userRepository.findOne({
+            where: { id },
+            select: ['currentDeviceId'],
+        });
+        if (user) {
+            return user.currentDeviceId;
+        }
+        return null;
+    }
+
+    async setCurrentDeviceId(id: number, deviceId: string) {
+        await this.userRepository.update(id, { currentDeviceId: deviceId });
+    }
+
     async create(createUserDto: CreateUserDto, app: Application, ip: string) {
         const user = new User();
         user.appid = app.id;
@@ -89,6 +104,17 @@ export class UserService extends BaseService {
             user.currentDeviceId = createUserDto.deviceId;
         }
         return await this.userRepository.save(user);
+    }
+
+    async changePassword(changePasswordDto: ChangePasswordDto) {
+        const user = await this.findByName(changePasswordDto.appid, changePasswordDto.name);
+        if (user && CryptoUtils.validatePassword(changePasswordDto.oldPassword, user.salt, user.password)) {
+            const salt = CryptoUtils.makeSalt();
+            const password = CryptoUtils.encryptPassword(changePasswordDto.newPassword, user.salt);
+            await this.userRepository.update(user.id, { salt, password });
+            return true;
+        }
+        throw new NotAcceptableException('用户名或密码错误');
     }
 
     async updateDeveloperIAP(id: number, iap: IPAddrAscriptionPlace) {
@@ -136,7 +162,7 @@ export class UserService extends BaseService {
         }
         // 验证是否绑定设备
         if (app.bindDevice) {
-            if (user.currentDeviceId !== deviceId) {
+            if (user.currentDeviceId && user.currentDeviceId !== deviceId) {
                 return {
                     result: false,
                     expire,
@@ -174,11 +200,49 @@ export class UserService extends BaseService {
         };
     }
 
-    async validateUserMultipledeviceLogin(user: User, app: Application) {
-        const deviceIds = await this.loginDeviceManageService.getDevices(user.id);
-        if (deviceIds.length > app.maxMultiDevice) {
-            if (app.allowForceLogin) {
-            }
+    async validateUserMultipledeviceLogin(user: User, app: Application, deviceId: string) {
+        // 清理5分钟没有心跳的设备
+        await this.loginDeviceManageService.cleanExpiredDevices(user.id, 5 * 60 * 100);
+        if (await this.loginDeviceManageService.isDeviceExist(user.id, deviceId)) {
+            // 设备已存在 允许同设备多开
+            await this.loginDeviceManageService.updateDevice(user.id, deviceId);
+            return true;
         }
+        const loginLength = await this.loginDeviceManageService.getLength(user.id);
+        let maxLength = app.maxMultiDevice;
+        if (!app.allowMultiDevice) {
+            // 不允许多设备登录
+            maxLength = 1;
+        }
+        if (loginLength >= app.maxMultiDevice) {
+            if (app.allowForceLogin) {
+                // 强制登录
+                await this.loginDeviceManageService.pop(user.id);
+                await this.loginDeviceManageService.addDevice(user.id, deviceId);
+                return true;
+            }
+            return false;
+        } else {
+            await this.loginDeviceManageService.addDevice(user.id, deviceId);
+            return true;
+        }
+    }
+
+    async subUserBalanceAndExpirationTime(user: User, minute: number, balance: number) {
+        const affected = await this.userRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: user.id })
+            .andWhere('ver = :ver', { ver: user.ver })
+            .andWhere(`DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE) >= NOW()`)
+            .andWhere(`balance >= ${balance}`)
+            .update({
+                expirationTime: () => `DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE)`,
+                balance: () => `balance - ${balance}`,
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        return false;
     }
 }

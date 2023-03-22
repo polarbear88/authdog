@@ -75,7 +75,7 @@ export class Application extends BaseEntity {
     maxUnbindCount: number;
 
     // 如果在用户模式下且不绑定机器码是否允许多设备登录
-    @Column({ default: false })
+    @Column({ default: true })
     allowMultiDevice: boolean;
 
     // 如果允许多设备登录，最大同时登录设备数

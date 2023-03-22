@@ -11,4 +11,27 @@ export class DateUtils {
 
         return year1 === year2 && month1 === month2 && day1 === day2;
     }
+
+    public static convertDatesToTimestamps(obj: any): any {
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+
+        if (Array.isArray(obj)) {
+            return obj.map((item) => this.convertDatesToTimestamps(item));
+        }
+
+        if (obj instanceof Date) {
+            return obj.getTime();
+        }
+
+        const result: any = {};
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                result[key] = this.convertDatesToTimestamps(obj[key]);
+            }
+        }
+
+        return result;
+    }
 }

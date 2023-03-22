@@ -20,6 +20,24 @@ export class CreateUserDto extends BaseUserDeviceDto {
     password: string;
 }
 
+export class ChangePasswordDto {
+    @IsNotEmpty({ message: 'appid不能为空' })
+    @IsNumber()
+    appid: number;
+
+    @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
+    name: string;
+
+    @IsString()
+    @IsNotEmpty({ message: '旧密码不能为空' })
+    oldPassword: string;
+
+    @IsString()
+    @IsNotEmpty({ message: '新密码不能为空' })
+    @Length(8, 16, { message: '新密码长度必须在8-16位之间' })
+    newPassword: string;
+}
+
 export class LoginUserDto extends BaseUserDeviceDto {
     @IsNotEmpty({ message: 'appid不能为空' })
     @IsNumber()

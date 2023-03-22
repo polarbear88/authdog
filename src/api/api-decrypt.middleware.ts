@@ -15,7 +15,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
 
     async use(req: Request, res: Response, next: NextFunction) {
         const request = req;
-        // 防止jwt拿去校验
+        // 防止jwt拿用户传入的header 中的token去校验
         request.headers['token'] = '';
         const app = await this.getApplication(request);
         const body = request.body;

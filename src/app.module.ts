@@ -88,7 +88,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
                 host: configService.get('REDIS_HOST'),
                 port: +configService.get('REDIS_PORT'),
                 password: configService.get('REDIS_PASSWORD'),
-                ttl: 60,
             }),
         }),
         LoginDeviceManageModule,

@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DeveloperModule } from 'src/developer/developer.module';
+import { LoginDeviceManageModule } from 'src/login-device-manage/login-device-manage.module';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 
@@ -19,6 +20,7 @@ import { JwtStrategy } from './jwt.strategy';
         }),
         DeveloperModule,
         UserModule,
+        LoginDeviceManageModule,
     ],
     providers: [JwtStrategy],
     exports: [PassportModule, JwtModule],

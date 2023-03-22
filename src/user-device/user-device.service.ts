@@ -44,7 +44,13 @@ export class UserDeviceService extends BaseService {
         userDevice.model = StringUtils.toString(baseUserDeviceDto.model);
         userDevice.osType = StringUtils.toString(baseUserDeviceDto.osType);
         userDevice.deviceId = baseUserDeviceDto.deviceId;
-        userDevice.ip.ipv4 = ip;
+        userDevice.ip = {
+            ipv4: ip,
+            country: null,
+            province: null,
+            city: null,
+            isp: null,
+        };
         return await this.userDeviceRepository.save(userDevice);
     }
 
