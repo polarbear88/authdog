@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
-import { DeviceModule } from './device/device.module';
+import { ApiUserModule } from './user/api-user.module';
+import { ApiDeviceModule } from './device/api-device.module';
 
 @Module({
-    imports: [UserModule, DeviceModule],
+    imports: [ApiUserModule, ApiDeviceModule],
 })
 export class ApiModule {}

@@ -20,4 +20,12 @@ export class StringUtils {
             return false;
         }
     }
+
+    public static isEmpty(str: string): boolean {
+        return str === null || str === undefined || str === '';
+    }
+
+    public static toString(str: any): string {
+        return str === null || str === undefined ? '' : str.toString();
+    }
 }

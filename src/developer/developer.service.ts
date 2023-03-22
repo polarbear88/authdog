@@ -1,8 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
-import { RandomUtils } from 'src/common/utils/random.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { Repository } from 'typeorm';
 import { CreateDeveloperDto, LoginDeveloperDto } from './dto/developer.dto';
@@ -38,7 +37,7 @@ export class DeveloperService extends BaseService {
         const developer = new Developer();
         developer.name = createDeveloperDto.username;
         developer.mobile = createDeveloperDto.mobile;
-        developer.salt = RandomUtils.getHexString(8);
+        developer.salt = CryptoUtils.makeSalt();
         developer.password = CryptoUtils.encryptPassword(createDeveloperDto.password, developer.salt);
         developer.ip = {
             ipv4: ip,
@@ -70,7 +69,7 @@ export class DeveloperService extends BaseService {
             this.developerRepository.update(developer.id, { lastLoginTime: new Date() });
             return developer;
         }
-        return null;
+        throw new NotAcceptableException('用户名或密码错误');
     }
 
     async updateDeveloperIAP(id: number, iap: IPAddrAscriptionPlace) {
@@ -93,5 +92,13 @@ export class DeveloperService extends BaseService {
             return developer.status;
         }
         return null;
+    }
+
+    async validateStatus(id: number) {
+        const status = await this.getStatus(id);
+        if (status !== 'normal') {
+            return false;
+        }
+        return true;
     }
 }

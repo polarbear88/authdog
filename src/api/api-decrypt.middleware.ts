@@ -24,11 +24,16 @@ export class ApiDecryptMiddleware implements NestMiddleware {
         }
         const decryptData = this.decryptBody(request, app);
         this.checkTimestamp(parseInt(decryptData.timestamp));
+        decryptData.appid = app.id;
         request.body = decryptData;
         // 将token放入header中，以便jwt校验
         if (decryptData.access_token && typeof decryptData.access_token === 'string') {
             request.headers['token'] = decryptData.access_token;
         }
+        if (!decryptData.clientVersion || typeof decryptData.clientVersion !== 'string') {
+            throw new BadRequestException('请传入客户端版本号');
+        }
+        request['clientVersion'] = decryptData.clientVersion;
         next();
     }
 

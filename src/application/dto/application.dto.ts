@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString, Length, Max } from 'class-validator';
 import { AppAuthMode, AppCryptoMode, AppStatus } from '../application.type';
 
 export class CreateApplicationDto {
@@ -89,6 +89,7 @@ export class SetApplicationAllowMultiDeviceDto {
 export class SetApplicationMaxMultiDeviceDto {
     @IsNotEmpty({ message: '最大同时登录设备数不能为空' })
     @IsNumber({}, { message: '最大同时登录设备数是数字' })
+    @Max(10, { message: '最大同时登录设备数不能超过10' })
     maxUnbindCount: number;
 }
 
@@ -108,4 +109,10 @@ export class SetApplicationtTrialCountDto {
     @IsNotEmpty({ message: '试用次数不能为空' })
     @IsNumber({}, { message: '试用次数必须是数字' })
     trialCount: number;
+}
+
+export class SetApplicationAllowForceLoginDto {
+    @IsNotEmpty({ message: '是否允许强制登录不能为空' })
+    @IsBoolean({ message: '是否允许强制登录是布尔值' })
+    allowForceLogin: boolean;
 }

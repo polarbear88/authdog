@@ -27,6 +27,10 @@ export class ApiEncryptInterceptor implements NestInterceptor {
         if (app.cryptoMode === 'none') {
             return data;
         }
+        if (data && data._serialization && typeof data._serialization === 'function') {
+            // 序列化数据，清理敏感信息
+            data = data._serialization();
+        }
         data = typeof data === 'object' ? JSON.stringify(data) : data + '';
         const key = request.aesKey;
         if (!key) {

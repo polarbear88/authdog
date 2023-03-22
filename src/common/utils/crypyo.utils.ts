@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { RandomUtils } from './random.utils';
 const _md5 = require('md5-node');
 
 export class CryptoUtils {
@@ -76,5 +77,9 @@ export class CryptoUtils {
      */
     public static validatePassword(password: string, salt: string, encryptPassword: string): boolean {
         return this.md5(password + salt) === encryptPassword;
+    }
+
+    public static makeSalt(): string {
+        return RandomUtils.getHexString(8);
     }
 }

@@ -93,4 +93,8 @@ export class Application extends BaseEntity {
     // 试用次数
     @Column({ default: 0 })
     trialCount: number;
+
+    // 在允许多设备登录的情况下，是否允许强制登录 如果不允许，那么当设备数达到上限时，新设备登录会被拒绝 如果允许，那么新设备登录会踢掉旧设备
+    @Column({ default: true })
+    allowForceLogin: boolean;
 }

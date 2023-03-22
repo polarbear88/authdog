@@ -17,6 +17,7 @@ import {
     SetApplicationUseCountModeDto,
     SetApplicationAllowLoginWhenCountUsedUpDto,
     SetApplicationtTrialCountDto,
+    SetApplicationAllowForceLoginDto,
 } from 'src/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -210,6 +211,14 @@ export class ApplicationController extends BaseController {
     @Post('set-trialCount')
     async setTrialCount(@Body() setApplicationtTrialCountDto: SetApplicationtTrialCountDto, @TakeApplication() app: Application) {
         await this.applicationService.setTrialCount(app.id, setApplicationtTrialCountDto.trialCount);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置是否允许强制登录')
+    @Post('set-allowForceLogin')
+    async setAllowForceLogin(@Body() setApplicationAllowForceLoginDto: SetApplicationAllowForceLoginDto, @TakeApplication() app: Application) {
+        await this.applicationService.setAllowForceLogin(app.id, setApplicationAllowForceLoginDto.allowForceLogin);
         return this.setAffected({}, app.name);
     }
 }

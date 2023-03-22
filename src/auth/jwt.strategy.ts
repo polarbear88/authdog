@@ -1,12 +1,13 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DeveloperService } from 'src/developer/developer.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private configService: ConfigService, private developerService: DeveloperService) {
+    constructor(private configService: ConfigService, private developerService: DeveloperService, private userService: UserService) {
         super({
             jwtFromRequest: ExtractJwt.fromHeader('token'),
             ignoreExpiration: false,
@@ -14,14 +15,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: any, @Req() req: any) {
         if (payload.roles.includes('developer')) {
-            const status = await this.developerService.getStatus(payload.id);
-            // 验证账号状态
-            if (status !== 'normal') {
+            if (payload.deviceId !== req.body.deviceId) {
+                // 禁止在其他设备上使用该token
                 return null;
             }
+            if (!(await this.developerService.validateStatus(payload.id))) {
+                return null;
+            }
+            return { id: payload.id, username: payload.username, roles: payload.roles, deviceId: payload.deviceId };
         }
-        return { id: payload.id, username: payload.username, roles: payload.roles };
+
+        if (payload.roles.includes('user')) {
+            if (!(await this.userService.validateStatus(payload.id))) {
+                return null;
+            }
+            return { id: payload.id, username: payload.username, roles: payload.roles };
+        }
+
+        return null;
     }
 }

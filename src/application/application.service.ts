@@ -155,4 +155,8 @@ export class ApplicationService extends BaseService {
     async setTrialCount(id: number, trialCount: number) {
         await this.applicationRepository.update(id, { trialCount });
     }
+
+    async setAllowForceLogin(id: number, allowForceLogin: boolean) {
+        await this.applicationRepository.update(id, { allowForceLogin });
+    }
 }

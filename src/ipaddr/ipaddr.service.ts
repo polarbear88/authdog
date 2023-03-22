@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { catchError, firstValueFrom } from 'rxjs';
-import { IPAddrAscriptionPlace } from '../dto/ipaddr-ascription-place';
+import { IPAddrAscriptionPlace } from '../common/dto/ipaddr-ascription-place';
 
 @Injectable()
 export class IPAddrService {

@@ -40,9 +40,6 @@ export class DeveloperController extends BaseController {
     async login(@Body() loginDeveloperDto: LoginDeveloperDto, @Request() req: any) {
         // 验证用户
         const developer = await this.developerService.validateUser(loginDeveloperDto);
-        if (!developer) {
-            throw new NotAcceptableException('用户名或密码错误');
-        }
         // 生成token
         const payload = { username: developer.name, id: developer.id, roles: [Role.Developer] };
         const access_token = this.jwtService.sign(payload, {

@@ -18,13 +18,6 @@ export class UserDevice extends BaseEntity {
     @Column()
     authMode: AppAuthMode;
 
-    @Column({ nullable: true })
-    userId: number;
-
-    // 对应device表的id
-    @Column({ nullable: true })
-    did: string;
-
     // 品牌
     @Column({ default: '' })
     brand: string;
@@ -43,8 +36,4 @@ export class UserDevice extends BaseEntity {
 
     @Column(() => IP)
     ip: IP;
-
-    // 最后使用
-    @Column({ default: () => 'NOW()' })
-    lastUseTime: Date;
 }

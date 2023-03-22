@@ -59,4 +59,9 @@ export class User extends BaseEntity {
     // 使用的设备名称
     @Column({ default: '' })
     useDeviceName: string;
+
+    _serialization() {
+        const data = super._serialization();
+        return this.deleteConfidential(['password', 'salt', 'ip'], data);
+    }
 }

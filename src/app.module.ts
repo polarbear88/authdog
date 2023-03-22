@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { CacheModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,6 +27,10 @@ import { Device } from './device/device.entity';
 import { UserDevice } from './user-device/user-device.entity';
 import { ApiModule } from './api/api.module';
 import { ApiDecryptMiddleware } from './api/api-decrypt.middleware';
+import { IPAddrModule } from './ipaddr/ipaddr.module';
+import { LoginDeviceManageModule } from './login-device-manage/login-device-manage.module';
+import * as redisStore from 'cache-manager-ioredis';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
     imports: [
@@ -74,6 +78,31 @@ import { ApiDecryptMiddleware } from './api/api-decrypt.middleware';
         DeviceModule,
         UserDeviceModule,
         ApiModule,
+        IPAddrModule,
+        CacheModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                isGlobal: true,
+                store: redisStore,
+                host: configService.get('REDIS_HOST'),
+                port: +configService.get('REDIS_PORT'),
+                password: configService.get('REDIS_PASSWORD'),
+                ttl: 60,
+            }),
+        }),
+        LoginDeviceManageModule,
+        RedisModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                config: {
+                    host: configService.get('REDIS_HOST'),
+                    port: +configService.get('REDIS_PORT'),
+                    password: configService.get('REDIS_PASSWORD'),
+                },
+            }),
+        }),
     ],
     controllers: [AppController],
     providers: [

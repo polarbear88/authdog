@@ -11,10 +11,9 @@ import { ApplicationController } from './controller/application.controller';
 import { CloudvarModule } from 'src/cloudvar/cloudvar.module';
 import { CloudvarController } from './controller/cloudvar.controller';
 import { DeveloperSubscriber } from './developer.subscriber';
-import { IPAddrService } from 'src/common/service/ipaddr.service';
-import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { IPAddrModule } from 'src/ipaddr/ipaddr.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -24,10 +23,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         DeveloperActionLogModule,
         ApplicationModule,
         CloudvarModule,
-        HttpModule.register({
-            timeout: 5000,
-            maxRedirects: 5,
-        }),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -36,9 +31,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 signOptions: { expiresIn: '24h' },
             }),
         }),
+        IPAddrModule,
     ],
     controllers: [DeveloperController, ProfileController, ApplicationController, CloudvarController],
-    providers: [DeveloperService, IPAddrService, DeveloperSubscriber],
+    providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
 })
 export class DeveloperModule {}

@@ -1,4 +1,4 @@
-import { IPAddrService } from 'src/common/service/ipaddr.service';
+import { IPAddrService } from 'src/ipaddr/ipaddr.service';
 import { DataSource, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm';
 import { Developer } from './developer.entity';
 import { DeveloperService } from './developer.service';
