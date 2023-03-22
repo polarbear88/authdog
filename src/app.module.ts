@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +26,7 @@ import { User } from './user/user.entity';
 import { Device } from './device/device.entity';
 import { UserDevice } from './user-device/user-device.entity';
 import { ApiModule } from './api/api.module';
+import { ApiDecryptMiddleware } from './api/api-decrypt.middleware';
 
 @Module({
     imports: [
@@ -102,4 +103,9 @@ import { ApiModule } from './api/api.module';
         },
     ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        // 应用API解密中间件
+        consumer.apply(ApiDecryptMiddleware).forRoutes('/v[0-9]/user/*');
+    }
+}

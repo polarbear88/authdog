@@ -1,4 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext, NotAcceptableException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, BadRequestException, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import { Application } from 'src/application/application.entity';
 import { ApplicationService } from 'src/application/application.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
@@ -6,14 +7,16 @@ import { ECDHUtils } from 'src/common/utils/ecdh.utils';
 import { RSAUtils } from 'src/common/utils/rsa.utils';
 
 /**
- * API加密守卫-用于解密API请求
+ * API解密中间件-用于解密API请求
  */
 @Injectable()
-export class ApiCryptoGuard implements CanActivate {
+export class ApiDecryptMiddleware implements NestMiddleware {
     constructor(private applicationService: ApplicationService) {}
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest();
+    async use(req: Request, res: Response, next: NextFunction) {
+        const request = req;
+        // 防止jwt拿去校验
+        request.headers['token'] = '';
         const app = await this.getApplication(request);
         const body = request.body;
         if (!body.data) {
@@ -22,7 +25,11 @@ export class ApiCryptoGuard implements CanActivate {
         const decryptData = this.decryptBody(request, app);
         this.checkTimestamp(parseInt(decryptData.timestamp));
         request.body = decryptData;
-        return true;
+        // 将token放入header中，以便jwt校验
+        if (decryptData.access_token && typeof decryptData.access_token === 'string') {
+            request.headers['token'] = decryptData.access_token;
+        }
+        next();
     }
 
     private checkTimestamp(timestamp: number) {
@@ -47,65 +54,54 @@ export class ApiCryptoGuard implements CanActivate {
             }
             return data;
         }
+        if (typeof data !== 'string') {
+            throw new BadRequestException('错误的请求');
+        }
         if (app.cryptoMode === 'aes') {
-            if (typeof data !== 'string') {
-                throw new BadRequestException('错误的请求');
-            }
-            request.publicKey = app.cryptoSecret;
+            request.aesKey = app.cryptoSecret;
             return this.decryptAES(data, app.cryptoSecret);
         }
+        if (!body.key || typeof body.key !== 'string') {
+            throw new BadRequestException('错误的请求');
+        }
         if (app.cryptoMode === 'rsa') {
-            if (typeof data !== 'string') {
-                throw new BadRequestException('错误的请求');
-            }
-            if (!body.publicKey || !body.aesKey) {
-                throw new BadRequestException('错误的请求');
-            }
-            if (typeof body.publicKey !== 'string' || typeof body.aesKey !== 'string') {
-                throw new BadRequestException('错误的请求');
-            }
-            const publicKey = body.publicKey;
-            this.tryRSAPublicKey(publicKey);
-            request.publicKey = publicKey;
-            return this.decryptRSA(data, body.aesKey, app.cryptoSecret);
+            const endata = this.decryptRSA(data, body.key, app.cryptoSecret);
+            request.aesKey = endata.aesKey;
+            return endata.data;
         }
         if (app.cryptoMode === 'ecdh') {
-            if (typeof data !== 'string') {
-                throw new BadRequestException('错误的请求');
-            }
-            if (!body.publicKey) {
-                throw new BadRequestException('错误的请求');
-            }
-            if (typeof body.publicKey !== 'string') {
-                throw new BadRequestException('错误的请求');
-            }
-            const publicKey = body.publicKey;
-            request.publicKey = publicKey;
-            return this.decryptECDH(data, publicKey, app.cryptoSecret);
+            const endata = this.decryptECDH(data, body.key, app.cryptoSecret);
+            request.aesKey = endata.aesKey;
+            return endata.data;
         }
+        throw new BadRequestException('错误的请求');
     }
 
-    private async decryptECDH(data: any, clientPublicKey: string, privateKey: string) {
+    private decryptECDH(data: any, clientPublicKey: string, privateKey: string) {
         try {
             const ecdh = new ECDHUtils();
             ecdh.setPrivateKey(Buffer.from(privateKey, 'hex'));
             const sharedSecret = ecdh.getSharedSecret(Buffer.from(clientPublicKey, 'hex')).toString('hex');
-            return this.decryptAES(data, sharedSecret.slice(0, 32));
+            const aesKey = sharedSecret.slice(0, 32);
+            return {
+                data: this.decryptAES(data, aesKey),
+                aesKey,
+            };
         } catch (error) {
             throw new BadRequestException('错误的请求');
         }
     }
 
-    private async tryRSAPublicKey(publicKey: string) {
-        try {
-            const rsa = new RSAUtils();
-            rsa.setPublicKey(publicKey);
-        } catch (error) {
-            throw new BadRequestException('错误的请求');
-        }
-    }
+    // private async tryRSAPublicKey(publicKey: string) {
+    //     try {
+    //         const rsa = new RSAUtils();
+    //         rsa.setPublicKey(publicKey);
+    //     } catch (error) {
+    //         throw new BadRequestException('错误的请求');
+    //     }
+    // }
 
-    private async decryptRSA(data: string, aesKeyData: string, privateKey: string) {
+    private decryptRSA(data: string, aesKeyData: string, privateKey: string) {
         try {
             const rsa = new RSAUtils();
             rsa.setPrivateKey(privateKey);
@@ -113,13 +109,16 @@ export class ApiCryptoGuard implements CanActivate {
             if (!aeskey || aeskey.length !== 32) {
                 throw new BadRequestException('错误的请求');
             }
-            return this.decryptAES(data, aeskey);
+            return {
+                data: this.decryptAES(data, aeskey),
+                aesKey: aeskey,
+            };
         } catch (error) {
             throw new BadRequestException('错误的请求');
         }
     }
 
-    private async decryptAES(data: string, key: string) {
+    private decryptAES(data: string, key: string) {
         try {
             const decryptData = CryptoUtils.aesCBCDecrypt(Buffer.from(data, 'base64'), key, 'aes-256-cbc', '0000000000000000', true);
             if (!decryptData) {
