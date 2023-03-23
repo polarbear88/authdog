@@ -4,23 +4,23 @@ export const PAGINATION_PAGE_SIZE = '_pagination_page_size';
 
 export function PaginationWhere(where?: string) {
     return (target: any, propertyKey: string | symbol) => {
-        let value = target[propertyKey];
-
-        const getter = () => {
-            return value;
-        };
-
-        const setter = (newValue: any) => {
-            const data = target[PAGINATION_WHERE] || {};
-            const query = [where, newValue];
-            data[propertyKey] = query;
-            target[PAGINATION_WHERE] = data;
-            value = newValue;
-        };
+        const privateProp = `_${String(propertyKey)}`;
+        target[privateProp] = target[propertyKey];
 
         Object.defineProperty(target, propertyKey, {
-            get: getter,
-            set: setter,
+            get() {
+                return this[privateProp];
+            },
+            set(newValue: any) {
+                const data = this[PAGINATION_WHERE] || {};
+                const query = [where, newValue];
+                data[propertyKey] = query;
+                if (newValue === undefined || newValue === '') {
+                    delete data[propertyKey];
+                }
+                this[PAGINATION_WHERE] = data;
+                this[privateProp] = newValue;
+            },
             enumerable: true,
             configurable: true,
         });
@@ -29,19 +29,16 @@ export function PaginationWhere(where?: string) {
 
 export function PaginationPage() {
     return (target: any, propertyKey: string | symbol) => {
-        let value = target[propertyKey];
-
-        const getter = () => {
-            return value;
-        };
-
-        const setter = (newValue: any) => {
-            target[PAGINATION_PAGE] = parseInt(newValue);
-            value = newValue;
-        };
+        const privateProp = `_${String(propertyKey)}`;
+        target[privateProp] = target[propertyKey];
         Object.defineProperty(target, propertyKey, {
-            get: getter,
-            set: setter,
+            get() {
+                return this[privateProp];
+            },
+            set(newValue: any) {
+                this[PAGINATION_PAGE] = parseInt(newValue);
+                this[privateProp] = newValue;
+            },
             enumerable: true,
             configurable: true,
         });
@@ -50,18 +47,16 @@ export function PaginationPage() {
 
 export function PaginationPageSize() {
     return (target: any, propertyKey: string | symbol) => {
-        let value = target[propertyKey];
-
-        const getter = () => {
-            return value;
-        };
-        const setter = (newValue: any) => {
-            target[PAGINATION_PAGE_SIZE] = parseInt(newValue);
-            value = newValue;
-        };
+        const privateProp = `_${String(propertyKey)}`;
+        target[privateProp] = target[propertyKey];
         Object.defineProperty(target, propertyKey, {
-            get: getter,
-            set: setter,
+            get() {
+                return this[privateProp];
+            },
+            set(newValue: any) {
+                this[PAGINATION_PAGE_SIZE] = parseInt(newValue);
+                this[privateProp] = newValue;
+            },
             enumerable: true,
             configurable: true,
         });

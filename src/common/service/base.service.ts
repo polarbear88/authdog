@@ -11,7 +11,7 @@ export class BaseService {
         return this.repository.findOne({ where: { id } });
     }
 
-    async getPage(dto: any, where?: Array<Array<any>>) {
+    async getPage(dto: any, where?: Array<Array<any>>, sort?: string, order?: 'ASC' | 'DESC') {
         const query = this.repository.createQueryBuilder();
         let isNotFirst = false;
         if (where && where.length > 0) {
@@ -23,6 +23,9 @@ export class BaseService {
                     isNotFirst = true;
                 }
             }
+        }
+        if (order) {
+            query.orderBy(sort, order);
         }
         return await PaginationUtils.build(query, dto, isNotFirst).getManyAndCount();
     }

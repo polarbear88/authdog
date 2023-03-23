@@ -101,7 +101,7 @@ export class UserService extends BaseService {
             // 防止下次请求过快导致误判
             user.expirationTime = new Date(new Date().getTime() - 1000 * 60);
         }
-        user.useDeviceName = createUserDto.brand + '-' + createUserDto.model;
+        user.useDeviceName = StringUtils.toString(createUserDto.brand) + '-' + StringUtils.toString(createUserDto.model);
         if (app.bindDevice) {
             user.currentDeviceId = createUserDto.deviceId;
         }
@@ -250,7 +250,7 @@ export class UserService extends BaseService {
     }
 
     async getList(appid: number, dto: GetUserListDto) {
-        const data = await super.getPage(PaginationUtils.objectToDto(dto, new GetUserListDto()), [['appid = :appid', { appid }]]);
+        const data = await super.getPage(PaginationUtils.objectToDto(dto, new GetUserListDto()), [['appid = :appid', { appid }]], 'id', 'DESC');
         return {
             total: data[1],
             list: EntityUtils.serializationEntityArr(data[0]),

@@ -1,8 +1,16 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 
 export class BaseUserDeviceDto {
+    @IsOptional()
+    @IsString()
     brand?: string;
+
+    @IsOptional()
+    @IsString()
     model?: string;
+
+    @IsOptional()
+    @IsString()
     osType?: string;
 
     @IsString()

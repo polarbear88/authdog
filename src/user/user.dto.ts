@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
@@ -12,8 +12,12 @@ export class CreateUserDto extends BaseUserDeviceDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
     name: string;
 
+    @IsOptional()
+    @IsString({ message: '手机号必须是字符串' })
     mobile?: string;
 
+    @IsOptional()
+    @IsString({ message: '其他信息必须是字符串' })
     otherInfo?: string;
 
     @IsString()
@@ -54,30 +58,53 @@ export class LoginUserDto extends BaseUserDeviceDto {
 }
 
 export class GetUserListDto extends GetPageDto {
+    @IsOptional()
+    @IsString()
     @PaginationWhere('name like %:name%')
     name?: string;
 
+    @IsOptional()
+    @IsString()
     @PaginationWhere('mobile like %:mobile%')
     mobile?: string;
 
+    @IsOptional()
+    @IsString()
     @PaginationWhere('status = status')
     status?: string;
 
+    @IsOptional()
+    @IsString()
     @PaginationWhere('otherInfo like %:otherInfo%')
     otherInfo?: string;
 
-    @PaginationWhere('balance >= :balanceGreaterOrEq')
+    @IsOptional()
+    @IsNumber()
+    @PaginationWhere('balance >= :balanceThanOrEq')
     balanceThanOrEq?: number;
 
+    @IsOptional()
+    @IsNumber()
     @PaginationWhere('balance <= :balanceLessOrEq')
     balanceLessOrEq?: number;
 
+    @IsOptional()
+    @IsBoolean()
     @PaginationWhere('trialExpiration < NOW()')
+    isNotTrial?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    @PaginationWhere('trialExpiration >= NOW()')
     isTrial?: boolean;
 
+    @IsOptional()
+    @IsString()
     @PaginationWhere('expirationTime >= :expirationTimeStart')
-    expirationTimeStart?: Date;
+    expirationTimeStart?: string;
 
+    @IsOptional()
+    @IsString()
     @PaginationWhere('expirationTime <= :expirationTimeEnd')
-    expirationTimeEnd?: Date;
+    expirationTimeEnd?: string;
 }

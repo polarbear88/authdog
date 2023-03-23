@@ -15,7 +15,7 @@ export class PaginationUtils {
             for (const key of keys) {
                 // value是一个数组，第一个元素是查询表达式，第二个元素是查询绑定数据
                 const value = where[key];
-                if (value && value.length === 2 && value[0] && value[1] !== undefined) {
+                if (value && value.length === 2 && value[0] && value[1] !== undefined && value[1] !== '') {
                     let bindData = {};
                     bindData[key] = value[1];
                     if (!(value[0] as string).includes(':')) {
@@ -32,6 +32,7 @@ export class PaginationUtils {
                 }
             }
         }
+        // console.log(select.getSql());
         return select.skip((page - 1) * pageSize).take(pageSize);
     }
 
@@ -60,9 +61,7 @@ export class PaginationUtils {
     public static objectToDto(object: any, dto: any) {
         const keys = Object.keys(object);
         for (const key of keys) {
-            if (dto[key] !== undefined) {
-                dto[key] = object[key];
-            }
+            dto[key] = object[key];
         }
         return dto;
     }
