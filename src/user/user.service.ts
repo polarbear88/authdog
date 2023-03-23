@@ -214,7 +214,7 @@ export class UserService extends BaseService {
             // 不允许多设备登录
             maxLength = 1;
         }
-        if (loginLength >= app.maxMultiDevice) {
+        if (loginLength >= maxLength) {
             if (app.allowForceLogin) {
                 // 强制登录
                 await this.loginDeviceManageService.pop(user.id);
@@ -238,6 +238,7 @@ export class UserService extends BaseService {
             .update({
                 expirationTime: () => `DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE)`,
                 balance: () => `balance - ${balance}`,
+                ver: () => 'ver + 1',
             })
             .execute();
         if (affected.affected > 0) {
