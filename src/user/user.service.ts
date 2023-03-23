@@ -2,13 +2,15 @@ import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
+import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { DateUtils } from 'src/common/utils/date.utils';
+import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
 import { Repository } from 'typeorm';
-import { ChangePasswordDto, CreateUserDto, LoginUserDto } from './user.dto';
+import { ChangePasswordDto, CreateUserDto, GetUserListDto, LoginUserDto } from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -245,5 +247,13 @@ export class UserService extends BaseService {
             return true;
         }
         return false;
+    }
+
+    async getList(appid: number, dto: GetUserListDto) {
+        const data = await super.getPage(PaginationUtils.objectToDto(dto, new GetUserListDto()), [['appid = :appid', { appid }]]);
+        return {
+            total: data[1],
+            list: EntityUtils.serializationEntityArr(data[0]),
+        };
     }
 }

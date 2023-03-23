@@ -18,6 +18,11 @@ export class BaseEntity {
         return DateUtils.convertDatesToTimestamps({ ...this });
     }
 
+    // 不用复制对象，速度更快
+    _serializationThis() {
+        return DateUtils.convertDatesToTimestamps(this);
+    }
+
     // convertDateToTimeStamp() {
     //     DateUtils.convertDatesToTimestamps(this);
     // }

@@ -64,4 +64,10 @@ export class User extends BaseEntity {
         const data = super._serialization();
         return this.deleteConfidential(['password', 'salt', 'ip'], data);
     }
+
+    // 不用复制对象，速度更快
+    _serializationThis() {
+        const data = super._serializationThis();
+        return this.deleteConfidential(['password', 'salt', 'ip'], data);
+    }
 }

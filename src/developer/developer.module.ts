@@ -14,6 +14,8 @@ import { DeveloperSubscriber } from './developer.subscriber';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IPAddrModule } from 'src/ipaddr/ipaddr.module';
+import { UserModule } from 'src/user/user.module';
+import { UserController } from './controller/user.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -32,8 +34,9 @@ import { IPAddrModule } from 'src/ipaddr/ipaddr.module';
             }),
         }),
         IPAddrModule,
+        UserModule,
     ],
-    controllers: [DeveloperController, ProfileController, ApplicationController, CloudvarController],
+    controllers: [DeveloperController, ProfileController, ApplicationController, CloudvarController, UserController],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
 })

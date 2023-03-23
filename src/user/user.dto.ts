@@ -1,4 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { GetPageDto } from 'src/common/dto/get-page.dto';
+import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
 
@@ -49,4 +51,33 @@ export class LoginUserDto extends BaseUserDeviceDto {
     @IsString()
     @IsNotEmpty({ message: '密码不能为空' })
     password: string;
+}
+
+export class GetUserListDto extends GetPageDto {
+    @PaginationWhere('name like %:name%')
+    name?: string;
+
+    @PaginationWhere('mobile like %:mobile%')
+    mobile?: string;
+
+    @PaginationWhere('status = status')
+    status?: string;
+
+    @PaginationWhere('otherInfo like %:otherInfo%')
+    otherInfo?: string;
+
+    @PaginationWhere('balance >= :balanceGreaterOrEq')
+    balanceThanOrEq?: number;
+
+    @PaginationWhere('balance <= :balanceLessOrEq')
+    balanceLessOrEq?: number;
+
+    @PaginationWhere('trialExpiration < NOW()')
+    isTrial?: boolean;
+
+    @PaginationWhere('expirationTime >= :expirationTimeStart')
+    expirationTimeStart?: Date;
+
+    @PaginationWhere('expirationTime <= :expirationTimeEnd')
+    expirationTimeEnd?: Date;
 }
