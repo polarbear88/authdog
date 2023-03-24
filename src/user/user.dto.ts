@@ -1,8 +1,9 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
+import { isInt32Array } from 'util/types';
 
 export class CreateUserDto extends BaseUserDeviceDto {
     @IsNotEmpty({ message: 'appid不能为空' })
@@ -121,19 +122,26 @@ export class ChangeUserPwdByDevDto {
 }
 
 export class AddUserTimeDto {
-    @IsNotEmpty({ message: '用户id不能为空' })
-    @IsNumber()
-    id: number;
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
 
     @IsNotEmpty({ message: '时间不能为空' })
     @IsNumber()
+    @Max(5256000, { message: '时间最大值为十年' })
     minutes: number;
 }
 
 export class AddUserBanlanceDto {
-    @IsNotEmpty({ message: '用户id不能为空' })
-    @IsNumber()
-    id: number;
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
 
     @IsNotEmpty({ message: '次数不能为空' })
     @IsNumber()
@@ -141,7 +149,10 @@ export class AddUserBanlanceDto {
 }
 
 export class OnlyUserIdDto {
-    @IsNotEmpty({ message: '用户id不能为空' })
-    @IsNumber()
-    id: number;
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
 }
