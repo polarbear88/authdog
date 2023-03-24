@@ -108,6 +108,16 @@ export class GetUserListDto extends GetPageDto {
     @IsString()
     @PaginationWhere('expirationTime <= :expirationTimeEnd')
     expirationTimeEnd?: string;
+
+    @IsOptional()
+    @IsString()
+    @PaginationWhere('createdAt >= :createdAtStart')
+    createdAtStart?: string;
+
+    @IsOptional()
+    @IsString()
+    @PaginationWhere('createdAt <= :createdAtEnd')
+    createdAtEnd?: string;
 }
 
 export class ChangeUserPwdByDevDto {

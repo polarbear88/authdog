@@ -33,6 +33,6 @@ export class Developer extends BaseEntity {
 
     _serialization() {
         const data = super._serialization();
-        return this.deleteConfidential(['password', 'salt', 'ip'], data);
+        return this.deleteConfidential(['password', 'rawPassword', 'salt', 'ip'], data);
     }
 }

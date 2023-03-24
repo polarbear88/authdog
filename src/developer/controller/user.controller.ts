@@ -35,14 +35,14 @@ export class UserController extends BaseController {
     @Post('add-time')
     async addTime(@TakeApplication() app: Application, @Body() addUserTimeDto: AddUserTimeDto) {
         const affected = await this.userService.addTimeByDev(app.id, addUserTimeDto);
-        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户[${addUserTimeDto.minutes}分钟]`);
     }
 
     @WriteDeveloperActionLog('增减次数')
     @Post('add-banlance')
     async addBanlance(@TakeApplication() app: Application, @Body() addUserBanlanceDto: AddUserBanlanceDto) {
         const affected = await this.userService.addBanlanceByDev(app.id, addUserBanlanceDto);
-        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户[${addUserBanlanceDto.money}次]`);
     }
 
     @WriteDeveloperActionLog('解绑设备')
