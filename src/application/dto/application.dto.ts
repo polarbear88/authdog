@@ -116,3 +116,10 @@ export class SetApplicationAllowForceLoginDto {
     @IsBoolean({ message: '是否允许强制登录是布尔值' })
     allowForceLogin: boolean;
 }
+
+export class SetApplicationVersionDto {
+    @IsNotEmpty({ message: '应用版本不能为空' })
+    @IsString({ message: '应用版本必须是字符串' })
+    @Length(1, 50, { message: '应用版本长度必须在1-50位之间' })
+    version: string;
+}

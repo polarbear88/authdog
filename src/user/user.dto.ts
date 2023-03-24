@@ -70,7 +70,7 @@ export class GetUserListDto extends GetPageDto {
 
     @IsOptional()
     @IsString()
-    @PaginationWhere('status = status')
+    @PaginationWhere('status = :status')
     status?: string;
 
     @IsOptional()
@@ -107,4 +107,41 @@ export class GetUserListDto extends GetPageDto {
     @IsString()
     @PaginationWhere('expirationTime <= :expirationTimeEnd')
     expirationTimeEnd?: string;
+}
+
+export class ChangeUserPwdByDevDto {
+    @IsNotEmpty({ message: '用户id不能为空' })
+    @IsNumber()
+    id: number;
+
+    @IsString()
+    @IsNotEmpty({ message: '密码不能为空' })
+    @Length(8, 16, { message: '密码长度必须在8-16位之间' })
+    password: string;
+}
+
+export class AddUserTimeDto {
+    @IsNotEmpty({ message: '用户id不能为空' })
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty({ message: '时间不能为空' })
+    @IsNumber()
+    minutes: number;
+}
+
+export class AddUserBanlanceDto {
+    @IsNotEmpty({ message: '用户id不能为空' })
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty({ message: '次数不能为空' })
+    @IsNumber()
+    money: number;
+}
+
+export class OnlyUserIdDto {
+    @IsNotEmpty({ message: '用户id不能为空' })
+    @IsNumber()
+    id: number;
 }

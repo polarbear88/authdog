@@ -8,6 +8,9 @@ export class DeveloperActionLog extends BaseEntity {
     @Column()
     developerId: number;
 
+    @Column({ default: '' })
+    username: string;
+
     @Column()
     action: string;
 

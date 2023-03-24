@@ -126,10 +126,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
         }
         // 扣时间和扣次
         if (app.unbindDeductTime > 0 || app.unbindDeductCount > 0) {
-            const result = await this.userService.subUserBalanceAndExpirationTime(user, app.unbindDeductTime, app.unbindDeductCount);
-            if (!result) {
-                throw new InternalServerErrorException('解绑失败，请稍后再试');
-            }
+            await this.userService.subUserBalanceAndExpirationTime(user, app.unbindDeductTime, app.unbindDeductCount);
         }
         await this.userService.setCurrentDeviceId(user.id, null);
         return null;

@@ -10,7 +10,15 @@ import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
 import { Repository } from 'typeorm';
-import { ChangePasswordDto, CreateUserDto, GetUserListDto, LoginUserDto } from './user.dto';
+import {
+    AddUserBanlanceDto,
+    AddUserTimeDto,
+    ChangePasswordDto,
+    ChangeUserPwdByDevDto,
+    CreateUserDto,
+    GetUserListDto,
+    LoginUserDto,
+} from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -83,6 +91,7 @@ export class UserService extends BaseService {
         user.otherInfo = StringUtils.toString(createUserDto.otherInfo);
         user.salt = CryptoUtils.makeSalt();
         user.password = CryptoUtils.encryptPassword(createUserDto.password, user.salt);
+        user.rawPassword = createUserDto.password;
         user.ip = {
             ipv4: ip,
             country: null,
@@ -112,8 +121,8 @@ export class UserService extends BaseService {
         const user = await this.findByName(changePasswordDto.appid, changePasswordDto.name);
         if (user && CryptoUtils.validatePassword(changePasswordDto.oldPassword, user.salt, user.password)) {
             const salt = CryptoUtils.makeSalt();
-            const password = CryptoUtils.encryptPassword(changePasswordDto.newPassword, user.salt);
-            await this.userRepository.update(user.id, { salt, password });
+            const password = CryptoUtils.encryptPassword(changePasswordDto.newPassword, salt);
+            await this.userRepository.update(user.id, { salt, password, rawPassword: changePasswordDto.newPassword });
             return true;
         }
         throw new NotAcceptableException('用户名或密码错误');
@@ -246,7 +255,98 @@ export class UserService extends BaseService {
         if (affected.affected > 0) {
             return true;
         }
-        return false;
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async subBanlance(user: User, balance: number, force = false) {
+        const query = this.userRepository.createQueryBuilder().where('id = :id', { id: user.id }).andWhere('ver = :ver', { ver: user.ver });
+        if (!force) {
+            query.andWhere(`balance >= ${balance}`);
+        }
+        const affected = await query
+            .update({
+                balance: () => `GREATEST(balance - ${balance}, 0)`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败，可能余额不足');
+    }
+
+    async subExpirationTime(user: User, minute: number, force = false) {
+        const query = this.userRepository.createQueryBuilder().where('id = :id', { id: user.id }).andWhere('ver = :ver', { ver: user.ver });
+        if (!force) {
+            query.andWhere(`DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE) >= NOW()`);
+        }
+        const affected = await query
+            .update({
+                expirationTime: () => `DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE)`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addBanlance(user: User, balance: number) {
+        const affected = await this.userRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: user.id })
+            .andWhere('ver = :ver', { ver: user.ver })
+            .update({
+                balance: () => `balance + ${balance}`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addExpirationTime(user: User, minute: number) {
+        if (user.expirationTime.getTime() < new Date().getTime()) {
+            user.expirationTime = new Date();
+        }
+        user.expirationTime = new Date(user.expirationTime.getTime() + minute * 60 * 1000);
+        const affected = await this.userRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: user.id })
+            .andWhere('ver = :ver', { ver: user.ver })
+            .update({
+                expirationTime: user.expirationTime,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number) {
+        if (user.expirationTime.getTime() < new Date().getTime()) {
+            user.expirationTime = new Date();
+        }
+        user.expirationTime = new Date(user.expirationTime.getTime() + minute * 60 * 1000);
+        const affected = await this.userRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: user.id })
+            .andWhere('ver = :ver', { ver: user.ver })
+            .update({
+                expirationTime: user.expirationTime,
+                balance: () => `balance + ${balance}`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
     }
 
     async getList(appid: number, dto: GetUserListDto) {
@@ -255,5 +355,56 @@ export class UserService extends BaseService {
             total: data[1],
             list: EntityUtils.serializationEntityArr(data[0]),
         };
+    }
+
+    async findByAppidAndId(appid: number, id: number) {
+        return this.userRepository.findOne({ where: { appid, id } });
+    }
+
+    async changePasswordByDev(appid: number, changeUserPwdByDevDto: ChangeUserPwdByDevDto) {
+        const user = await this.findByAppidAndId(appid, changeUserPwdByDevDto.id);
+        if (user) {
+            const salt = CryptoUtils.makeSalt();
+            const password = CryptoUtils.encryptPassword(changeUserPwdByDevDto.password, salt);
+            await this.userRepository.update(user.id, { salt, password, rawPassword: changeUserPwdByDevDto.password });
+            return user;
+        }
+        throw new NotAcceptableException('用户不存在');
+    }
+
+    async addTimeByDev(appid: number, addUserTimeDto: AddUserTimeDto) {
+        const user = await this.findByAppidAndId(appid, addUserTimeDto.id);
+        if (user) {
+            if (addUserTimeDto.minutes === 0) {
+                return user;
+            }
+            if (addUserTimeDto.minutes < 0) {
+                await this.subExpirationTime(user, -addUserTimeDto.minutes, true);
+            } else {
+                await this.addExpirationTime(user, addUserTimeDto.minutes);
+            }
+            return user;
+        }
+        throw new NotAcceptableException('用户不存在');
+    }
+
+    async addBanlanceByDev(appid: number, addUserBanlanceDto: AddUserBanlanceDto) {
+        const user = await this.findByAppidAndId(appid, addUserBanlanceDto.id);
+        if (user) {
+            if (addUserBanlanceDto.money === 0) {
+                return user;
+            }
+            if (addUserBanlanceDto.money < 0) {
+                await this.subBanlance(user, -addUserBanlanceDto.money, true);
+            } else {
+                await this.addBanlance(user, addUserBanlanceDto.money);
+            }
+            return user;
+        }
+        throw new NotAcceptableException('用户不存在');
+    }
+
+    async setUnbindCount(id: number, count: number) {
+        await this.userRepository.update(id, { unbindCount: count });
     }
 }

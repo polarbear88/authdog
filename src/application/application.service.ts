@@ -159,4 +159,8 @@ export class ApplicationService extends BaseService {
     async setAllowForceLogin(id: number, allowForceLogin: boolean) {
         await this.applicationRepository.update(id, { allowForceLogin });
     }
+
+    async setVersion(id: number, version: string) {
+        await this.applicationRepository.update(id, { version });
+    }
 }

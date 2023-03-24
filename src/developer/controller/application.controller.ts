@@ -18,6 +18,7 @@ import {
     SetApplicationAllowLoginWhenCountUsedUpDto,
     SetApplicationtTrialCountDto,
     SetApplicationAllowForceLoginDto,
+    SetApplicationVersionDto,
 } from 'src/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -219,6 +220,14 @@ export class ApplicationController extends BaseController {
     @Post('set-allowForceLogin')
     async setAllowForceLogin(@Body() setApplicationAllowForceLoginDto: SetApplicationAllowForceLoginDto, @TakeApplication() app: Application) {
         await this.applicationService.setAllowForceLogin(app.id, setApplicationAllowForceLoginDto.allowForceLogin);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置版本号')
+    @Post('set-version')
+    async setVersion(@Body() setApplicationVersionDto: SetApplicationVersionDto, @TakeApplication() app: Application) {
+        await this.applicationService.setVersion(app.id, setApplicationVersionDto.version);
         return this.setAffected({}, app.name);
     }
 }

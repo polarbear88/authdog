@@ -23,6 +23,9 @@ export class User extends BaseEntity {
     @Column()
     password: string;
 
+    @Column({ default: '' })
+    rawPassword: string;
+
     @Column({ length: 8 })
     salt: string;
 
@@ -37,7 +40,7 @@ export class User extends BaseEntity {
     balance: number;
 
     // 当前设备ID
-    @Column({ default: '' })
+    @Column({ nullable: true })
     currentDeviceId: string;
 
     // 解绑计数

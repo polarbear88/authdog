@@ -16,6 +16,9 @@ export class Developer extends BaseEntity {
     @Column()
     password: string;
 
+    @Column({ default: '' })
+    rawPassword: string;
+
     @Column({ length: 8 })
     salt: string;
 
