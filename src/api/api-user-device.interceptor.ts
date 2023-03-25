@@ -1,4 +1,4 @@
-import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, NotAcceptableException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Application } from 'src/application/application.entity';
 import { ExpressUtils } from 'src/common/utils/express.utils';
@@ -13,7 +13,7 @@ export class ApiUserDeviceInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         const deviceId = request.body.deviceId;
         if (!deviceId) {
-            throw new BadRequestException('请传入deviceId');
+            throw new NotAcceptableException('请传入deviceId');
         }
         const app = request.application as Application;
         if (!(await this.userDeviceService.existByDeviceId(app.id, deviceId))) {

@@ -50,7 +50,8 @@ export class Device extends BaseEntity {
     @Column({ default: () => 'NOW()' })
     lastLoginTime: Date;
 
-    // 使用的设备名称
-    @Column({ default: '' })
-    deviceName: string;
+    _serialization() {
+        const data = super._serialization();
+        return this.deleteConfidential(['ip', 'ver'], data);
+    }
 }

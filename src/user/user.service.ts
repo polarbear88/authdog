@@ -153,7 +153,7 @@ export class UserService extends BaseService {
             if (user.status !== 'normal') {
                 throw new ForbiddenException('账号状态异常');
             }
-            if (!DateUtils.compareYMD(new Date(), user.expirationTime)) {
+            if (!DateUtils.compareYMD(new Date(), user.lastLoginTime)) {
                 this.userRepository.update(user.id, { lastLoginTime: new Date() });
             }
             return user;

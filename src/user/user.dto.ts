@@ -3,7 +3,6 @@ import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
-import { isInt32Array } from 'util/types';
 
 export class CreateUserDto extends BaseUserDeviceDto {
     @IsNotEmpty({ message: 'appid不能为空' })

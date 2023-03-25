@@ -25,6 +25,10 @@ export class StringUtils {
         return str === null || str === undefined || str === '';
     }
 
+    public static isNotEmpty(str: string): boolean {
+        return !this.isEmpty(str);
+    }
+
     public static toString(str: any): string {
         return str === null || str === undefined ? '' : str.toString();
     }

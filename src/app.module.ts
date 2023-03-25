@@ -134,6 +134,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         // 应用API解密中间件
-        consumer.apply(ApiDecryptMiddleware).forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*');
+        consumer.apply(ApiDecryptMiddleware).forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*');
     }
 }
