@@ -63,14 +63,5 @@ export class User extends BaseEntity {
     @Column({ default: '' })
     useDeviceName: string;
 
-    _serialization() {
-        const data = super._serialization();
-        return this.deleteConfidential(['password', 'rawPassword', 'salt', 'ip', 'ver'], data);
-    }
-
-    // 不用复制对象，速度更快
-    _serializationThis() {
-        const data = super._serializationThis();
-        return this.deleteConfidential(['password', 'rawPassword', 'salt', 'ip', 'ver'], data);
-    }
+    shield = ['password', 'rawPassword', 'salt', 'ip', 'ver'];
 }

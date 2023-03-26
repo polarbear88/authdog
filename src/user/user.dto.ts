@@ -1,4 +1,17 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from 'class-validator';
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsArray,
+    IsBoolean,
+    IsIn,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Length,
+    Max,
+} from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
@@ -164,4 +177,18 @@ export class OnlyUserIdDto {
     @ArrayMaxSize(100, { message: '用户id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
+}
+
+export class SetUserStatusDto {
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
+
+    @IsNotEmpty({ message: '状态不能为空' })
+    @IsString()
+    @IsIn(['normal', 'disabled'], { message: '状态只能是normal或disabled' })
+    status: string;
 }

@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
+import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
+import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
-import { Repository } from 'typeorm';
-import { DeviceDto } from './device.dto';
+import { UserStatus } from 'src/user/user.type';
+import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { AddDeviceBanlanceDto, AddDeviceTimeDto, DeviceDto, GetDeviceListDto } from './device.dto';
 import { Device } from './device.entity';
 
 @Injectable()
@@ -117,5 +120,191 @@ export class DeviceService extends BaseService {
             result: device.expirationTime.getTime() > new Date().getTime(),
             expire: device.expirationTime,
         };
+    }
+
+    async getList(appid: number, dto: GetDeviceListDto) {
+        const data = await super.getPage(PaginationUtils.objectToDto(dto, new GetDeviceListDto()), [['appid = :appid', { appid }]], 'id', 'DESC');
+        return {
+            total: data[1],
+            list: EntityUtils.serializationEntityArr(data[0], true, ['ip']),
+        };
+    }
+
+    async subUserBalanceAndExpirationTime(device: Device, minute: number, balance: number) {
+        const affected = await this.deviceRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: device.id })
+            .andWhere('ver = :ver', { ver: device.ver })
+            .andWhere(`DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE) >= NOW()`)
+            .andWhere(`balance >= ${balance}`)
+            .update({
+                expirationTime: () => `DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE)`,
+                balance: () => `balance - ${balance}`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async subBanlance(device: Device | Array<number>, balance: number, force = false, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+        const query = this.deviceRepository.createQueryBuilder();
+        if (Array.isArray(device)) {
+            query.where('id in (:...ids)', { ids: device });
+        } else {
+            query.where('id = :id', { id: device.id }).andWhere('ver = :ver', { ver: device.ver });
+        }
+        if (!force) {
+            query.andWhere(`balance >= ${balance}`);
+        }
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const affected = await query
+            .update({
+                balance: () => `GREATEST(balance - ${balance}, 0)`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return affected.affected;
+        }
+        throw new NotAcceptableException('操作失败，可能次数不足');
+    }
+
+    async subExpirationTime(
+        device: Device | Array<number>,
+        minute: number,
+        force = false,
+        whereCallback?: (query: SelectQueryBuilder<Device>) => void,
+    ) {
+        const query = this.deviceRepository.createQueryBuilder();
+        if (Array.isArray(device)) {
+            query.where('id in (:...ids)', { ids: device });
+        } else {
+            query.where('id = :id', { id: device.id });
+            query.andWhere('ver = :ver', { ver: device.ver });
+        }
+        if (!force) {
+            query.andWhere(`DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE) >= NOW()`);
+        }
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const affected = await query
+            .update({
+                expirationTime: () => `DATE_SUB(expirationTime, INTERVAL ${minute} MINUTE)`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return affected.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addBanlance(device: Device | Array<number>, balance: number, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+        const query = this.deviceRepository.createQueryBuilder();
+        if (Array.isArray(device)) {
+            query.where('id in (:...ids)', { ids: device });
+        } else {
+            query.where('id = :id', { id: device.id }).andWhere('ver = :ver', { ver: device.ver });
+        }
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const affected = await query
+            .update({
+                balance: () => `balance + ${balance}`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return affected.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addExpirationTime(device: Device | Array<number>, minute: number, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+        const query = this.deviceRepository.createQueryBuilder();
+        if (Array.isArray(device)) {
+            query.where('id in (:...ids)', { ids: device });
+        } else {
+            query.where('id = :id', { id: device.id }).andWhere('ver = :ver', { ver: device.ver });
+        }
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const affected = await query
+            .update({
+                expirationTime: () => `DATE_ADD(GREATEST(expirationTime, NOW()), INTERVAL ${minute} MINUTE)`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return affected.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addBanlanceAndExpirationTime(device: Device, minute: number, balance: number) {
+        const affected = await this.deviceRepository
+            .createQueryBuilder()
+            .where('id = :id', { id: device.id })
+            .andWhere('ver = :ver', { ver: device.ver })
+            .update({
+                expirationTime: () => `DATE_ADD(GREATEST(expirationTime, NOW()), INTERVAL ${minute} MINUTE)`,
+                balance: () => `balance + ${balance}`,
+                ver: () => 'ver + 1',
+            })
+            .execute();
+        if (affected.affected > 0) {
+            return true;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async addTimeByDev(appid: number, addDeviceTimeDto: AddDeviceTimeDto) {
+        if (addDeviceTimeDto.minutes === 0) {
+            throw new NotAcceptableException('操作失败');
+        }
+        if (addDeviceTimeDto.minutes < 0) {
+            return await this.subExpirationTime(addDeviceTimeDto.ids, -addDeviceTimeDto.minutes, true, (query) => {
+                query.andWhere('appid = :appid', { appid });
+            });
+        } else {
+            return await this.addExpirationTime(addDeviceTimeDto.ids, addDeviceTimeDto.minutes, (query) => {
+                query.andWhere('appid = :appid', { appid });
+            });
+        }
+    }
+
+    async addBanlanceByDev(appid: number, addDeviceBanlanceDto: AddDeviceBanlanceDto) {
+        if (addDeviceBanlanceDto.money === 0) {
+            throw new NotAcceptableException('操作失败');
+        }
+        if (addDeviceBanlanceDto.money < 0) {
+            return await this.subBanlance(addDeviceBanlanceDto.ids, -addDeviceBanlanceDto.money, true, (query) => {
+                query.andWhere('appid = :appid', { appid });
+            });
+        } else {
+            return await this.addBanlance(addDeviceBanlanceDto.ids, addDeviceBanlanceDto.money, (query) => {
+                query.andWhere('appid = :appid', { appid });
+            });
+        }
+    }
+
+    async setStatusByIds(ids: Array<number>, status: UserStatus, whereCallback?: (query: UpdateQueryBuilder<Device>) => void) {
+        const query = this.deviceRepository.createQueryBuilder().update().set({ status }).where('id in (:...ids)', { ids });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败');
     }
 }

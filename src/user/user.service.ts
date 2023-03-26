@@ -20,6 +20,7 @@ import {
     LoginUserDto,
 } from './user.dto';
 import { User } from './user.entity';
+import { UserStatus } from './user.type';
 
 @Injectable()
 export class UserService extends BaseService {
@@ -280,7 +281,7 @@ export class UserService extends BaseService {
         if (affected.affected > 0) {
             return affected.affected;
         }
-        throw new NotAcceptableException('操作失败，可能余额不足');
+        throw new NotAcceptableException('操作失败，可能次数不足');
     }
 
     async subExpirationTime(user: User | Array<number>, minute: number, force = false, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
@@ -374,7 +375,7 @@ export class UserService extends BaseService {
         const data = await super.getPage(PaginationUtils.objectToDto(dto, new GetUserListDto()), [['appid = :appid', { appid }]], 'id', 'DESC');
         return {
             total: data[1],
-            list: EntityUtils.serializationEntityArr(data[0]),
+            list: EntityUtils.serializationEntityArr(data[0], true, ['ip']),
         };
     }
 
@@ -441,6 +442,18 @@ export class UserService extends BaseService {
 
     async setUnbindCountByIds(ids: Array<number>, count: number, whereCallback?: (query: UpdateQueryBuilder<User>) => void) {
         const query = this.userRepository.createQueryBuilder().update().set({ unbindCount: count }).where('id in (:...ids)', { ids });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async setStatusByIds(ids: Array<number>, status: UserStatus, whereCallback?: (query: UpdateQueryBuilder<User>) => void) {
+        const query = this.userRepository.createQueryBuilder().update().set({ status }).where('id in (:...ids)', { ids });
         if (whereCallback) {
             whereCallback(query);
         }

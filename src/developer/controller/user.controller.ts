@@ -3,9 +3,10 @@ import { Application } from 'src/application/application.entity';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { AddUserBanlanceDto, AddUserTimeDto, ChangeUserPwdByDevDto, GetUserListDto, OnlyUserIdDto } from 'src/user/user.dto';
+import { AddUserBanlanceDto, AddUserTimeDto, ChangeUserPwdByDevDto, GetUserListDto, OnlyUserIdDto, SetUserStatusDto } from 'src/user/user.dto';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { UserStatus } from 'src/user/user.type';
 import { UpdateQueryBuilder } from 'typeorm';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeApplication } from '../decorator/take-application.decorator';
@@ -61,5 +62,18 @@ export class UserController extends BaseController {
             query.andWhere('appid = :appid', { appid: app.id });
         });
         return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
+    }
+
+    @WriteDeveloperActionLog('设置用户状态')
+    @Post('set-status')
+    async setStatus(@TakeApplication() app: Application, @Body() setUserStatusDto: SetUserStatusDto) {
+        const affected = await this.userService.setStatusByIds(
+            setUserStatusDto.ids,
+            setUserStatusDto.status as UserStatus,
+            (query: UpdateQueryBuilder<User>) => {
+                query.andWhere('appid = :appid', { appid: app.id });
+            },
+        );
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户[${setUserStatusDto.status}]`);
     }
 }

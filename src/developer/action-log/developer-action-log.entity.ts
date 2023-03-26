@@ -14,6 +14,12 @@ export class DeveloperActionLog extends BaseEntity {
     @Column()
     action: string;
 
+    @Column({ default: 0 })
+    appid: number;
+
+    @Column({ default: '' })
+    appname: string;
+
     @Column()
     ip: string;
 

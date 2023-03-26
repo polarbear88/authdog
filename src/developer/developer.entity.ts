@@ -31,8 +31,5 @@ export class Developer extends BaseEntity {
     @Column({ default: 'normal' })
     status: DeveloperStatus;
 
-    _serialization() {
-        const data = super._serialization();
-        return this.deleteConfidential(['password', 'rawPassword', 'salt', 'ip'], data);
-    }
+    shield = ['password', 'rawPassword', 'salt', 'ip'];
 }

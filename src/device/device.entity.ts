@@ -50,8 +50,5 @@ export class Device extends BaseEntity {
     @Column({ default: () => 'NOW()' })
     lastLoginTime: Date;
 
-    _serialization() {
-        const data = super._serialization();
-        return this.deleteConfidential(['ip', 'ver'], data);
-    }
+    shield = ['ip', 'ver'];
 }

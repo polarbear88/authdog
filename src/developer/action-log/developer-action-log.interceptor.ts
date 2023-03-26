@@ -24,6 +24,10 @@ export class DeveloperActionLogInterceptor implements NestInterceptor {
                 developerActionLog.ip = ExpressUtils.getIp(req);
                 developerActionLog.action = action;
                 developerActionLog.username = req.user.username;
+                if (req.application) {
+                    developerActionLog.appid = req.application.id;
+                    developerActionLog.appname = req.application.name;
+                }
                 let affected = null;
                 if (data && data.affected) {
                     affected = data.affected;
