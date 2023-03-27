@@ -18,6 +18,8 @@ import { UserModule } from 'src/user/user.module';
 import { UserController } from './controller/user.controller';
 import { DeviceController } from './controller/device.controller';
 import { DeviceModule } from 'src/device/device.module';
+import { RechargeCardModule } from 'src/recharge-card/recharge-card.module';
+import { RechargeCardTypeController } from './controller/recharge-card-type.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -38,8 +40,17 @@ import { DeviceModule } from 'src/device/device.module';
         IPAddrModule,
         UserModule,
         DeviceModule,
+        RechargeCardModule,
     ],
-    controllers: [DeveloperController, ProfileController, ApplicationController, CloudvarController, UserController, DeviceController],
+    controllers: [
+        DeveloperController,
+        ProfileController,
+        ApplicationController,
+        CloudvarController,
+        UserController,
+        DeviceController,
+        RechargeCardTypeController,
+    ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
 })

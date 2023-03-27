@@ -1,3 +1,5 @@
+import { RandomUtils } from './random.utils';
+
 export class StringUtils {
     // 判断首个字符是否是字母
     public static charIsLetter(char: string): boolean {
@@ -31,5 +33,55 @@ export class StringUtils {
 
     public static toString(str: any): string {
         return str === null || str === undefined ? '' : str.toString();
+    }
+
+    public static buildFormatString(str: string) {
+        let fstr = str;
+        let replaceCount = 0;
+        let replaceLength = 0;
+        while (true) {
+            let replace = false;
+            if (fstr.includes('${uuid}')) {
+                fstr = fstr.replace('${uuid}', RandomUtils.getUUID());
+                replace = true;
+                replaceLength += 36;
+                replaceCount++;
+            }
+            if (fstr.includes('${randhex}[')) {
+                const startPos = fstr.indexOf('${randhex}[') + 11;
+                const endPos = fstr.indexOf(']', startPos);
+                const length = parseInt(fstr.substring(startPos, endPos));
+                fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getHexString(length));
+                replace = true;
+                replaceLength += length;
+                replaceCount++;
+            }
+            if (fstr.includes('${randnum}[')) {
+                const startPos = fstr.indexOf('${randnum}[') + 11;
+                const endPos = fstr.indexOf(']', startPos);
+                const length = parseInt(fstr.substring(startPos, endPos));
+                fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getNumberString(length));
+                replace = true;
+                replaceLength += length;
+                replaceCount++;
+            }
+            if (fstr.includes('${randletter}[')) {
+                const startPos = fstr.indexOf('${randletter}[') + 14;
+                const endPos = fstr.indexOf(']', startPos);
+                const length = parseInt(fstr.substring(startPos, endPos));
+                fstr = fstr.replace(fstr.substring(startPos - 14, endPos + 1), RandomUtils.getLetterUppercase(length).toLowerCase());
+                replace = true;
+                replaceLength += length;
+                replaceCount++;
+            }
+            if (!replace) {
+                break;
+            }
+        }
+        return {
+            str: fstr,
+            replaceCount,
+            replaceLength,
+        };
     }
 }

@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Max } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';

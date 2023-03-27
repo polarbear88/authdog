@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString, Length, Max } from 'class-validator';
+import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString, Length, Max, Min } from 'class-validator';
 import { AppAuthMode, AppCryptoMode, AppStatus } from '../application.type';
 
 export class CreateApplicationDto {
@@ -90,6 +90,7 @@ export class SetApplicationMaxMultiDeviceDto {
     @IsNotEmpty({ message: '最大同时登录设备数不能为空' })
     @IsNumber({}, { message: '最大同时登录设备数是数字' })
     @Max(10, { message: '最大同时登录设备数不能超过10' })
+    @Min(0, { message: '最大同时登录设备数不能小于0' })
     maxUnbindCount: number;
 }
 

@@ -31,6 +31,10 @@ import { IPAddrModule } from './ipaddr/ipaddr.module';
 import { LoginDeviceManageModule } from './login-device-manage/login-device-manage.module';
 import * as redisStore from 'cache-manager-ioredis';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { RechargeCardModule } from './recharge-card/recharge-card.module';
+import { FeedbackModule } from './feedback/feedback.module';
+import { RechargeCard } from './recharge-card/recharge-card.entity';
+import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.entity';
 
 @Module({
     imports: [
@@ -53,7 +57,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer, DeveloperActionLog, Application, Cloudvar, User, Device, UserDevice],
+                entities: [Developer, DeveloperActionLog, Application, Cloudvar, User, Device, UserDevice, RechargeCard, RechargeCardType],
             }),
         }),
         // 导入请求频率限制器
@@ -102,6 +106,8 @@ import { RedisModule } from '@nestjs-modules/ioredis';
                 },
             }),
         }),
+        RechargeCardModule,
+        FeedbackModule,
     ],
     controllers: [AppController],
     providers: [
