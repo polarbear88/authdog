@@ -39,6 +39,7 @@ export class StringUtils {
         let fstr = str;
         let replaceCount = 0;
         let replaceLength = 0;
+        let haveError = false;
         while (true) {
             let replace = false;
             if (fstr.includes('${uuid}')) {
@@ -51,25 +52,42 @@ export class StringUtils {
                 const startPos = fstr.indexOf('${randhex}[') + 11;
                 const endPos = fstr.indexOf(']', startPos);
                 const length = parseInt(fstr.substring(startPos, endPos));
-                fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getHexString(length));
-                replace = true;
-                replaceLength += length;
+                if (!length) {
+                    fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), '');
+                    haveError = true;
+                } else {
+                    fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getHexString(length));
+                    replace = true;
+                    replaceLength += length;
+                }
                 replaceCount++;
             }
             if (fstr.includes('${randnum}[')) {
                 const startPos = fstr.indexOf('${randnum}[') + 11;
                 const endPos = fstr.indexOf(']', startPos);
                 const length = parseInt(fstr.substring(startPos, endPos));
-                fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getNumberString(length));
+                if (!length) {
+                    fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), '');
+                    haveError = true;
+                } else {
+                    fstr = fstr.replace(fstr.substring(startPos - 11, endPos + 1), RandomUtils.getNumberString(length));
+                    replaceLength += length;
+                    replaceCount++;
+                }
                 replace = true;
-                replaceLength += length;
-                replaceCount++;
             }
             if (fstr.includes('${randletter}[')) {
                 const startPos = fstr.indexOf('${randletter}[') + 14;
                 const endPos = fstr.indexOf(']', startPos);
                 const length = parseInt(fstr.substring(startPos, endPos));
-                fstr = fstr.replace(fstr.substring(startPos - 14, endPos + 1), RandomUtils.getLetterUppercase(length).toLowerCase());
+                if (!length) {
+                    fstr = fstr.replace(fstr.substring(startPos - 14, endPos + 1), '');
+                    haveError = true;
+                } else {
+                    fstr = fstr.replace(fstr.substring(startPos - 14, endPos + 1), RandomUtils.getLetterUppercase(length).toLowerCase());
+                    replaceLength += length;
+                    replaceCount++;
+                }
                 replace = true;
                 replaceLength += length;
                 replaceCount++;
@@ -82,6 +100,7 @@ export class StringUtils {
             str: fstr,
             replaceCount,
             replaceLength,
+            haveError,
         };
     }
 }

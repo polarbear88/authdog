@@ -20,6 +20,7 @@ import { DeviceController } from './controller/device.controller';
 import { DeviceModule } from 'src/device/device.module';
 import { RechargeCardModule } from 'src/recharge-card/recharge-card.module';
 import { RechargeCardTypeController } from './controller/recharge-card-type.controller';
+import { RechargeCardController } from './controller/recharge-card.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -50,6 +51,7 @@ import { RechargeCardTypeController } from './controller/recharge-card-type.cont
         UserController,
         DeviceController,
         RechargeCardTypeController,
+        RechargeCardController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

@@ -33,6 +33,9 @@ export class RechargeCardTypeService extends BaseService {
             throw new NotAcceptableException('激活卡无效，次数和时间不能同时为0');
         }
         const fstrres = StringUtils.buildFormatString(createRechargeCardTypeDto.cardFormat);
+        if (fstrres.haveError) {
+            throw new NotAcceptableException('激活卡格式不正确');
+        }
         if (fstrres.replaceLength < 16) {
             throw new NotAcceptableException('激活卡格式不正确，随机位长度不能小于16');
         }
@@ -90,6 +93,9 @@ export class RechargeCardTypeService extends BaseService {
             throw new NotAcceptableException('激活卡无效，次数和时间不能同时为0');
         }
         const fstrres = StringUtils.buildFormatString(updateRechargeCardTypeDto.cardFormat);
+        if (fstrres.haveError) {
+            throw new NotAcceptableException('激活卡格式不正确');
+        }
         if (fstrres.replaceLength < 16) {
             throw new NotAcceptableException('激活卡格式不正确，随机位长度不能小于16');
         }
