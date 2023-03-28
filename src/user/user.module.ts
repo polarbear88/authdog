@@ -3,12 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IPAddrModule } from 'src/ipaddr/ipaddr.module';
 import { IPAddrService } from 'src/ipaddr/ipaddr.service';
 import { LoginDeviceManageModule } from 'src/login-device-manage/login-device-manage.module';
+import { UserFinancialModule } from 'src/user-financial/user-financial.module';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UserSubscriber } from './user.subscriber';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]), IPAddrModule, LoginDeviceManageModule],
+    imports: [TypeOrmModule.forFeature([User]), IPAddrModule, LoginDeviceManageModule, UserFinancialModule],
     providers: [UserService, IPAddrService, UserSubscriber],
     exports: [UserService],
 })

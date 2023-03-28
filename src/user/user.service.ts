@@ -9,6 +9,7 @@ import { DateUtils } from 'src/common/utils/date.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
+import { UserFinancialService } from 'src/user-financial/user-financial.service';
 import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import {
     AddUserBanlanceDto,
@@ -28,6 +29,7 @@ export class UserService extends BaseService {
         @InjectRepository(User)
         private userRepository: Repository<User>,
         private loginDeviceManageService: LoginDeviceManageService,
+        private userFinancialService: UserFinancialService,
     ) {
         super(userRepository);
     }
@@ -240,7 +242,7 @@ export class UserService extends BaseService {
         }
     }
 
-    async subUserBalanceAndExpirationTime(user: User, minute: number, balance: number) {
+    async subUserBalanceAndExpirationTime(user: User, minute: number, balance: number, reason: string) {
         const affected = await this.userRepository
             .createQueryBuilder()
             .where('id = :id', { id: user.id })
@@ -254,12 +256,20 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            await this.userFinancialService.createSubUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+            await this.userFinancialService.createSubUserBalance(user, balance, reason, user.balance + '');
             return true;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async subBanlance(user: User | Array<number>, balance: number, force = false, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
+    async subBanlance(
+        user: User | Array<number>,
+        balance: number,
+        reason: string,
+        force = false,
+        whereCallback?: (query: SelectQueryBuilder<User>) => void,
+    ) {
         const query = this.userRepository.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -279,12 +289,21 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(user)) {
+                await this.userFinancialService.createSubUserBalance(user, balance, reason, user.balance + '');
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败，可能次数不足');
     }
 
-    async subExpirationTime(user: User | Array<number>, minute: number, force = false, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
+    async subExpirationTime(
+        user: User | Array<number>,
+        minute: number,
+        reason: string,
+        force = false,
+        whereCallback?: (query: SelectQueryBuilder<User>) => void,
+    ) {
         const query = this.userRepository.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -305,12 +324,15 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(user)) {
+                await this.userFinancialService.createSubUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlance(user: User | Array<number>, balance: number, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
+    async addBanlance(user: User | Array<number>, balance: number, reason: string, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
         const query = this.userRepository.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -327,12 +349,15 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(user)) {
+                await this.userFinancialService.createAddUserBalance(user, balance, reason, user.balance + '');
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addExpirationTime(user: User | Array<number>, minute: number, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
+    async addExpirationTime(user: User | Array<number>, minute: number, reason: string, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
         const query = this.userRepository.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -349,12 +374,15 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(user)) {
+                await this.userFinancialService.createAddUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number) {
+    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string) {
         const affected = await this.userRepository
             .createQueryBuilder()
             .where('id = :id', { id: user.id })
@@ -366,6 +394,8 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            await this.userFinancialService.createAddUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+            await this.userFinancialService.createAddUserBalance(user, balance, reason, user.balance + '');
             return true;
         }
         throw new NotAcceptableException('操作失败');
@@ -399,11 +429,11 @@ export class UserService extends BaseService {
             throw new NotAcceptableException('操作失败');
         }
         if (addUserTimeDto.minutes < 0) {
-            return await this.subExpirationTime(addUserTimeDto.ids, -addUserTimeDto.minutes, true, (query) => {
+            return await this.subExpirationTime(addUserTimeDto.ids, -addUserTimeDto.minutes, '管理员操作', true, (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         } else {
-            return await this.addExpirationTime(addUserTimeDto.ids, addUserTimeDto.minutes, (query) => {
+            return await this.addExpirationTime(addUserTimeDto.ids, addUserTimeDto.minutes, '管理员操作', (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         }
@@ -414,11 +444,11 @@ export class UserService extends BaseService {
             throw new NotAcceptableException('操作失败');
         }
         if (addUserBanlanceDto.money < 0) {
-            return await this.subBanlance(addUserBanlanceDto.ids, -addUserBanlanceDto.money, true, (query) => {
+            return await this.subBanlance(addUserBanlanceDto.ids, -addUserBanlanceDto.money, '管理员操作', true, (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         } else {
-            return await this.addBanlance(addUserBanlanceDto.ids, addUserBanlanceDto.money, (query) => {
+            return await this.addBanlance(addUserBanlanceDto.ids, addUserBanlanceDto.money, '管理员操作', (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         }

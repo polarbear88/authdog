@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export class DateUtils {
     public static compareYMD(date1: Date, date2: Date): boolean {
         const year1 = date1.getFullYear();
@@ -33,5 +35,21 @@ export class DateUtils {
         }
 
         return result;
+    }
+
+    /**
+     * 格式化日期时间
+     * @param format
+     * @param date
+     * @returns
+     */
+    public static formatDateTime(date?: Date | number | string, format = 'yyyy-MM-DD HH:mm:ss') {
+        if (!date) {
+            date = new Date();
+        }
+        if (typeof date == 'number' || typeof date == 'string') {
+            date = new Date(date);
+        }
+        return moment(date).format(format);
     }
 }

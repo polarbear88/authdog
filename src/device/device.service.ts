@@ -4,8 +4,10 @@ import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
+import { DateUtils } from 'src/common/utils/date.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
+import { UserFinancialService } from 'src/user-financial/user-financial.service';
 import { UserStatus } from 'src/user/user.type';
 import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { AddDeviceBanlanceDto, AddDeviceTimeDto, DeviceDto, GetDeviceListDto } from './device.dto';
@@ -16,6 +18,7 @@ export class DeviceService extends BaseService {
     constructor(
         @InjectRepository(Device)
         private deviceRepository: Repository<Device>,
+        private userFinancialService: UserFinancialService,
     ) {
         super(deviceRepository);
     }
@@ -130,7 +133,7 @@ export class DeviceService extends BaseService {
         };
     }
 
-    async subUserBalanceAndExpirationTime(device: Device, minute: number, balance: number) {
+    async subUserBalanceAndExpirationTime(device: Device, minute: number, balance: number, reason: string) {
         const affected = await this.deviceRepository
             .createQueryBuilder()
             .where('id = :id', { id: device.id })
@@ -144,12 +147,20 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            await this.userFinancialService.createSubUserTime(device, minute, reason, DateUtils.formatDateTime(device.expirationTime));
+            await this.userFinancialService.createSubUserBalance(device, balance, reason, device.balance + '');
             return true;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async subBanlance(device: Device | Array<number>, balance: number, force = false, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+    async subBanlance(
+        device: Device | Array<number>,
+        balance: number,
+        reason: string,
+        force = false,
+        whereCallback?: (query: SelectQueryBuilder<Device>) => void,
+    ) {
         const query = this.deviceRepository.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
@@ -169,6 +180,9 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(device)) {
+                await this.userFinancialService.createSubUserBalance(device, balance, reason, device.balance + '');
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败，可能次数不足');
@@ -177,6 +191,7 @@ export class DeviceService extends BaseService {
     async subExpirationTime(
         device: Device | Array<number>,
         minute: number,
+        reason: string,
         force = false,
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
     ) {
@@ -200,12 +215,15 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(device)) {
+                await this.userFinancialService.createSubUserTime(device, minute, reason, DateUtils.formatDateTime(device.expirationTime));
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlance(device: Device | Array<number>, balance: number, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+    async addBanlance(device: Device | Array<number>, balance: number, reason: string, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
         const query = this.deviceRepository.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
@@ -222,12 +240,20 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(device)) {
+                await this.userFinancialService.createAddUserBalance(device, balance, reason, device.balance + '');
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addExpirationTime(device: Device | Array<number>, minute: number, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
+    async addExpirationTime(
+        device: Device | Array<number>,
+        minute: number,
+        reason: string,
+        whereCallback?: (query: SelectQueryBuilder<Device>) => void,
+    ) {
         const query = this.deviceRepository.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
@@ -244,12 +270,15 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            if (!Array.isArray(device)) {
+                await this.userFinancialService.createAddUserTime(device, minute, reason, DateUtils.formatDateTime(device.expirationTime));
+            }
             return affected.affected;
         }
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(device: Device, minute: number, balance: number) {
+    async addBanlanceAndExpirationTime(device: Device, minute: number, reason: string, balance: number) {
         const affected = await this.deviceRepository
             .createQueryBuilder()
             .where('id = :id', { id: device.id })
@@ -261,6 +290,8 @@ export class DeviceService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
+            await this.userFinancialService.createAddUserTime(device, minute, reason, DateUtils.formatDateTime(device.expirationTime));
+            await this.userFinancialService.createAddUserBalance(device, balance, reason, device.balance + '');
             return true;
         }
         throw new NotAcceptableException('操作失败');
@@ -271,11 +302,11 @@ export class DeviceService extends BaseService {
             throw new NotAcceptableException('操作失败');
         }
         if (addDeviceTimeDto.minutes < 0) {
-            return await this.subExpirationTime(addDeviceTimeDto.ids, -addDeviceTimeDto.minutes, true, (query) => {
+            return await this.subExpirationTime(addDeviceTimeDto.ids, -addDeviceTimeDto.minutes, '管理员操作', true, (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         } else {
-            return await this.addExpirationTime(addDeviceTimeDto.ids, addDeviceTimeDto.minutes, (query) => {
+            return await this.addExpirationTime(addDeviceTimeDto.ids, addDeviceTimeDto.minutes, '管理员操作', (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         }
@@ -286,11 +317,11 @@ export class DeviceService extends BaseService {
             throw new NotAcceptableException('操作失败');
         }
         if (addDeviceBanlanceDto.money < 0) {
-            return await this.subBanlance(addDeviceBanlanceDto.ids, -addDeviceBanlanceDto.money, true, (query) => {
+            return await this.subBanlance(addDeviceBanlanceDto.ids, -addDeviceBanlanceDto.money, '管理员操作', true, (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         } else {
-            return await this.addBanlance(addDeviceBanlanceDto.ids, addDeviceBanlanceDto.money, (query) => {
+            return await this.addBanlance(addDeviceBanlanceDto.ids, addDeviceBanlanceDto.money, '管理员操作', (query) => {
                 query.andWhere('appid = :appid', { appid });
             });
         }

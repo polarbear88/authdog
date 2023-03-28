@@ -73,4 +73,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 
-#TODO: 添加用户反馈功能 批量废弃和恢复激活卡 添加财务记录，记录包括代理和用户的财务记录 代理注册禁止使用developer
+#TODO: 添加用户反馈功能 添加财务记录，记录包括代理和用户的财务记录 解决url明文问题

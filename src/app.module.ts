@@ -35,6 +35,8 @@ import { RechargeCardModule } from './recharge-card/recharge-card.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { RechargeCard } from './recharge-card/recharge-card.entity';
 import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.entity';
+import { UserFinancialModule } from './user-financial/user-financial.module';
+import { UserFinancial } from './user-financial/user-financial.entity';
 
 @Module({
     imports: [
@@ -57,7 +59,18 @@ import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.e
                 database: configService.get('DATABASE_NAME'),
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
                 autoLoadEntities: true,
-                entities: [Developer, DeveloperActionLog, Application, Cloudvar, User, Device, UserDevice, RechargeCard, RechargeCardType],
+                entities: [
+                    Developer,
+                    DeveloperActionLog,
+                    Application,
+                    Cloudvar,
+                    User,
+                    Device,
+                    UserDevice,
+                    RechargeCard,
+                    RechargeCardType,
+                    UserFinancial,
+                ],
             }),
         }),
         // 导入请求频率限制器
@@ -108,6 +121,7 @@ import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.e
         }),
         RechargeCardModule,
         FeedbackModule,
+        UserFinancialModule,
     ],
     controllers: [AppController],
     providers: [
