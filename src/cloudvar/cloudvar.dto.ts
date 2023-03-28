@@ -8,7 +8,7 @@ export class CreateCloudvarDto {
 
     @IsOptional()
     @IsString({ message: '变量描述必须是字符串' })
-    desc?: string;
+    description?: string;
 
     @IsNotEmpty({ message: '变量值不能为空' })
     @IsString({ message: '变量值必须是字符串' })
@@ -40,7 +40,7 @@ export class UpdateCloudvarDto {
 
     @IsOptional()
     @IsString({ message: '变量描述必须是字符串' })
-    desc?: string;
+    description?: string;
 
     @IsNotEmpty({ message: '变量值不能为空' })
     @IsString({ message: '变量值必须是字符串' })

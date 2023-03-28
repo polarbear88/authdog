@@ -20,8 +20,8 @@ export class CloudvarService extends BaseService {
     async create(cloudvar: CreateCloudvarDto, developerId: number): Promise<Cloudvar> {
         const cv = new Cloudvar();
         cv.name = cloudvar.name;
-        if (cloudvar.desc) {
-            cv.desc = cloudvar.desc + '';
+        if (cloudvar.description) {
+            cv.description = cloudvar.description + '';
         }
         cv.value = cloudvar.value;
         cv.isPublic = cloudvar.isPublic;
@@ -101,8 +101,8 @@ export class CloudvarService extends BaseService {
             throw new NotAcceptableException('变量不存在');
         }
         cv.name = cloudvar.name;
-        if (cloudvar.desc) {
-            cv.desc = cloudvar.desc + '';
+        if (cloudvar.description) {
+            cv.description = cloudvar.description + '';
         }
         cv.value = cloudvar.value;
         cv.isPublic = cloudvar.isPublic;

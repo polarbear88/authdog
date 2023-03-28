@@ -10,15 +10,10 @@ export class CreateRechargeCardTypeDto {
     @IsBoolean({ message: '是否需要密码必须是布尔值' })
     isNeedPassword: boolean;
 
-    @IsNotEmpty({ message: '卡号格式不能为空' })
-    @IsString({ message: '卡号格式必须是字符串' })
-    @Length(6, 128, { message: '卡号格式长度必须在6-128之间' })
-    cardFormat: string;
-
     @IsOptional()
-    @IsString({ message: '密码格式必须是字符串' })
-    @Length(6, 128, { message: '密码格式长度必须在6-128之间' })
-    passwordFormat: string;
+    @IsString({ message: '卡号前缀是字符串' })
+    @Length(0, 128, { message: '卡号前缀长度必须在6-128之间' })
+    prefix: string;
 
     @IsNotEmpty({ message: '时间不能为空' })
     @IsNumber({}, { message: '时间必须是数字' })
@@ -60,15 +55,10 @@ export class UpdateRechargeCardTypeDto {
     @IsBoolean({ message: '是否需要密码必须是布尔值' })
     isNeedPassword: boolean;
 
-    @IsNotEmpty({ message: '卡号格式不能为空' })
-    @IsString({ message: '卡号格式必须是字符串' })
-    @Length(6, 128, { message: '卡号格式长度必须在6-128之间' })
-    cardFormat: string;
-
     @IsOptional()
-    @IsString({ message: '密码格式必须是字符串' })
-    @Length(6, 128, { message: '密码格式长度必须在6-128之间' })
-    passwordFormat: string;
+    @IsString({ message: '卡号前缀是字符串' })
+    @Length(6, 128, { message: '卡号前缀长度必须在6-128之间' })
+    prefix: string;
 
     @IsNotEmpty({ message: '时间不能为空' })
     @IsNumber({}, { message: '时间必须是数字' })

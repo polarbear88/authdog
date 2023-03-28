@@ -22,7 +22,7 @@ export class RechargeCard extends BaseEntity {
     password: string;
 
     @Column({ default: '' })
-    desc: string;
+    description: string;
 
     // 充值的时间
     @Column()

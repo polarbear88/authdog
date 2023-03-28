@@ -13,7 +13,7 @@ export class Cloudvar extends BaseEntity {
     name: string;
 
     @Column({ default: '' })
-    desc: string;
+    description: string;
 
     @Column({ type: 'text' })
     value: string;

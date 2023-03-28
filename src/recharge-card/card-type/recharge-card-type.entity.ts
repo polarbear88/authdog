@@ -14,12 +14,9 @@ export class RechargeCardType extends BaseEntity {
     @Column()
     isNeedPassword: boolean;
 
-    // ${uuid} ${randhex}[10] ${randnum}[10] ${randletter}[10]
+    // 卡号前缀
     @Column()
-    cardFormat: string;
-
-    @Column({ default: '' })
-    passwordFormat: string;
+    prefix: string;
 
     // 分钟
     @Column()

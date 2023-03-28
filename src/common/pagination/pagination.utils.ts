@@ -3,7 +3,7 @@ import { PAGINATION_PAGE, PAGINATION_PAGE_SIZE, PAGINATION_WHERE } from './pagin
 
 // 用于构造DTO记录的分页查询
 export class PaginationUtils {
-    public static build(select: SelectQueryBuilder<any>, dto: any, andWhere = true) {
+    public static build(select: SelectQueryBuilder<any>, dto: any, andWhere = true, isPage = true) {
         // 从dto获取查询参数
         const where = dto[PAGINATION_WHERE] || {};
         const page = dto[PAGINATION_PAGE] || 1;
@@ -33,6 +33,9 @@ export class PaginationUtils {
             }
         }
         // console.log(select.getSql());
+        if (!isPage) {
+            return select;
+        }
         return select.skip((page - 1) * pageSize).take(pageSize);
     }
 
@@ -59,6 +62,9 @@ export class PaginationUtils {
     }
 
     public static objectToDto(object: any, dto: any) {
+        if (!object) {
+            return dto;
+        }
         const keys = Object.keys(object);
         for (const key of keys) {
             dto[key] = object[key];
