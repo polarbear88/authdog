@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
@@ -9,8 +9,10 @@ import { DateUtils } from 'src/common/utils/date.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
+import { RechargeCard } from 'src/recharge-card/recharge-card.entity';
+import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user-financial/user-financial.service';
-import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import {
     AddUserBanlanceDto,
     AddUserTimeDto,
@@ -19,6 +21,7 @@ import {
     CreateUserDto,
     GetUserListDto,
     LoginUserDto,
+    UserRechargeDto,
 } from './user.dto';
 import { User } from './user.entity';
 import { UserStatus } from './user.type';
@@ -30,6 +33,8 @@ export class UserService extends BaseService {
         private userRepository: Repository<User>,
         private loginDeviceManageService: LoginDeviceManageService,
         private userFinancialService: UserFinancialService,
+        private rechargeCardService: RechargeCardService,
+        private readonly entityManager: EntityManager,
     ) {
         super(userRepository);
     }
@@ -332,8 +337,15 @@ export class UserService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlance(user: User | Array<number>, balance: number, reason: string, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
-        const query = this.userRepository.createQueryBuilder();
+    async addBanlance(
+        user: User | Array<number>,
+        balance: number,
+        reason: string,
+        whereCallback?: (query: SelectQueryBuilder<User>) => void,
+        manager?: Repository<User>,
+    ) {
+        const mgr = manager || this.userRepository.manager;
+        const query = mgr.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
         } else {
@@ -357,8 +369,15 @@ export class UserService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addExpirationTime(user: User | Array<number>, minute: number, reason: string, whereCallback?: (query: SelectQueryBuilder<User>) => void) {
-        const query = this.userRepository.createQueryBuilder();
+    async addExpirationTime(
+        user: User | Array<number>,
+        minute: number,
+        reason: string,
+        whereCallback?: (query: SelectQueryBuilder<User>) => void,
+        manager?: Repository<User>,
+    ) {
+        const mgr = manager || this.userRepository.manager;
+        const query = mgr.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
         } else {
@@ -382,8 +401,9 @@ export class UserService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string) {
-        const affected = await this.userRepository
+    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string, manager?: Repository<User>) {
+        const mgr = manager || this.userRepository.manager;
+        const affected = await mgr
             .createQueryBuilder()
             .where('id = :id', { id: user.id })
             .andWhere('ver = :ver', { ver: user.ver })
@@ -492,5 +512,42 @@ export class UserService extends BaseService {
             return result.affected;
         }
         throw new NotAcceptableException('操作失败');
+    }
+
+    async recharge(user: User, dto: UserRechargeDto) {
+        const card = await this.rechargeCardService.findByCard(user.appid, dto.card);
+        if (!card || card.status !== 'unused') {
+            throw new NotAcceptableException('未找到该充值卡或已使用');
+        }
+        if (card.password && card.password !== dto.password) {
+            throw new NotAcceptableException('充值卡密码错误');
+        }
+        try {
+            await this.entityManager.transaction(async (manager) => {
+                const result = await manager
+                    .createQueryBuilder()
+                    .update(RechargeCard)
+                    .set({ status: 'used', user: user.id, usedTime: new Date(), userName: user.name, ver: card.ver + 1 })
+                    .where('id = :id', { id: card.id })
+                    .andWhere('status = :status', { status: 'unused' })
+                    .andWhere('ver = :ver', { ver: card.ver })
+                    .execute();
+                if (result.affected <= 0) {
+                    throw new Error('系统异常');
+                }
+                if (card.time > 0 && card.money > 0) {
+                    await this.addBanlanceAndExpirationTime(user, card.time, card.money, '充值卡充值', manager.getRepository(User));
+                } else {
+                    if (card.time > 0) {
+                        await this.addExpirationTime(user, card.time, '充值卡充值', undefined, manager.getRepository(User));
+                    }
+                    if (card.money > 0) {
+                        await this.addBanlance(user, card.money, '充值卡充值', undefined, manager.getRepository(User));
+                    }
+                }
+            });
+        } catch (error) {
+            throw new InternalServerErrorException('操作失败，系统错误');
+        }
     }
 }

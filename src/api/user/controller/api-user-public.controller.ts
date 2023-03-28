@@ -8,7 +8,7 @@ import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { StringUtils } from 'src/common/utils/string.utils';
-import { ChangePasswordDto, CreateUserDto, LoginUserDto } from 'src/user/user.dto';
+import { ChangePasswordDto, CreateUserDto, LoginUserDto, UserRechargeDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { ApiUserBaseController } from './api-user-base.controller';
 
@@ -129,6 +129,20 @@ export class ApiUserPublicController extends ApiUserBaseController {
             await this.userService.subUserBalanceAndExpirationTime(user, app.unbindDeductTime, app.unbindDeductCount, '解绑扣减');
         }
         await this.userService.setCurrentDeviceId(user.id, null);
+        return null;
+    }
+
+    @Throttle(200, 3600)
+    @Post('recharge')
+    async recharge(@Body() dto: UserRechargeDto, @ApiTakeApp() app: Application) {
+        const user = await this.userService.findByName(app.id, dto.name);
+        if (!user) {
+            throw new NotAcceptableException('用户不存在');
+        }
+        if (user.status !== 'normal') {
+            throw new NotAcceptableException('用户状态异常');
+        }
+        await this.userService.recharge(user, dto);
         return null;
     }
 }

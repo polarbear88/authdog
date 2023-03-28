@@ -11,6 +11,7 @@ import {
     IsString,
     Length,
     Max,
+    MaxLength,
 } from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
@@ -191,4 +192,23 @@ export class SetUserStatusDto {
     @IsString()
     @IsIn(['normal', 'disabled'], { message: '状态只能是normal或disabled' })
     status: string;
+}
+
+export class UserRechargeDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: 'appid不能为空' })
+    @IsNumber()
+    appid: number;
+
+    @UserName('name', { message: '账号错误' })
+    name: string;
+
+    @IsString()
+    @IsNotEmpty({ message: '卡号不能为空' })
+    @MaxLength(100, { message: '卡号最大长度为100' })
+    card: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(100, { message: '密码最大长度为100' })
+    password: string;
 }

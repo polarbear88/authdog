@@ -65,7 +65,11 @@ export class RechargeCardService extends BaseService {
     }
 
     async setStatusByIds(ids: Array<number>, status: RechargeCardStatus, whereCallback?: (query: UpdateQueryBuilder<RechargeCard>) => void) {
-        const query = this.rechargeCardRepository.createQueryBuilder().update().set({ status }).where('id in (:...ids)', { ids });
+        const query = this.rechargeCardRepository
+            .createQueryBuilder()
+            .update()
+            .set({ status, ver: () => 'ver + 1' })
+            .where('id in (:...ids)', { ids });
         if (whereCallback) {
             whereCallback(query);
         }
@@ -84,6 +88,7 @@ export class RechargeCardService extends BaseService {
                 // card: () => "REPLACE(UUID(), '-', '')", // mysql的uuid基于时间戳，变化太小，不适合用于卡号
                 card: () => 'LOWER(HEX(RANDOM_BYTES(16)))',
                 password: () => "IF(LENGTH(password) > 0, LOWER(HEX(RANDOM_BYTES(4))), '')",
+                ver: () => 'ver + 1',
             })
             .where('id in (:...ids)', { ids });
         if (whereCallback) {
@@ -162,7 +167,7 @@ export class RechargeCardService extends BaseService {
         const query = this.rechargeCardRepository
             .createQueryBuilder()
             .update()
-            .set({ status })
+            .set({ status, ver: () => 'ver + 1' })
             .where('card in (:...cards)', { cards })
             .andWhere('appid = :appid', { appid });
         if (whereCallback) {
@@ -189,6 +194,7 @@ export class RechargeCardService extends BaseService {
                 card: () => 'LOWER(HEX(RANDOM_BYTES(16)))',
                 password: () => "IF(LENGTH(password) > 0, LOWER(HEX(RANDOM_BYTES(4))), '')",
                 description: description,
+                ver: () => 'ver + 1',
             })
             .where('card in (:...cards)', { cards })
             .andWhere('appid = :appid', { appid });
@@ -216,5 +222,9 @@ export class RechargeCardService extends BaseService {
             return result.affected;
         }
         throw new NotAcceptableException('操作失败或没有找到数据');
+    }
+
+    async findByCard(appid: number, card: string) {
+        return await this.rechargeCardRepository.findOne({ where: { appid, card } });
     }
 }
