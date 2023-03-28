@@ -9,9 +9,12 @@ import {
     DeveloperCreateRechargeCardDto,
     ExportRechargeCardListDto,
     GetRechargeCardListDto,
+    RechargeCardDeleteByCardsDto,
     RechargeCardDeleteDto,
     RechargeCardExportDto,
+    RechargeCardReBuildByCardsDto,
     RechargeCardReBuildDto,
+    RechargeCardSetStatusByCardsDto,
     RechargeCardSetStatusDto,
 } from 'src/recharge-card/recharge-card.dto';
 import { RechargeCard } from 'src/recharge-card/recharge-card.entity';
@@ -101,5 +104,40 @@ export class RechargeCardController extends BaseController {
     @Post('export-by-eligible')
     async exportByEligible(@TakeApplication() app: Application, @Body() dto: ExportRechargeCardListDto) {
         return await this.rechargeCardService.exportByEligible(app.id, dto);
+    }
+
+    @WriteDeveloperActionLog('设置充值卡状态')
+    @Post('set-status-by-cards')
+    async setStatusByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardSetStatusByCardsDto) {
+        const affected = await this.rechargeCardService.setStatusByCards(
+            app.id,
+            dto.cards,
+            dto.status as RechargeCardStatus,
+            (query: UpdateQueryBuilder<RechargeCard>) => {
+                query.andWhere("status != 'used'");
+            },
+        );
+        return this.setAffected({ affectedCount: affected }, `操作${affected}张卡[${dto.status}]`);
+    }
+
+    @WriteDeveloperActionLog('重新构建卡号')
+    @Post('rebuild-by-cards')
+    async rebuildByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardReBuildByCardsDto) {
+        const affected = await this.rechargeCardService.rebuildCardByCards(
+            app.id,
+            dto.cards,
+            dto.description,
+            (query: UpdateQueryBuilder<RechargeCard>) => {
+                query.andWhere("status != 'used'");
+            },
+        );
+        return this.setAffected({ affectedCount: affected }, `操作${affected}张卡`);
+    }
+
+    @WriteDeveloperActionLog('删除充值卡')
+    @Post('delete-by-cards')
+    async deleteByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardDeleteByCardsDto) {
+        const affected = await this.rechargeCardService.deleteByCards(app.id, dto.cards);
+        return this.setAffected({ affectedCount: affected }, `操作${affected}张卡`);
     }
 }

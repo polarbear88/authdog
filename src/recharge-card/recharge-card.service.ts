@@ -81,8 +81,9 @@ export class RechargeCardService extends BaseService {
             .createQueryBuilder()
             .update()
             .set({
-                card: () => "REPLACE(UUID(), '-', '')",
-                password: () => "IF(LENGTH(password) > 0, LEFT(REPLACE(UUID(), '-', ''), 8), '')",
+                // card: () => "REPLACE(UUID(), '-', '')", // mysql的uuid基于时间戳，变化太小，不适合用于卡号
+                card: () => 'LOWER(HEX(RANDOM_BYTES(16)))',
+                password: () => "IF(LENGTH(password) > 0, LOWER(HEX(RANDOM_BYTES(4))), '')",
             })
             .where('id in (:...ids)', { ids });
         if (whereCallback) {
@@ -115,7 +116,11 @@ export class RechargeCardService extends BaseService {
         const arrs = await query.orderBy('id', 'DESC').execute();
         let str = '';
         for (const iterator of arrs) {
-            str += `卡号：${iterator.card} 密码：${iterator.password} 类型：${iterator.cardTypeName}\n`;
+            str += `卡号：${iterator.card}`;
+            if (iterator.password) {
+                str += ` 密码：${iterator.password}`;
+            }
+            str += ` 类型：${iterator.cardTypeName}\n`;
         }
         if (!str) {
             throw new NotAcceptableException('没有可导出的数据');
@@ -139,8 +144,77 @@ export class RechargeCardService extends BaseService {
         }
         let str = '';
         for (const iterator of data[0]) {
-            str += `卡号：${iterator.card} 密码：${iterator.password} 类型：${iterator.cardTypeName}\n`;
+            str += `卡号：${iterator.card}`;
+            if (iterator.password) {
+                str += ` 密码：${iterator.password}`;
+            }
+            str += ` 类型：${iterator.cardTypeName}\n`;
         }
         return str;
+    }
+
+    async setStatusByCards(
+        appid: number,
+        cards: Array<string>,
+        status: RechargeCardStatus,
+        whereCallback?: (query: UpdateQueryBuilder<RechargeCard>) => void,
+    ) {
+        const query = this.rechargeCardRepository
+            .createQueryBuilder()
+            .update()
+            .set({ status })
+            .where('card in (:...cards)', { cards })
+            .andWhere('appid = :appid', { appid });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败或没有找到数据');
+    }
+
+    async rebuildCardByCards(
+        appid: number,
+        cards: Array<string>,
+        description: string,
+        whereCallback?: (query: UpdateQueryBuilder<RechargeCard>) => void,
+    ) {
+        const query = this.rechargeCardRepository
+            .createQueryBuilder()
+            .update()
+            .set({
+                // card: () => "REPLACE(UUID(), '-', '')", // mysql的uuid基于时间戳，变化太小，不适合用于卡号
+                card: () => 'LOWER(HEX(RANDOM_BYTES(16)))',
+                password: () => "IF(LENGTH(password) > 0, LOWER(HEX(RANDOM_BYTES(4))), '')",
+                description: description,
+            })
+            .where('card in (:...cards)', { cards })
+            .andWhere('appid = :appid', { appid });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败或没有找到数据');
+    }
+
+    async deleteByCards(appid: number, cards: Array<string>, whereCallback?: (query: DeleteQueryBuilder<RechargeCard>) => void) {
+        const query = this.rechargeCardRepository
+            .createQueryBuilder()
+            .delete()
+            .where('card in (:...cards)', { cards })
+            .andWhere('appid = :appid', { appid });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败或没有找到数据');
     }
 }
