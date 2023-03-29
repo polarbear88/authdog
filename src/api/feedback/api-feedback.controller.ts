@@ -17,7 +17,7 @@ export class ApiFeedbackController extends BaseController {
         super();
     }
 
-    @Throttle(5, 3600)
+    @Throttle(10, 3600)
     @Post('send')
     async get(@ApiTakeApp() app: Application, @Body() dto: CreateFeedbackDto, @Req() req: any) {
         await this.feedbackService.create(app, req['clientVersion'], dto);

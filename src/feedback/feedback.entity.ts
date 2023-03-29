@@ -3,11 +3,20 @@ import { Column, Entity, Index } from 'typeorm';
 import { FeedbackStatus } from './feedback.type';
 
 @Index(['appid', 'userName'])
+@Index(['developerId', 'appid'])
+@Index(['developerId', 'status'])
 @Entity()
 export class Feedback extends BaseEntity {
     @Index()
     @Column()
+    developerId: number;
+
+    @Index()
+    @Column()
     appid: number;
+
+    @Column()
+    appName: string;
 
     @Column()
     appVersion: string;
