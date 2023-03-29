@@ -9,7 +9,7 @@ import { ApiTakeApp } from '../decorator/api-take-app.decorator';
 
 @Public()
 @UseInterceptors(ApiUserDeviceInterceptor, ApiEncryptInterceptor)
-@Controller()
+@Controller({ version: '1' })
 export class ApiAppController extends BaseController {
     constructor(private developerService: DeveloperService) {
         super();

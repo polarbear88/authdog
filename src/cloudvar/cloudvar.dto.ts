@@ -1,4 +1,5 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
 
 export class CreateCloudvarDto {
     @IsNotEmpty({ message: '变量名称不能为空' })
@@ -58,4 +59,10 @@ export class UpdateCloudvarDto {
     @IsOptional()
     @IsNumber({}, { message: '应用ID必须是数字' })
     applicationId?: number;
+}
+
+export class GetCloudvarDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: '变量ID不能为空' })
+    @IsNumber({}, { message: '变量ID必须是数字' })
+    id: number;
 }
