@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { GetFeedbackListDto, SetFeedbackStatusDto } from 'src/feedback/feedback.dto';
+import { DeleteFeedbackDto, GetFeedbackListDto, SetFeedbackStatusDto } from 'src/feedback/feedback.dto';
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { FeedbackStatus } from 'src/feedback/feedback.type';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
@@ -31,6 +31,12 @@ export class FeedbackController extends BaseController {
     @Post('set-status')
     async setStatus(@TakeDeveloper() developer: any, @Body() dto: SetFeedbackStatusDto) {
         await this.feedbackService.setStatusByIds(developer.id, dto.ids, dto.status as FeedbackStatus);
+        return null;
+    }
+
+    @Post('delete')
+    async delete(@TakeDeveloper() developer: any, @Body() dto: DeleteFeedbackDto) {
+        await this.feedbackService.deleteByIds(developer.id, dto.ids);
         return null;
     }
 }

@@ -4,7 +4,7 @@ import { Column, Entity, Index, Unique } from 'typeorm';
 @Unique(['developerId', 'name'])
 @Index(['developerId', 'applicationId'])
 @Entity()
-export class Cloudvar extends BaseEntity {
+export class Cloudfun extends BaseEntity {
     @Index()
     @Column()
     developerId: number;
@@ -12,14 +12,11 @@ export class Cloudvar extends BaseEntity {
     @Column()
     name: string;
 
+    @Column({ type: 'longtext' })
+    script: string;
+
     @Column({ default: '' })
     description: string;
-
-    @Column({ type: 'text' })
-    value: string;
-
-    @Column()
-    isPublic: boolean;
 
     @Column()
     isGlobal: boolean;
@@ -29,4 +26,6 @@ export class Cloudvar extends BaseEntity {
 
     @Column({ default: '' })
     applicationName: string;
+
+    shield = ['script'];
 }

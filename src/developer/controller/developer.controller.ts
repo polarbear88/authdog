@@ -9,6 +9,7 @@ import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { CreateDeveloperDto, LoginDeveloperDto } from '../dto/developer.dto';
 import { DeveloperService } from '../developer.service';
+// import ivm from 'isolated-vm';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })
@@ -52,7 +53,17 @@ export class DeveloperController extends BaseController {
 
     // @Post('test')
     // async test(@Request() req: any) {
-    //     console.log(req._user);
-    //     return null;
+    //     const isolate = new ivm.Isolate({ memoryLimit: 128 });
+    //     const context = isolate.createContextSync();
+    //     const jail = context.global;
+    //     jail.setSync('global', jail.derefInto());
+    //     jail.setSync('log', (...args) => {
+    //         console.log(req.ip);
+    //         console.log(...args);
+    //     });
+    //     jail.setSync('getPm', (...args) => {
+    //         return { a: 'wdw' };
+    //     });
+    //     console.log(context.evalClosureSync('log($0); log(getPm()); log($1);return {a: "ecec"}', ['wdw', 1]));
     // }
 }

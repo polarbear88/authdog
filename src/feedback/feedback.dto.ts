@@ -54,3 +54,12 @@ export class SetFeedbackStatusDto {
     @IsIn(['resolved', 'rejected'], { message: '状态只能是resolved或rejected' })
     status: string;
 }
+
+export class DeleteFeedbackDto {
+    @IsNotEmpty({ message: 'id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: 'id数组不能为空' })
+    @ArrayMaxSize(100, { message: 'id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
+}

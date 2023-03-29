@@ -23,6 +23,8 @@ import { RechargeCardTypeController } from './controller/recharge-card-type.cont
 import { RechargeCardController } from './controller/recharge-card.controller';
 import { FeedbackModule } from 'src/feedback/feedback.module';
 import { FeedbackController } from './controller/feedback.controller';
+import { CloudfunController } from './controller/cloudfun.controller';
+import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -32,6 +34,7 @@ import { FeedbackController } from './controller/feedback.controller';
         DeveloperActionLogModule,
         ApplicationModule,
         CloudvarModule,
+        CloudfunModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -56,6 +59,7 @@ import { FeedbackController } from './controller/feedback.controller';
         RechargeCardTypeController,
         RechargeCardController,
         FeedbackController,
+        CloudfunController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

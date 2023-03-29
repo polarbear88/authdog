@@ -37,6 +37,7 @@ import { RechargeCard } from './recharge-card/recharge-card.entity';
 import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.entity';
 import { UserFinancialModule } from './user-financial/user-financial.module';
 import { UserFinancial } from './user-financial/user-financial.entity';
+import { CloudfunModule } from './cloudfun/cloudfun.module';
 
 @Module({
     imports: [
@@ -122,6 +123,7 @@ import { UserFinancial } from './user-financial/user-financial.entity';
         RechargeCardModule,
         FeedbackModule,
         UserFinancialModule,
+        CloudfunModule,
     ],
     controllers: [AppController],
     providers: [

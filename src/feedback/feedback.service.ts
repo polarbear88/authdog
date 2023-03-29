@@ -82,4 +82,14 @@ export class FeedbackService extends BaseService {
         }
         throw new NotAcceptableException('操作失败');
     }
+
+    async deleteByIds(developerId: number, ids: Array<number>) {
+        const query = this.repo.createQueryBuilder().delete().where('id in (:...ids)', { ids });
+        query.andWhere('developerId = :developerId', { developerId });
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
 }

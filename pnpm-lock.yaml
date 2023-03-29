@@ -12,7 +12,7 @@ specifiers:
   '@nestjs/platform-express': ^8.0.0
   '@nestjs/schematics': ^8.0.0
   '@nestjs/swagger': ^6.2.1
-  '@nestjs/testing': ^8.0.0
+  '@nestjs/testing': ^8.4.7
   '@nestjs/throttler': ^4.0.0
   '@nestjs/typeorm': ^9.0.1
   '@types/cache-manager-ioredis': ^2.0.3
@@ -36,6 +36,7 @@ specifiers:
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
   ioredis: ^5.3.1
+  isolated-vm: ^4.5.0
   jest: 28.0.3
   md5-node: ^1.0.1
   moment: ^2.29.4
@@ -80,6 +81,7 @@ dependencies:
   class-validator: 0.14.0
   dotenv: 16.0.3
   ioredis: 5.3.1
+  isolated-vm: 4.5.0
   md5-node: 1.0.1
   moment: 2.29.4
   mysql2: 3.2.0
@@ -3434,6 +3436,12 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
+
+  /isolated-vm/4.5.0:
+    resolution: {integrity: sha512-Kse0m5t+B9wZQVeTDqzPoX1SIFNTNfyaUxhnCuFgpXL1+5GYJ9GUAN3mpD+ainixGmUXgeYaVBX+QPDjEBBu0w==}
+    engines: {node: '>=10.4.0'}
+    requiresBuild: true
+    dev: false
 
   /istanbul-lib-coverage/3.2.0:
     resolution: {integrity: sha512-eOeJ5BHCmHYvQK7xt9GkdHuzuCGS1Y6g9Gvnx3Ym33fz/HpLRYxiS0wHNr+m/MBC8B647Xt608vCDEvhl9c6Mw==}
