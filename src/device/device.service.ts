@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
@@ -7,10 +7,12 @@ import { BaseService } from 'src/common/service/base.service';
 import { DateUtils } from 'src/common/utils/date.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
+import { RechargeCard } from 'src/recharge-card/recharge-card.entity';
+import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user-financial/user-financial.service';
 import { UserStatus } from 'src/user/user.type';
-import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
-import { AddDeviceBanlanceDto, AddDeviceTimeDto, DeviceDto, GetDeviceListDto } from './device.dto';
+import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { AddDeviceBanlanceDto, AddDeviceTimeDto, DeviceDto, DeviceRechargeDto, GetDeviceListDto } from './device.dto';
 import { Device } from './device.entity';
 
 @Injectable()
@@ -19,6 +21,8 @@ export class DeviceService extends BaseService {
         @InjectRepository(Device)
         private deviceRepository: Repository<Device>,
         private userFinancialService: UserFinancialService,
+        private rechargeCardService: RechargeCardService,
+        private readonly entityManager: EntityManager,
     ) {
         super(deviceRepository);
     }
@@ -223,8 +227,15 @@ export class DeviceService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlance(device: Device | Array<number>, balance: number, reason: string, whereCallback?: (query: SelectQueryBuilder<Device>) => void) {
-        const query = this.deviceRepository.createQueryBuilder();
+    async addBanlance(
+        device: Device | Array<number>,
+        balance: number,
+        reason: string,
+        whereCallback?: (query: SelectQueryBuilder<Device>) => void,
+        manager?: Repository<Device>,
+    ) {
+        const mgr = manager || this.deviceRepository.manager;
+        const query = mgr.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
         } else {
@@ -253,8 +264,10 @@ export class DeviceService extends BaseService {
         minute: number,
         reason: string,
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
+        manager?: Repository<Device>,
     ) {
-        const query = this.deviceRepository.createQueryBuilder();
+        const mgr = manager || this.deviceRepository.manager;
+        const query = mgr.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
         } else {
@@ -278,8 +291,9 @@ export class DeviceService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(device: Device, minute: number, reason: string, balance: number) {
-        const affected = await this.deviceRepository
+    async addBanlanceAndExpirationTime(device: Device, minute: number, balance: number, reason: string, manager?: Repository<Device>) {
+        const mgr = manager || this.deviceRepository.manager;
+        const affected = await mgr
             .createQueryBuilder()
             .where('id = :id', { id: device.id })
             .andWhere('ver = :ver', { ver: device.ver })
@@ -337,5 +351,42 @@ export class DeviceService extends BaseService {
             return result.affected;
         }
         throw new NotAcceptableException('操作失败');
+    }
+
+    async recharge(device: Device, dto: DeviceRechargeDto) {
+        const card = await this.rechargeCardService.findByCard(device.appid, dto.card);
+        if (!card || card.status !== 'unused') {
+            throw new NotAcceptableException('未找到该充值卡或已使用');
+        }
+        if (card.password && card.password !== dto.password) {
+            throw new NotAcceptableException('充值卡密码错误');
+        }
+        try {
+            await this.entityManager.transaction(async (manager) => {
+                const result = await manager
+                    .createQueryBuilder()
+                    .update(RechargeCard)
+                    .set({ status: 'used', user: device.id, usedTime: new Date(), userName: device.deviceId, ver: card.ver + 1 })
+                    .where('id = :id', { id: card.id })
+                    .andWhere('status = :status', { status: 'unused' })
+                    .andWhere('ver = :ver', { ver: card.ver })
+                    .execute();
+                if (result.affected <= 0) {
+                    throw new Error('系统异常');
+                }
+                if (card.time > 0 && card.money > 0) {
+                    await this.addBanlanceAndExpirationTime(device, card.time, card.money, '充值卡充值', manager.getRepository(Device));
+                } else {
+                    if (card.time > 0) {
+                        await this.addExpirationTime(device, card.time, '充值卡充值', undefined, manager.getRepository(Device));
+                    }
+                    if (card.money > 0) {
+                        await this.addBanlance(device, card.money, '充值卡充值', undefined, manager.getRepository(Device));
+                    }
+                }
+            });
+        } catch (error) {
+            throw new InternalServerErrorException('操作失败，系统错误');
+        }
     }
 }

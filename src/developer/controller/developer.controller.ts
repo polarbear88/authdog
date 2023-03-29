@@ -49,4 +49,10 @@ export class DeveloperController extends BaseController {
         (developer as any).access_token = access_token;
         return developer;
     }
+
+    // @Post('test')
+    // async test(@Request() req: any) {
+    //     console.log(req._user);
+    //     return null;
+    // }
 }

@@ -19,9 +19,6 @@ export class ApiAppStatusCheckGuard implements CanActivate {
         if ((await this.developerService.getStatus(app.developerId)) !== 'normal') {
             throw new NotAcceptableException('开发者已被禁用');
         }
-        if (app.forceUpgrade && request.clientVersion !== app.version) {
-            throw new NotAcceptableException('请升级客户端');
-        }
         return true;
     }
 }

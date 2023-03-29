@@ -1,4 +1,18 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsArray,
+    IsBoolean,
+    IsIn,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Max,
+    MaxLength,
+    Min,
+} from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
@@ -109,4 +123,36 @@ export class SetDeviceStatusDto {
     @IsString()
     @IsIn(['normal', 'disabled'], { message: '状态只能是normal或disabled' })
     status: string;
+}
+
+export class DeviceRechargeDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: 'appid不能为空' })
+    @IsNumber()
+    appid: number;
+
+    @IsString()
+    @IsNotEmpty({ message: '卡号不能为空' })
+    @MaxLength(200, { message: '卡号最大长度为200' })
+    card: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(200, { message: '密码最大长度为200' })
+    password: string;
+}
+
+export class DeviceReduceCountDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: 'appid不能为空' })
+    @IsNumber()
+    appid: number;
+
+    @IsNotEmpty({ message: '次数不能为空' })
+    @IsNumber()
+    @Min(1, { message: '次数最小值为1' })
+    count: number;
+
+    @IsString()
+    @IsNotEmpty({ message: '原因不能为空' })
+    @MaxLength(200, { message: '原因最大长度为200' })
+    reason: string;
 }

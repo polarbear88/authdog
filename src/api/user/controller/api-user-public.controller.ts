@@ -1,6 +1,7 @@
-import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post } from '@nestjs/common';
+import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Throttle } from '@nestjs/throttler';
+import { ApiAppVersionCheckGuard } from 'src/api/api-app-version-check.guard';
 import { ApiTakeApp } from 'src/api/decorator/api-take-app.decorator';
 import { Application } from 'src/application/application.entity';
 import { JwtExpiresInConfig } from 'src/common/config/jwt-expiresIn.config';
@@ -12,6 +13,7 @@ import { ChangePasswordDto, CreateUserDto, LoginUserDto, UserRechargeDto } from 
 import { UserService } from 'src/user/user.service';
 import { ApiUserBaseController } from './api-user-base.controller';
 
+@UseGuards(ApiAppVersionCheckGuard)
 @Public()
 @Controller({ version: '1', path: 'public' })
 export class ApiUserPublicController extends ApiUserBaseController {

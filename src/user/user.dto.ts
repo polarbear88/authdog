@@ -12,6 +12,7 @@ import {
     Length,
     Max,
     MaxLength,
+    Min,
 } from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
@@ -204,11 +205,27 @@ export class UserRechargeDto extends BaseUserDeviceDto {
 
     @IsString()
     @IsNotEmpty({ message: '卡号不能为空' })
-    @MaxLength(100, { message: '卡号最大长度为100' })
+    @MaxLength(200, { message: '卡号最大长度为200' })
     card: string;
 
     @IsOptional()
     @IsString()
-    @MaxLength(100, { message: '密码最大长度为100' })
+    @MaxLength(200, { message: '密码最大长度为200' })
     password: string;
+}
+
+export class UserReduceCountDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: 'appid不能为空' })
+    @IsNumber()
+    appid: number;
+
+    @IsNotEmpty({ message: '次数不能为空' })
+    @IsNumber()
+    @Min(1, { message: '次数最小值为1' })
+    count: number;
+
+    @IsString()
+    @IsNotEmpty({ message: '原因不能为空' })
+    @MaxLength(200, { message: '原因最大长度为200' })
+    reason: string;
 }
