@@ -154,6 +154,8 @@ import { UserFinancial } from './user-financial/user-financial.entity';
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         // 应用API解密中间件
-        consumer.apply(ApiDecryptMiddleware).forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*', '/v[0-9]/cloudvar/*');
+        consumer
+            .apply(ApiDecryptMiddleware)
+            .forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*', '/v[0-9]/cloudvar/*', '/v[0-9]/feedback/*');
     }
 }

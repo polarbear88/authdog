@@ -7,18 +7,18 @@ import { FeedbackStatus } from './feedback.type';
 export class Feedback extends BaseEntity {
     @Index()
     @Column()
-    appid: string;
+    appid: number;
 
     @Column()
     appVersion: string;
 
-    // 用户id或设备表id
-    @Column()
-    userId: number;
-
-    // 用户名或设备ID
+    // 用户名
     @Column()
     userName: string;
+
+    // 设备ID
+    @Column()
+    deviceId: string;
 
     // 品牌
     @Column({ default: '' })
@@ -35,6 +35,6 @@ export class Feedback extends BaseEntity {
     @Column({ type: 'text' })
     content: string;
 
-    @Column()
+    @Column({ default: 'pending' })
     status: FeedbackStatus;
 }
