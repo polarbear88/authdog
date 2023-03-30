@@ -34,7 +34,7 @@ export class ApiUserController extends ApiUserBaseController {
 
     @Post('reduce-count')
     async reduceCount(@ApiTakeUser(ApiParseUserPipe) user: User, @Body() dto: UserReduceCountDto) {
-        if (user.balance >= dto.count) {
+        if (user.balance < dto.count) {
             return {
                 user: user._serialization(),
                 result: false,

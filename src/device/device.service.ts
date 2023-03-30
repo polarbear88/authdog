@@ -366,7 +366,7 @@ export class DeviceService extends BaseService {
                 const result = await manager
                     .createQueryBuilder()
                     .update(RechargeCard)
-                    .set({ status: 'used', user: device.id, usedTime: new Date(), userName: device.deviceId, ver: card.ver + 1 })
+                    .set({ status: 'used', user: device.id, useTime: new Date(), userName: device.deviceId, ver: card.ver + 1 })
                     .where('id = :id', { id: card.id })
                     .andWhere('status = :status', { status: 'unused' })
                     .andWhere('ver = :ver', { ver: card.ver })

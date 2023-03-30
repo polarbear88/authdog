@@ -30,7 +30,7 @@ export class DeviceDto extends BaseUserDeviceDto {
 export class GetDeviceListDto extends GetPageDto {
     @IsOptional()
     @IsString()
-    @PaginationWhere('deviceId like %:deviceId%')
+    @PaginationWhere('deviceId = :deviceId')
     deviceId?: string;
 
     @IsOptional()
@@ -40,7 +40,7 @@ export class GetDeviceListDto extends GetPageDto {
 
     @IsOptional()
     @IsString()
-    @PaginationWhere('otherInfo like %:otherInfo%')
+    @PaginationWhere('otherInfo = :otherInfo')
     otherInfo?: string;
 
     @IsOptional()

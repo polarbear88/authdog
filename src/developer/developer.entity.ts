@@ -31,5 +31,8 @@ export class Developer extends BaseEntity {
     @Column({ default: 'normal' })
     status: DeveloperStatus;
 
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    income: number;
+
     shield = ['password', 'rawPassword', 'salt', 'ip'];
 }

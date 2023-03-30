@@ -25,6 +25,8 @@ import { FeedbackModule } from 'src/feedback/feedback.module';
 import { FeedbackController } from './controller/feedback.controller';
 import { CloudfunController } from './controller/cloudfun.controller';
 import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
+import { SalerController } from './controller/saler.controller';
+import { SalerModule } from 'src/saler/saler.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -48,6 +50,7 @@ import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
         DeviceModule,
         RechargeCardModule,
         FeedbackModule,
+        SalerModule,
     ],
     controllers: [
         DeveloperController,
@@ -60,6 +63,7 @@ import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
         RechargeCardController,
         FeedbackController,
         CloudfunController,
+        SalerController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

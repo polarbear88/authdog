@@ -29,7 +29,7 @@ export class UserFinancialService extends BaseService {
         }
         userFinancial.type = 'time';
         userFinancial.direction = 'out';
-        userFinancial.value = value;
+        userFinancial.value = -value;
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;
@@ -71,7 +71,7 @@ export class UserFinancialService extends BaseService {
         }
         userFinancial.type = 'balance';
         userFinancial.direction = 'out';
-        userFinancial.value = value;
+        userFinancial.value = -value;
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;

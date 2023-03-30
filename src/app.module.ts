@@ -38,6 +38,8 @@ import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.e
 import { UserFinancialModule } from './user-financial/user-financial.module';
 import { UserFinancial } from './user-financial/user-financial.entity';
 import { CloudfunModule } from './cloudfun/cloudfun.module';
+import { SalerModule } from './saler/saler.module';
+import { Saler } from './saler/saler.entity';
 
 @Module({
     imports: [
@@ -71,6 +73,7 @@ import { CloudfunModule } from './cloudfun/cloudfun.module';
                     RechargeCard,
                     RechargeCardType,
                     UserFinancial,
+                    Saler,
                 ],
             }),
         }),
@@ -124,6 +127,7 @@ import { CloudfunModule } from './cloudfun/cloudfun.module';
         FeedbackModule,
         UserFinancialModule,
         CloudfunModule,
+        SalerModule,
     ],
     controllers: [AppController],
     providers: [

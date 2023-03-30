@@ -47,7 +47,7 @@ export class ApiDeviceController extends ApiDeviceBaseController {
 
     @Post('reduce-count')
     async reduceCount(@ApiTakeDevice() device: Device, @Body() dto: DeviceReduceCountDto) {
-        if (device.balance >= dto.count) {
+        if (device.balance < dto.count) {
             return {
                 device: device._serialization(),
                 result: false,

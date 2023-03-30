@@ -75,12 +75,12 @@ export class LoginUserDto extends BaseUserDeviceDto {
 export class GetUserListDto extends GetPageDto {
     @IsOptional()
     @IsString()
-    @PaginationWhere('name like %:name%')
+    @PaginationWhere('name = :name')
     name?: string;
 
     @IsOptional()
     @IsString()
-    @PaginationWhere('mobile like %:mobile%')
+    @PaginationWhere('mobile = :mobile')
     mobile?: string;
 
     @IsOptional()
@@ -90,7 +90,7 @@ export class GetUserListDto extends GetPageDto {
 
     @IsOptional()
     @IsString()
-    @PaginationWhere('otherInfo like %:otherInfo%')
+    @PaginationWhere('otherInfo = :otherInfo')
     otherInfo?: string;
 
     @IsOptional()
