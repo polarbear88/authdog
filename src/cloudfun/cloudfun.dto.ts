@@ -1,4 +1,5 @@
 import { ArrayMaxSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { BaseUserDeviceDto } from 'src/user-device/user-device.dto';
 
 export class CreateCloudfunDto {
     @IsNotEmpty({ message: '函数名称不能为空' })
@@ -53,6 +54,18 @@ export class UpdateCloudfunDto {
 }
 
 export class TryRunCloudfunDto {
+    @IsNotEmpty({ message: '函数ID不能为空' })
+    @IsNumber({}, { message: '函数ID必须是数字' })
+    id: number;
+
+    @IsOptional()
+    @IsArray({ message: '参数必须是数组' })
+    @ArrayMaxSize(10, { message: '参数最多支持10个' })
+    @IsString({ each: true, message: '参数必须是字符串' })
+    args?: string[];
+}
+
+export class RunCloudfunDto extends BaseUserDeviceDto {
     @IsNotEmpty({ message: '函数ID不能为空' })
     @IsNumber({}, { message: '函数ID必须是数字' })
     id: number;

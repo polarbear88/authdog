@@ -1,7 +1,9 @@
 import { ForbiddenException, Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/application/application.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
+import { Role } from 'src/common/enums/role.enum';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
@@ -35,6 +37,7 @@ export class UserService extends BaseService {
         private userFinancialService: UserFinancialService,
         private rechargeCardService: RechargeCardService,
         private readonly entityManager: EntityManager,
+        private jwtService: JwtService,
     ) {
         super(userRepository);
     }
@@ -548,6 +551,31 @@ export class UserService extends BaseService {
             });
         } catch (error) {
             throw new InternalServerErrorException('操作失败，系统错误');
+        }
+    }
+
+    async validateUserAuthForToken(app: Application, token: string, deviceId: string) {
+        if (!token) {
+            throw new NotAcceptableException('未登录');
+        }
+        try {
+            const decode = this.jwtService.verify(token);
+            if (!(decode.roles as Array<string>).includes(Role.User)) {
+                throw new NotAcceptableException('未登录');
+            }
+            const user = (await this.findById(decode.id)) as User;
+            if (!user || user.appid !== app.id) {
+                throw new NotAcceptableException('未登录');
+            }
+            if (user.status !== 'normal') {
+                throw new NotAcceptableException('用户已被禁用');
+            }
+            if (!this.validateUserAuth(user, app, deviceId).result) {
+                throw new NotAcceptableException('用户未授权');
+            }
+            return user;
+        } catch (error) {
+            throw new NotAcceptableException('未登录');
         }
     }
 }

@@ -92,7 +92,7 @@ export class CloudfunController extends BaseController {
         const args = dto.args || [];
         try {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            const result = await new CloudfunRuner({}, cf.script, (balance: number) => {}).run(args);
+            const result = await new CloudfunRuner({}, cf.script, (balance: number, reason: string) => {}).run(args);
             return {
                 result,
             };

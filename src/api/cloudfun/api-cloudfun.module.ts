@@ -1,16 +1,16 @@
 import { Module, SetMetadata } from '@nestjs/common';
 import { MODULE_PATH } from '@nestjs/common/constants';
-import { CloudvarModule } from 'src/cloudvar/cloudvar.module';
+import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
 import { DeveloperModule } from 'src/developer/developer.module';
 import { DeviceModule } from 'src/device/device.module';
 import { UserDeviceModule } from 'src/user-device/user-device.module';
 import { UserModule } from 'src/user/user.module';
-import { ApiCloudvarController } from './api-cloudvar.controller';
+import { ApiCloudfunController } from './api-cloudfun.controller';
 
-@SetMetadata(MODULE_PATH, 'cloudvar')
+@SetMetadata(MODULE_PATH, 'cloudfun')
 @Module({
-    imports: [DeveloperModule, UserDeviceModule, UserModule, DeviceModule, CloudvarModule],
+    imports: [DeveloperModule, UserDeviceModule, UserModule, DeviceModule, CloudfunModule],
     providers: [],
-    controllers: [ApiCloudvarController],
+    controllers: [ApiCloudfunController],
 })
-export class ApiCloudvarModule {}
+export class ApiCloudfunModule {}

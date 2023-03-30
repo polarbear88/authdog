@@ -6,9 +6,9 @@ export class CloudfunRuner {
     private user: any = {};
     private script = '';
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    private reduceUserBalance: (balance: number) => void = () => {};
+    private reduceUserBalance: (balance: number, reason: string) => void = () => {};
 
-    constructor(user: any, script: string, reduceUserBalance: (balance: number) => void) {
+    constructor(user: any, script: string, reduceUserBalance: (balance: number, reason: string) => void) {
         this.user = user;
         this.script = script;
         this.reduceUserBalance = reduceUserBalance;
@@ -19,8 +19,8 @@ export class CloudfunRuner {
         this.jail.setSync('$getUser', () => {
             return this.user;
         });
-        this.jail.setSync('$reduceUserBalance', (balance: number) => {
-            this.reduceUserBalance(balance);
+        this.jail.setSync('$reduceUserBalance', (balance: number, reason: string) => {
+            this.reduceUserBalance(balance, reason);
         });
     }
 
@@ -29,7 +29,7 @@ export class CloudfunRuner {
         this.context.release();
         this.isolate.dispose();
         if (result !== undefined && typeof result !== 'string') {
-            throw new Error('返回值必须为字符串');
+            throw new Error('返回值必须为字符串或不返回');
         }
         return result;
     }
