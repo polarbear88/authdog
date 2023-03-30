@@ -158,6 +158,6 @@ export class AppModule implements NestModule {
         // 应用API解密中间件
         consumer
             .apply(ApiDecryptMiddleware)
-            .forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*', '/v[0-9]/cloudvar/*', '/v[0-9]/feedback/*');
+            .forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*', '/v[0-9]/cloudvar/*', '/v[0-9]/feedback/*', '/v[0-9]/cloudfun/*');
     }
 }
