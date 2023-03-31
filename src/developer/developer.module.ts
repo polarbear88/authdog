@@ -27,6 +27,8 @@ import { CloudfunController } from './controller/cloudfun.controller';
 import { CloudfunModule } from 'src/cloudfun/cloudfun.module';
 import { SalerController } from './controller/saler.controller';
 import { SalerModule } from 'src/saler/saler.module';
+import { SalerEntryLinkModule } from 'src/saler/entry-link/entry-link.module';
+import { SalerEntryLinkController } from './controller/saler-entry-link.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -51,6 +53,7 @@ import { SalerModule } from 'src/saler/saler.module';
         RechargeCardModule,
         FeedbackModule,
         SalerModule,
+        SalerEntryLinkModule,
     ],
     controllers: [
         DeveloperController,
@@ -64,6 +67,7 @@ import { SalerModule } from 'src/saler/saler.module';
         FeedbackController,
         CloudfunController,
         SalerController,
+        SalerEntryLinkController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

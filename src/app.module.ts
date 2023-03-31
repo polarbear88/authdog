@@ -17,31 +17,20 @@ import { HttpExceptionFilter } from './http-exception.filter';
 import { DeveloperActionLog } from './developer/action-log/developer-action-log.entity';
 import { ApplicationModule } from './application/application.module';
 import { Application } from './application/application.entity';
-import { CloudvarModule } from './cloudvar/cloudvar.module';
 import { Cloudvar } from './cloudvar/cloudvar.entity';
-import { UserModule } from './user/user.module';
-import { DeviceModule } from './device/device.module';
-import { UserDeviceModule } from './user-device/user-device.module';
 import { User } from './user/user.entity';
 import { Device } from './device/device.entity';
 import { UserDevice } from './user-device/user-device.entity';
 import { ApiModule } from './api/api.module';
 import { ApiDecryptMiddleware } from './api/api-decrypt.middleware';
-import { IPAddrModule } from './ipaddr/ipaddr.module';
-import { LoginDeviceManageModule } from './login-device-manage/login-device-manage.module';
 import * as redisStore from 'cache-manager-ioredis';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { RechargeCardModule } from './recharge-card/recharge-card.module';
-import { FeedbackModule } from './feedback/feedback.module';
 import { RechargeCard } from './recharge-card/recharge-card.entity';
 import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.entity';
-import { UserFinancialModule } from './user-financial/user-financial.module';
 import { UserFinancial } from './user-financial/user-financial.entity';
-import { CloudfunModule } from './cloudfun/cloudfun.module';
-import { SalerModule } from './saler/saler.module';
 import { Saler } from './saler/saler.entity';
-import { FundFlowModule } from './fund-flow/fund-flow.module';
 import { FundFlow } from './fund-flow/fund-flow.entity';
+import { SalerEntryLink } from './saler/entry-link/entry-link.entity';
 
 @Module({
     imports: [
@@ -77,6 +66,7 @@ import { FundFlow } from './fund-flow/fund-flow.entity';
                     UserFinancial,
                     Saler,
                     FundFlow,
+                    SalerEntryLink,
                 ],
             }),
         }),
@@ -97,12 +87,7 @@ import { FundFlow } from './fund-flow/fund-flow.entity';
         DeveloperModule,
         AuthModule,
         ApplicationModule,
-        CloudvarModule,
-        UserModule,
-        DeviceModule,
-        UserDeviceModule,
         ApiModule,
-        IPAddrModule,
         CacheModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -114,7 +99,6 @@ import { FundFlow } from './fund-flow/fund-flow.entity';
                 password: configService.get('REDIS_PASSWORD'),
             }),
         }),
-        LoginDeviceManageModule,
         RedisModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -126,12 +110,6 @@ import { FundFlow } from './fund-flow/fund-flow.entity';
                 },
             }),
         }),
-        RechargeCardModule,
-        FeedbackModule,
-        UserFinancialModule,
-        CloudfunModule,
-        SalerModule,
-        FundFlowModule,
     ],
     controllers: [AppController],
     providers: [

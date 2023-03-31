@@ -69,6 +69,11 @@ export class GetSalerListDto {
     @IsString()
     @PaginationWhere('createdAt <= :createdAtEnd')
     createdAtEnd?: string;
+
+    @IsOptional()
+    @IsString()
+    @PaginationWhere('fromToken = :fromToken')
+    fromToken?: string;
 }
 
 export class AddSalerBanlanceDto {

@@ -71,6 +71,7 @@ export class SalerService extends BaseService {
         };
         saler.balance = 0;
         saler.apps = [];
+        saler.fromToken = '后台创建';
         return await this.repo.save(saler);
     }
 

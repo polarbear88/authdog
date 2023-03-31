@@ -48,5 +48,8 @@ export class Saler extends BaseEntity {
     @Column('json')
     apps: Array<{ id: number; name: string }>;
 
+    @Column({ default: '' })
+    fromToken: string;
+
     shield = ['password', 'rawPassword', 'salt', 'ip', 'ver'];
 }

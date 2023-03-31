@@ -30,10 +30,10 @@ export class SalerController extends BaseController {
     @Post('create')
     async create(@TakeDeveloper() developer: any, @Body() dto: CreateSalerByDevloperDto) {
         if (await this.salerService.existByName(developer.id, dto.name)) {
-            return new NotAcceptableException('该代理名称已存在');
+            throw new NotAcceptableException('该代理名称已存在');
         }
         if (await this.salerService.existByMobile(developer.id, dto.mobile)) {
-            return new NotAcceptableException('该代理名称已存在');
+            throw new NotAcceptableException('该代理名称已存在');
         }
         const saler = await this.salerService.createByDevloper(developer.id, dto);
         return this.setAffected(saler._serializationThis(), saler.name);
