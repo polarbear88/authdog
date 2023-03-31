@@ -102,4 +102,12 @@ export class DeveloperService extends BaseService {
         }
         return true;
     }
+
+    async incIncome(developerId: number, amount: number) {
+        await this.developerRepository.update(developerId, { income: () => `income + ${amount}` });
+    }
+
+    async decIncome(developerId: number, amount: number) {
+        await this.developerRepository.update(developerId, { income: () => `income - ${amount}` });
+    }
 }

@@ -1,4 +1,16 @@
-import { IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsNotEmpty,
+    IsNumber,
+    IsNumberString,
+    IsOptional,
+    IsString,
+    Length,
+    MaxLength,
+    ValidateNested,
+} from 'class-validator';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 
@@ -57,4 +69,37 @@ export class GetSalerListDto {
     @IsString()
     @PaginationWhere('createdAt <= :createdAtEnd')
     createdAtEnd?: string;
+}
+
+export class AddSalerBanlanceDto {
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty({ message: '金额不能为空' })
+    @IsNumber()
+    amount: number;
+}
+
+export class SetSalerAppsItemDto {
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(100, { message: '应用名称长度不能超过100' })
+    name: string;
+}
+
+export class SetSalerAppsDto {
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
+
+    @ValidateNested({ each: true })
+    @Type(() => SetSalerAppsItemDto)
+    @ArrayMinSize(1)
+    @ArrayMaxSize(100)
+    apps: SetSalerAppsItemDto[];
 }

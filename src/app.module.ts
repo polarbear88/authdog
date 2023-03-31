@@ -40,6 +40,8 @@ import { UserFinancial } from './user-financial/user-financial.entity';
 import { CloudfunModule } from './cloudfun/cloudfun.module';
 import { SalerModule } from './saler/saler.module';
 import { Saler } from './saler/saler.entity';
+import { FundFlowModule } from './fund-flow/fund-flow.module';
+import { FundFlow } from './fund-flow/fund-flow.entity';
 
 @Module({
     imports: [
@@ -74,6 +76,7 @@ import { Saler } from './saler/saler.entity';
                     RechargeCardType,
                     UserFinancial,
                     Saler,
+                    FundFlow,
                 ],
             }),
         }),
@@ -128,6 +131,7 @@ import { Saler } from './saler/saler.entity';
         UserFinancialModule,
         CloudfunModule,
         SalerModule,
+        FundFlowModule,
     ],
     controllers: [AppController],
     providers: [
