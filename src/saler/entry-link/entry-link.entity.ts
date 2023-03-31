@@ -15,6 +15,9 @@ export class SalerEntryLink extends BaseEntity {
     @Column()
     salerId: number;
 
+    @Column({ default: '' })
+    salerName: string;
+
     @Column()
     type: 'login' | 'register';
 

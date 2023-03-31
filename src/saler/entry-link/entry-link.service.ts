@@ -30,7 +30,7 @@ export class SalerEntryLinkService extends BaseService {
         });
     }
 
-    async create(developerId: number, salerId: number, type: 'login' | 'register', name: string) {
+    async create(developerId: number, salerId: number, type: 'login' | 'register', name: string, salerName?: string) {
         const token = this.generateToken();
         const link = new SalerEntryLink();
         link.developerId = developerId;
@@ -38,6 +38,7 @@ export class SalerEntryLinkService extends BaseService {
         link.type = type;
         link.token = token;
         link.name = name;
+        link.salerName = salerName || '';
         return await this.repo.save(link);
     }
 

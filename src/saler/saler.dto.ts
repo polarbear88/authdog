@@ -13,7 +13,6 @@ import {
 } from 'class-validator';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
-
 export class CreateSalerByDevloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
     name: string;
@@ -27,6 +26,13 @@ export class CreateSalerByDevloperDto {
     @IsNumberString(undefined, { message: '手机号必须为数字字符串' })
     @Length(11, 11, { message: '手机号必须为11位' })
     mobile: string;
+}
+
+export class RegisterSalerDto extends CreateSalerByDevloperDto {
+    @IsNotEmpty({ message: 'token不能为空' })
+    @IsString()
+    @MaxLength(100, { message: 'token不能超过100个字符' })
+    token: string;
 }
 
 export class GetSalerListDto {
@@ -107,4 +113,20 @@ export class SetSalerAppsDto {
     @ArrayMinSize(1)
     @ArrayMaxSize(100)
     apps: SetSalerAppsItemDto[];
+}
+
+export class SalerLoginDto {
+    @IsNotEmpty({ message: '用户名不能为空' })
+    @Length(6, 16, { message: '用户名长度必须在6-16位之间' })
+    username: string;
+
+    @IsNotEmpty({ message: '密码不能为空' })
+    @IsString({ message: '密码必须是字符串' })
+    @Length(32, 32, { message: '密码错误' })
+    password: string;
+
+    @IsNotEmpty({ message: 'token不能为空' })
+    @IsString()
+    @MaxLength(100, { message: 'token不能超过100个字符' })
+    token: string;
 }

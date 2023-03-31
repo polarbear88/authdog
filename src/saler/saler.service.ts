@@ -1,15 +1,17 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
+import { StringUtils } from 'src/common/utils/string.utils';
 import { Developer } from 'src/developer/developer.entity';
 import { FundFlowService } from 'src/fund-flow/fund-flow.service';
 import { ChangeUserPwdByDevDto } from 'src/user/user.dto';
 import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
-import { CreateSalerByDevloperDto, GetSalerListDto, SetSalerAppsDto } from './saler.dto';
+import { SalerEntryLink } from './entry-link/entry-link.entity';
+import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLoginDto, SetSalerAppsDto } from './saler.dto';
 import { Saler } from './saler.entity';
 import { SalerStatus } from './saler.type';
 
@@ -52,6 +54,24 @@ export class SalerService extends BaseService {
         });
     }
 
+    async findByName(developerId: number, name: string) {
+        return await this.repo.findOne({
+            where: {
+                developerId,
+                name,
+            },
+        });
+    }
+
+    async findByMobile(developerId: number, mobile: string) {
+        return await this.repo.findOne({
+            where: {
+                developerId,
+                mobile,
+            },
+        });
+    }
+
     async createByDevloper(developerId: number, dto: CreateSalerByDevloperDto) {
         const saler = new Saler();
         saler.developerId = developerId;
@@ -72,6 +92,29 @@ export class SalerService extends BaseService {
         saler.balance = 0;
         saler.apps = [];
         saler.fromToken = '后台创建';
+        return await this.repo.save(saler);
+    }
+
+    async create(entryLink: SalerEntryLink, dto: RegisterSalerDto, ipv4: string) {
+        const saler = new Saler();
+        saler.developerId = entryLink.developerId;
+        saler.name = dto.name;
+        saler.mobile = dto.mobile;
+        saler.rawPassword = dto.password;
+        saler.salt = CryptoUtils.makeSalt();
+        saler.password = CryptoUtils.encryptPassword(dto.password, saler.salt);
+        saler.parentId = entryLink.salerId;
+        saler.parentName = entryLink.salerId ? entryLink.salerName : '开发者';
+        saler.ip = {
+            country: null,
+            province: null,
+            city: null,
+            isp: null,
+            ipv4,
+        };
+        saler.balance = 0;
+        saler.apps = [];
+        saler.fromToken = entryLink.token;
         return await this.repo.save(saler);
     }
 
@@ -199,5 +242,41 @@ export class SalerService extends BaseService {
             return await this.repo.save(saler);
         }
         throw new NotAcceptableException('代理不存在');
+    }
+
+    async validateSaler(developer: Developer, dto: SalerLoginDto) {
+        let saler: Saler;
+        if (StringUtils.charIsNumber(dto.username)) {
+            saler = await this.findByMobile(developer.id, dto.username);
+        } else {
+            saler = await this.findByName(developer.id, dto.username);
+        }
+        if (saler && CryptoUtils.validatePassword(dto.password, saler.salt, saler.password)) {
+            if (saler.status !== 'normal') {
+                throw new ForbiddenException('账号状态异常');
+            }
+            this.repo.update(saler.id, { lastLoginTime: new Date() });
+            return saler;
+        }
+        throw new NotAcceptableException('用户名或密码错误');
+    }
+
+    async getStatus(id: number) {
+        const saler = await this.repo.findOne({
+            where: { id },
+            select: ['status'],
+        });
+        if (saler) {
+            return saler.status;
+        }
+        return null;
+    }
+
+    async validateStatus(id: number) {
+        const status = await this.getStatus(id);
+        if (status !== 'normal') {
+            return false;
+        }
+        return true;
     }
 }

@@ -1,16 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, SetMetadata } from '@nestjs/common';
+import { MODULE_PATH } from '@nestjs/common/constants';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { DeveloperModule } from 'src/developer/developer.module';
-import { LoginDeviceManageModule } from 'src/login-device-manage/login-device-manage.module';
 import { SalerModule } from 'src/saler/saler.module';
-import { UserModule } from 'src/user/user.module';
-import { JwtStrategy } from './jwt.strategy';
+import { SalerController } from './controller/saler.controller';
 
+// saler的控制器不能放在saler模块中，因为saler控制器需要访问developer的service，
+// 而developer又依赖saler的service，这样就会造成循环依赖，所以这里把saler的控制器单独放在一个模块中
+@SetMetadata(MODULE_PATH, 'saler')
 @Module({
     imports: [
-        PassportModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -19,12 +19,9 @@ import { JwtStrategy } from './jwt.strategy';
                 signOptions: { expiresIn: '24h' },
             }),
         }),
-        DeveloperModule,
-        UserModule,
-        LoginDeviceManageModule,
         SalerModule,
+        DeveloperModule,
     ],
-    providers: [JwtStrategy],
-    exports: [PassportModule, JwtModule],
+    controllers: [SalerController],
 })
-export class AuthModule {}
+export class SalerControlModule {}

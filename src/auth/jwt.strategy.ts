@@ -6,6 +6,7 @@ import { DeveloperService } from 'src/developer/developer.service';
 import { UserService } from 'src/user/user.service';
 import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
 import { Application } from 'src/application/application.entity';
+import { SalerService } from 'src/saler/saler.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,6 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         private developerService: DeveloperService,
         private userService: UserService,
         private loginDeviceManageService: LoginDeviceManageService,
+        private salerService: SalerService,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromHeader('token'),
@@ -28,6 +30,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 return null;
             }
             return { id: payload.id, username: payload.username, roles: payload.roles };
+        }
+
+        if (payload.roles.includes('saler')) {
+            if (!(await this.developerService.validateStatus(payload.developerId))) {
+                return null;
+            }
+            if (!(await this.salerService.validateStatus(payload.id))) {
+                return null;
+            }
+            return { id: payload.id, username: payload.username, roles: payload.roles, developerId: payload.developerId, parentId: payload.parentId };
         }
 
         if (payload.roles.includes('user')) {
