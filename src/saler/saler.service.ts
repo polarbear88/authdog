@@ -10,6 +10,8 @@ import { StringUtils } from 'src/common/utils/string.utils';
 import { Developer } from 'src/developer/developer.entity';
 import { FundFlowService } from 'src/fund-flow/fund-flow.service';
 import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type.entity';
+import { SalerRoles } from 'src/saler-roles/saler-roles.entity';
+import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
 import { ChangeUserPwdByDevDto } from 'src/user/user.dto';
 import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { SalerEntryLink } from './entry-link/entry-link.entity';
@@ -24,6 +26,7 @@ export class SalerService extends BaseService {
         private repo: Repository<Saler>,
         private fundFlowService: FundFlowService,
         private applicationService: ApplicationService,
+        private salerRoleService: SalerRolesService,
     ) {
         super(repo);
     }
@@ -330,7 +333,20 @@ export class SalerService extends BaseService {
         // 从层级中删除顶级代理
         salerLevelList.shift();
         // 获取顶级代理制卡价格
-        price = price - price * (cardType.salerProfit / 100);
+        let topProfit = cardType.salerProfit;
+        if (topSaler.salerRoleId) {
+            // 从角色中获取利润比例
+            const salerRole = (await this.salerRoleService.findById(topSaler.salerRoleId)) as SalerRoles;
+            if (salerRole) {
+                const roleProfit = salerRole.priceConfig.find((item) => {
+                    return item.appid === cardType.appid && item.cardTypeId === cardType.id;
+                });
+                if (roleProfit) {
+                    topProfit = roleProfit.salerProfit;
+                }
+            }
+        }
+        price = price - price * (topProfit / 100);
         // 保存每一层的制卡价格和应得利润
         const result: Array<{
             saler: Saler;
@@ -364,5 +380,34 @@ export class SalerService extends BaseService {
             // 最终制卡价格
             price,
         };
+    }
+
+    async setRoleIdByIds(ids: Array<number>, salerRole: SalerRoles, whereCallback?: (query: UpdateQueryBuilder<Saler>) => void) {
+        const query = this.repo
+            .createQueryBuilder()
+            .update()
+            .set({ salerRoleId: salerRole.id, salerRoleName: salerRole.name })
+            .where('id in (:...ids)', { ids });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        const result = await query.execute();
+        if (result.affected > 0) {
+            return result.affected;
+        }
+        throw new NotAcceptableException('操作失败');
+    }
+
+    async resetSalerRole(developerId: number, roleId: number) {
+        await this.repo.update(
+            {
+                developerId,
+                salerRoleId: roleId,
+            },
+            {
+                salerRoleId: 0,
+                salerRoleName: '',
+            },
+        );
     }
 }

@@ -58,5 +58,11 @@ export class Saler extends BaseEntity {
     @Column({ type: 'json' })
     subordinatePrice: Array<{ cardTypeId: number; percentage: number }>;
 
+    @Column({ default: 0 })
+    salerRoleId: number;
+
+    @Column({ default: '' })
+    salerRoleName: string;
+
     shield = ['password', 'rawPassword', 'salt', 'ip', 'ver'];
 }

@@ -2,6 +2,8 @@ import { Type } from 'class-transformer';
 import {
     ArrayMaxSize,
     ArrayMinSize,
+    IsArray,
+    IsInt,
     IsNotEmpty,
     IsNumber,
     IsNumberString,
@@ -80,6 +82,11 @@ export class GetSalerListDto {
     @IsString()
     @PaginationWhere('fromToken = :fromToken')
     fromToken?: string;
+
+    @IsOptional()
+    @IsString()
+    @PaginationWhere('salerRoleName = :salerRoleName')
+    salerRoleName?: string;
 }
 
 export class AddSalerBanlanceDto {
@@ -129,4 +136,17 @@ export class SalerLoginDto {
     @IsString()
     @MaxLength(100, { message: 'token不能超过100个字符' })
     token: string;
+}
+
+export class SalerSetRoleDto {
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
+
+    @IsNotEmpty({ message: '角色id不能为空' })
+    @IsInt({ message: '角色id必须是整数' })
+    roleId: number;
 }

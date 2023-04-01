@@ -12,7 +12,7 @@ export class CreateRechargeCardTypeDto {
 
     @IsOptional()
     @IsString({ message: '卡号前缀是字符串' })
-    @Length(0, 128, { message: '卡号前缀长度必须在6-128之间' })
+    @Length(0, 128, { message: '卡号前缀长度必须在1-128之间' })
     prefix: string;
 
     @IsNotEmpty({ message: '时间不能为空' })
@@ -35,7 +35,7 @@ export class CreateRechargeCardTypeDto {
 
     @IsNotEmpty({ message: '代理利润不能为空' })
     @IsInt({ message: '代理利润必须是数字' })
-    @Max(100, { message: '代理利润最大值为100' })
+    @Max(99, { message: '代理利润最大值为99' })
     @Min(0, { message: '代理价格最小值为0' })
     salerProfit: number;
 }
@@ -57,7 +57,7 @@ export class UpdateRechargeCardTypeDto {
 
     @IsOptional()
     @IsString({ message: '卡号前缀是字符串' })
-    @Length(6, 128, { message: '卡号前缀长度必须在6-128之间' })
+    @Length(0, 128, { message: '卡号前缀长度必须在1-128之间' })
     prefix: string;
 
     @IsNotEmpty({ message: '时间不能为空' })
@@ -80,7 +80,7 @@ export class UpdateRechargeCardTypeDto {
 
     @IsNotEmpty({ message: '代理利润不能为空' })
     @IsInt({ message: '代理利润必须是数字' })
-    @Max(100, { message: '代理利润最大值为100' })
+    @Max(99, { message: '代理利润最大值为99' })
     @Min(0, { message: '代理价格最小值为0' })
     salerProfit: number;
 }

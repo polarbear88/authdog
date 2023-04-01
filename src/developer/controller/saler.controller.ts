@@ -2,7 +2,8 @@ import { Body, Controller, NotAcceptableException, Post } from '@nestjs/common';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { AddSalerBanlanceDto, CreateSalerByDevloperDto, GetSalerListDto, SetSalerAppsDto } from 'src/saler/saler.dto';
+import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
+import { AddSalerBanlanceDto, CreateSalerByDevloperDto, GetSalerListDto, SalerSetRoleDto, SetSalerAppsDto } from 'src/saler/saler.dto';
 import { Saler } from 'src/saler/saler.entity';
 import { SalerService } from 'src/saler/saler.service';
 import { SalerStatus } from 'src/saler/saler.type';
@@ -17,7 +18,7 @@ import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'saler' })
 export class SalerController extends BaseController {
-    constructor(private salerService: SalerService, private developerService: DeveloperService) {
+    constructor(private salerService: SalerService, private developerService: DeveloperService, private salerRolesService: SalerRolesService) {
         super();
     }
 
@@ -79,5 +80,19 @@ export class SalerController extends BaseController {
     async setApps(@TakeDeveloper() developer: any, @Body() dto: SetSalerAppsDto) {
         await this.salerService.setApps(developer.id, dto);
         return null;
+    }
+
+    @WriteDeveloperActionLog('设置代理角色')
+    @Post('set-roles')
+    async setRoles(@TakeDeveloper() developer: any, @Body() dto: SalerSetRoleDto) {
+        const role = await this.salerRolesService.findByDeveloperAndId(developer.id, dto.roleId);
+        if (!role) {
+            throw new NotAcceptableException('角色不存在');
+        }
+        const affected = await this.salerService.setRoleIdByIds(dto.ids, role, (query: UpdateQueryBuilder<Saler>) => {
+            query.andWhere('developerId = :developerId', { developerId: developer.id });
+            query.andWhere('parentId = 0');
+        });
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个代理[${role.name}]`);
     }
 }

@@ -29,6 +29,8 @@ import { SalerController } from './controller/saler.controller';
 import { SalerModule } from 'src/saler/saler.module';
 import { SalerEntryLinkModule } from 'src/saler/entry-link/entry-link.module';
 import { SalerEntryLinkController } from './controller/saler-entry-link.controller';
+import { SalerRolesModule } from 'src/saler-roles/saler-roles.module';
+import { SalerRolesController } from './controller/saler-roles.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -54,6 +56,7 @@ import { SalerEntryLinkController } from './controller/saler-entry-link.controll
         FeedbackModule,
         SalerModule,
         SalerEntryLinkModule,
+        SalerRolesModule,
     ],
     controllers: [
         DeveloperController,
@@ -68,6 +71,7 @@ import { SalerEntryLinkController } from './controller/saler-entry-link.controll
         CloudfunController,
         SalerController,
         SalerEntryLinkController,
+        SalerRolesController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
