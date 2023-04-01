@@ -234,7 +234,7 @@ export class DeviceService extends BaseService {
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
         manager?: Repository<Device>,
     ) {
-        const mgr = manager || this.deviceRepository.manager;
+        const mgr = manager || this.deviceRepository;
         const query = mgr.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
@@ -266,7 +266,7 @@ export class DeviceService extends BaseService {
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
         manager?: Repository<Device>,
     ) {
-        const mgr = manager || this.deviceRepository.manager;
+        const mgr = manager || this.deviceRepository;
         const query = mgr.createQueryBuilder();
         if (Array.isArray(device)) {
             query.where('id in (:...ids)', { ids: device });
@@ -292,7 +292,7 @@ export class DeviceService extends BaseService {
     }
 
     async addBanlanceAndExpirationTime(device: Device, minute: number, balance: number, reason: string, manager?: Repository<Device>) {
-        const mgr = manager || this.deviceRepository.manager;
+        const mgr = manager || this.deviceRepository;
         const affected = await mgr
             .createQueryBuilder()
             .where('id = :id', { id: device.id })

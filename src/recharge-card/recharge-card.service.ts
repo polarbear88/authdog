@@ -25,6 +25,8 @@ export class RechargeCardService extends BaseService {
         creator: number,
         creatorName: string,
         count: number,
+        createDetail = '开发者',
+        mgr: Repository<RechargeCard> = this.rechargeCardRepository,
     ) {
         const rechargeCards = [];
         for (let i = 0; i < count; i++) {
@@ -45,10 +47,10 @@ export class RechargeCardService extends BaseService {
             rechargeCard.price = rechargeCardType.price;
             rechargeCard.creator = creator;
             rechargeCard.creatorName = creatorName;
-            rechargeCard.createDetail = '开发者';
+            rechargeCard.createDetail = createDetail;
             rechargeCards.push(rechargeCard);
         }
-        return await this.rechargeCardRepository.save(rechargeCards);
+        return await mgr.save(rechargeCards);
     }
 
     async getListForDeveloper(appid: number, dto: GetRechargeCardListDto) {

@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ApplicationService } from 'src/application/application.service';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 import { BaseService } from 'src/common/service/base.service';
@@ -8,6 +9,7 @@ import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
 import { Developer } from 'src/developer/developer.entity';
 import { FundFlowService } from 'src/fund-flow/fund-flow.service';
+import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type.entity';
 import { ChangeUserPwdByDevDto } from 'src/user/user.dto';
 import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { SalerEntryLink } from './entry-link/entry-link.entity';
@@ -21,6 +23,7 @@ export class SalerService extends BaseService {
         @InjectRepository(Saler)
         private repo: Repository<Saler>,
         private fundFlowService: FundFlowService,
+        private applicationService: ApplicationService,
     ) {
         super(repo);
     }
@@ -92,6 +95,8 @@ export class SalerService extends BaseService {
         saler.balance = 0;
         saler.apps = [];
         saler.fromToken = '后台创建';
+        saler.topSalerId = 0;
+        saler.subordinatePrice = [];
         return await this.repo.save(saler);
     }
 
@@ -115,6 +120,15 @@ export class SalerService extends BaseService {
         saler.balance = 0;
         saler.apps = [];
         saler.fromToken = entryLink.token;
+        if (entryLink.salerId) {
+            const topSaler = (await this.findById(entryLink.salerId)) as Saler;
+            if (topSaler.topSalerId) {
+                saler.topSalerId = topSaler.topSalerId;
+            } else {
+                saler.topSalerId = topSaler.id;
+            }
+        }
+        saler.subordinatePrice = [];
         return await this.repo.save(saler);
     }
 
@@ -278,5 +292,77 @@ export class SalerService extends BaseService {
             return false;
         }
         return true;
+    }
+
+    async checkSalerAppPermission(saler: Saler, appid: number) {
+        const topSaler = saler.topSalerId ? ((await this.findById(saler.topSalerId)) as Saler) : saler;
+        if (!topSaler.apps.find((app) => app.id === appid)) {
+            throw new NotAcceptableException('应用不存在');
+        }
+        const app = await this.applicationService.findByDeveloperIdAndId(saler.developerId, appid);
+        if (!app || app.status !== 'published') {
+            throw new NotAcceptableException('应用不存在或被禁用');
+        }
+        return {
+            app,
+            topSaler,
+        };
+    }
+
+    async getRechargeCardTypePrice(saler: Saler, cardType: RechargeCardType) {
+        // 获取上级代理层级列表
+        const salerLevelList: Array<Saler> = [];
+        let parentId = saler.parentId;
+        while (parentId !== 0) {
+            const parentSaler = (await this.findById(parentId)) as Saler;
+            if (!parentSaler || parentSaler.status !== 'normal') {
+                throw new NotAcceptableException('上级代理不存在或状态异常');
+            }
+            salerLevelList.push(parentSaler);
+            parentId = parentSaler.parentId;
+        }
+        // 颠倒层级顺序
+        salerLevelList.reverse();
+        salerLevelList.push(saler);
+        let price = cardType.price;
+        // 计算到顶级代理的价格
+        const topSaler = salerLevelList[0];
+        // 从层级中删除顶级代理
+        salerLevelList.slice(1);
+        // 获取顶级代理制卡价格
+        price = price - price * (cardType.salerProfit / 100);
+        // 保存每一层的制卡价格和应得利润
+        const result: Array<{
+            saler: Saler;
+            price: number;
+            profit: number;
+        }> = [];
+        result.push({
+            saler: topSaler,
+            price,
+            profit: 0,
+        });
+        // 计算其他层级溢价
+        let previousPrice = price;
+        for (const itemSaler of salerLevelList) {
+            let overflowPercentage = itemSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
+            if (!overflowPercentage) {
+                overflowPercentage = 0;
+            }
+            previousPrice = price;
+            price = price + price * (overflowPercentage / 100);
+            result[result.length - 1].profit = price - previousPrice;
+            result.push({
+                saler: itemSaler,
+                price,
+                profit: 0,
+            });
+        }
+        return {
+            // 每层的代理和制卡价格和利润
+            result,
+            // 最终制卡价格
+            price,
+        };
     }
 }

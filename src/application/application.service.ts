@@ -54,6 +54,10 @@ export class ApplicationService extends BaseService {
         app.cryptoPublicKey = ecdh.getPublicKey().toString('hex');
     }
 
+    async findByDeveloperIdAndId(developerId: number, id: number) {
+        return await this.applicationRepository.findOne({ where: { developerId, id } });
+    }
+
     async findByDeveloperIdAndName(developerId: number, name: string) {
         return await this.applicationRepository.findOne({ where: { developerId, name } });
     }

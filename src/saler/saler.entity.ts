@@ -12,6 +12,9 @@ export class Saler extends BaseEntity {
     @Column()
     developerId: number;
 
+    @Column({ default: 0 })
+    topSalerId: number;
+
     @Column()
     parentId: number;
 
@@ -50,6 +53,10 @@ export class Saler extends BaseEntity {
 
     @Column({ default: '' })
     fromToken: string;
+
+    // 下属代理溢价配置 百分比
+    @Column({ type: 'json' })
+    subordinatePrice: Array<{ cardTypeId: number; percentage: number }>;
 
     shield = ['password', 'rawPassword', 'salt', 'ip', 'ver'];
 }

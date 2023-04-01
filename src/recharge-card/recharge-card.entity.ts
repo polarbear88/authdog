@@ -58,6 +58,6 @@ export class RechargeCard extends BaseEntity {
     userName: string;
 
     // 创建细节，记录多级代理的扣费细节
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'text' })
     createDetail: string;
 }

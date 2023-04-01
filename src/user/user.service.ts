@@ -347,7 +347,7 @@ export class UserService extends BaseService {
         whereCallback?: (query: SelectQueryBuilder<User>) => void,
         manager?: Repository<User>,
     ) {
-        const mgr = manager || this.userRepository.manager;
+        const mgr = manager || this.userRepository;
         const query = mgr.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -379,7 +379,7 @@ export class UserService extends BaseService {
         whereCallback?: (query: SelectQueryBuilder<User>) => void,
         manager?: Repository<User>,
     ) {
-        const mgr = manager || this.userRepository.manager;
+        const mgr = manager || this.userRepository;
         const query = mgr.createQueryBuilder();
         if (Array.isArray(user)) {
             query.where('id in (:...ids)', { ids: user });
@@ -405,7 +405,7 @@ export class UserService extends BaseService {
     }
 
     async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string, manager?: Repository<User>) {
-        const mgr = manager || this.userRepository.manager;
+        const mgr = manager || this.userRepository;
         const affected = await mgr
             .createQueryBuilder()
             .where('id = :id', { id: user.id })

@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 
 export class CreateRechargeCardTypeDto {
     @IsNotEmpty({ message: '名称不能为空' })
@@ -33,11 +33,11 @@ export class CreateRechargeCardTypeDto {
     @Min(0, { message: '价格最小值为0' })
     price: number;
 
-    @IsNotEmpty({ message: '代理价格不能为空' })
-    @IsNumber({}, { message: '代理价格必须是数字' })
-    @Max(10000000, { message: '代理价格最大值为1000万' })
+    @IsNotEmpty({ message: '代理利润不能为空' })
+    @IsInt({ message: '代理利润必须是数字' })
+    @Max(100, { message: '代理利润最大值为100' })
     @Min(0, { message: '代理价格最小值为0' })
-    salerPrice: number;
+    salerProfit: number;
 }
 
 export class DeleteRechargeCardTypeDto {
@@ -78,9 +78,9 @@ export class UpdateRechargeCardTypeDto {
     @Min(0, { message: '价格最小值为0' })
     price: number;
 
-    @IsNotEmpty({ message: '代理价格不能为空' })
-    @IsNumber({}, { message: '代理价格必须是数字' })
-    @Max(10000000, { message: '代理价格最大值为1000万' })
+    @IsNotEmpty({ message: '代理利润不能为空' })
+    @IsInt({ message: '代理利润必须是数字' })
+    @Max(100, { message: '代理利润最大值为100' })
     @Min(0, { message: '代理价格最小值为0' })
-    salerPrice: number;
+    salerProfit: number;
 }
