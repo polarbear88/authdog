@@ -1,5 +1,4 @@
 import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nestjs/common';
-import { ApplicationService } from 'src/application/application.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
@@ -9,12 +8,17 @@ import { SalerCreateRechargeCardDto } from 'src/recharge-card/recharge-card.dto'
 import { Saler } from 'src/saler/saler.entity';
 import { SalerService } from 'src/saler/saler.service';
 import { ParseSalerPipe } from '../parse-saler.pipe';
+import { SalerControlService } from '../saler-control.service';
 import { TakeSaler } from '../take-saler.decorator';
 
 @Roles(Role.Saler)
 @Controller({ version: '1', path: 'recharge-card' })
 export class RechargeCardController extends BaseController {
-    constructor(private salerService: SalerService, private rechargeCardTypeService: RechargeCardTypeService) {
+    constructor(
+        private salerService: SalerService,
+        private rechargeCardTypeService: RechargeCardTypeService,
+        private salerControlService: SalerControlService,
+    ) {
         super();
     }
 
@@ -62,5 +66,9 @@ export class RechargeCardController extends BaseController {
         if (!cardType || cardType.appid !== dto.appid) {
             throw new NotAcceptableException('充值卡类型不存在');
         }
+        const cards = await this.salerControlService.createRechargeCardBySaler(dto, saler, cardType);
+        return {
+            cards,
+        };
     }
 }

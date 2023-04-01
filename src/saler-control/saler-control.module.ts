@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ApplicationModule } from 'src/application/application.module';
 import { DeveloperModule } from 'src/developer/developer.module';
+import { FundFlowModule } from 'src/fund-flow/fund-flow.module';
 import { RechargeCardTypeModule } from 'src/recharge-card/card-type/recharge-card-type.module';
 import { RechargeCardModule } from 'src/recharge-card/recharge-card.module';
 import { SalerModule } from 'src/saler/saler.module';
@@ -29,6 +30,7 @@ import { SalerControlService } from './saler-control.service';
         ApplicationModule,
         RechargeCardTypeModule,
         RechargeCardModule,
+        FundFlowModule,
     ],
     providers: [SalerControlService],
     controllers: [SalerController, RechargeCardController],

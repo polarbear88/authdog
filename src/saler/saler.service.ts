@@ -328,7 +328,7 @@ export class SalerService extends BaseService {
         // 计算到顶级代理的价格
         const topSaler = salerLevelList[0];
         // 从层级中删除顶级代理
-        salerLevelList.slice(1);
+        salerLevelList.shift();
         // 获取顶级代理制卡价格
         price = price - price * (cardType.salerProfit / 100);
         // 保存每一层的制卡价格和应得利润
