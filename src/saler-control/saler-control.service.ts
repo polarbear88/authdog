@@ -1,4 +1,5 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { NumberUtils } from 'src/common/utils/number.utils';
 import { Developer } from 'src/developer/developer.entity';
 import { DeveloperService } from 'src/developer/developer.service';
 import { FundFlowService } from 'src/fund-flow/fund-flow.service';
@@ -42,7 +43,7 @@ export class SalerControlService {
                 await this.salerService.subBanlance(
                     developer,
                     saler,
-                    Math.floor(priceResult.price * dto.count),
+                    NumberUtils.toFixedTwo(priceResult.price * dto.count),
                     `制作充值卡[${cardType.name}${dto.count}张]`,
                     false,
                     undefined,
@@ -55,7 +56,7 @@ export class SalerControlService {
                     await this.salerService.addBanlance(
                         developer,
                         item.saler,
-                        Math.floor(item.profit * dto.count),
+                        NumberUtils.toFixedTwo(item.profit * dto.count),
                         `下级[${priceResult.result[i - 1].saler.name}]制作充值卡[${cardType.name}${dto.count}张]`,
                         undefined,
                         manager.getRepository(Saler),
@@ -65,7 +66,7 @@ export class SalerControlService {
                 await this.fundFlowService.createAddBalance(
                     developer,
                     null,
-                    Math.floor((cardType.price - cardType.price * cardType.salerProfit) * dto.count),
+                    NumberUtils.toFixedTwo((cardType.price - cardType.price * cardType.salerProfit) * dto.count),
                     `[${saler.name}]制作充值卡[${cardType.name}${dto.count}张]`,
                     0,
                 );

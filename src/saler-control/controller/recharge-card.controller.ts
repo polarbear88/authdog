@@ -2,6 +2,7 @@ import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nes
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
+import { NumberUtils } from 'src/common/utils/number.utils';
 import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type.entity';
 import { RechargeCardTypeService } from 'src/recharge-card/card-type/recharge-card-type.service';
 import { SalerCreateRechargeCardDto } from 'src/recharge-card/recharge-card.dto';
@@ -55,7 +56,7 @@ export class RechargeCardController extends BaseController {
         }
         const price = await this.salerService.getRechargeCardTypePrice(saler, cardType);
         return {
-            price: Math.floor(price.price),
+            price: NumberUtils.toFixedTwo(price.price),
         };
     }
 
