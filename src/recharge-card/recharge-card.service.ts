@@ -66,6 +66,22 @@ export class RechargeCardService extends BaseService {
         };
     }
 
+    async getListForSaler(salerId: number, dto: GetRechargeCardListDto) {
+        const data = await super.getPage(
+            PaginationUtils.objectToDto(dto, new GetRechargeCardListDto()),
+            [['creator = :creator', { creator: salerId }]],
+            'id',
+            'DESC',
+        );
+        data[0].forEach((item) => {
+            item.createDetail = '代理商';
+        });
+        return {
+            total: data[1],
+            list: data[0],
+        };
+    }
+
     async setStatusByIds(ids: Array<number>, status: RechargeCardStatus, whereCallback?: (query: UpdateQueryBuilder<RechargeCard>) => void) {
         const query = this.rechargeCardRepository
             .createQueryBuilder()
@@ -135,9 +151,8 @@ export class RechargeCardService extends BaseService {
         return str;
     }
 
-    async exportByEligible(appid: number, dto: ExportRechargeCardListDto) {
+    async exportByEligible(where: Array<Array<any>>, dto: ExportRechargeCardListDto) {
         const cldto = PaginationUtils.objectToDto(dto, new ExportRechargeCardListDto());
-        const where = [['appid = :appid', { appid }]];
         const count = await this.getCount(cldto, where);
         if (count <= 0) {
             throw new NotAcceptableException('没有可导出的数据');
@@ -160,6 +175,14 @@ export class RechargeCardService extends BaseService {
         return str;
     }
 
+    async exportByEligibleByDeveloper(appid: number, dto: ExportRechargeCardListDto) {
+        return this.exportByEligible([['appid = :appid', { appid }]], dto);
+    }
+
+    async exportByEligibleBySaler(salerId: number, dto: ExportRechargeCardListDto) {
+        return this.exportByEligible([['creator = :creator', { creator: salerId }]], dto);
+    }
+
     async setStatusByCards(
         appid: number,
         cards: Array<string>,
@@ -170,8 +193,8 @@ export class RechargeCardService extends BaseService {
             .createQueryBuilder()
             .update()
             .set({ status, ver: () => 'ver + 1' })
-            .where('card in (:...cards)', { cards })
-            .andWhere('appid = :appid', { appid });
+            .where('card in (:...cards)', { cards });
+        query.andWhere('appid = :appid', { appid });
         if (whereCallback) {
             whereCallback(query);
         }
@@ -198,8 +221,8 @@ export class RechargeCardService extends BaseService {
                 description: description,
                 ver: () => 'ver + 1',
             })
-            .where('card in (:...cards)', { cards })
-            .andWhere('appid = :appid', { appid });
+            .where('card in (:...cards)', { cards });
+        query.andWhere('appid = :appid', { appid });
         if (whereCallback) {
             whereCallback(query);
         }

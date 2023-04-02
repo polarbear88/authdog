@@ -1,13 +1,27 @@
 import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { NumberUtils } from 'src/common/utils/number.utils';
 import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type.entity';
 import { RechargeCardTypeService } from 'src/recharge-card/card-type/recharge-card-type.service';
-import { SalerCreateRechargeCardDto } from 'src/recharge-card/recharge-card.dto';
+import {
+    ExportRechargeCardListDto,
+    GetRechargeCardListDto,
+    RechargeCardExportDto,
+    RechargeCardReBuildByCardsSalerDto,
+    RechargeCardReBuildDto,
+    RechargeCardSetStatusByCardsSalerDto,
+    RechargeCardSetStatusDto,
+    SalerCreateRechargeCardDto,
+} from 'src/recharge-card/recharge-card.dto';
+import { RechargeCard } from 'src/recharge-card/recharge-card.entity';
+import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
+import { RechargeCardStatus } from 'src/recharge-card/recharge-card.type';
 import { Saler } from 'src/saler/saler.entity';
 import { SalerService } from 'src/saler/saler.service';
+import { SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { ParseSalerPipe } from '../parse-saler.pipe';
 import { SalerControlService } from '../saler-control.service';
 import { TakeSaler } from '../take-saler.decorator';
@@ -19,6 +33,7 @@ export class RechargeCardController extends BaseController {
         private salerService: SalerService,
         private rechargeCardTypeService: RechargeCardTypeService,
         private salerControlService: SalerControlService,
+        private rechargeCardService: RechargeCardService,
     ) {
         super();
     }
@@ -71,5 +86,73 @@ export class RechargeCardController extends BaseController {
         return {
             cards,
         };
+    }
+
+    @Post('list')
+    async getList(@TakeSaler() saler: any, @Body() dto: GetRechargeCardListDto) {
+        return await this.rechargeCardService.getListForSaler(saler.id, dto);
+    }
+
+    @Post('set-status')
+    async setStatus(@TakeSaler() saler: any, @Body() dto: RechargeCardSetStatusDto) {
+        const affected = await this.rechargeCardService.setStatusByIds(
+            dto.ids,
+            dto.status as RechargeCardStatus,
+            (query: UpdateQueryBuilder<RechargeCard>) => {
+                query.andWhere('creator = :creator', { creator: saler.id });
+                query.andWhere("status != 'used'");
+            },
+        );
+        return { affectedCount: affected };
+    }
+
+    @Post('rebuild')
+    async rebuild(@TakeSaler() saler: any, @Body() dto: RechargeCardReBuildDto) {
+        const affected = await this.rechargeCardService.rebuildCardByIds(dto.ids, (query: UpdateQueryBuilder<RechargeCard>) => {
+            query.andWhere('creator = :creator', { creator: saler.id });
+            query.andWhere("status != 'used'");
+        });
+        return { affectedCount: affected };
+    }
+
+    @Post('export-by-ids')
+    async exportByIds(@TakeSaler() saler: any, @Body() dto: RechargeCardExportDto) {
+        return await this.rechargeCardService.exportByIds(dto.ids, (query: SelectQueryBuilder<RechargeCard>) => {
+            query.andWhere('creator = :creator', { creator: saler.id });
+        });
+    }
+
+    @Throttle(10, 180)
+    @Post('export-by-eligible')
+    async exportByEligible(@TakeSaler() saler: any, @Body() dto: ExportRechargeCardListDto) {
+        return await this.rechargeCardService.exportByEligibleBySaler(saler.id, dto);
+    }
+
+    @Post('set-status-by-cards')
+    async setStatusByCards(@TakeSaler() saler: any, @Body() dto: RechargeCardSetStatusByCardsSalerDto) {
+        const affected = await this.rechargeCardService.setStatusByCards(
+            dto.appid,
+            dto.cards,
+            dto.status as RechargeCardStatus,
+            (query: UpdateQueryBuilder<RechargeCard>) => {
+                query.andWhere("status != 'used'");
+                query.andWhere('creator = :creator', { creator: saler.id });
+            },
+        );
+        return { affectedCount: affected };
+    }
+
+    @Post('rebuild-by-cards')
+    async rebuildByCards(@TakeSaler() saler: any, @Body() dto: RechargeCardReBuildByCardsSalerDto) {
+        const affected = await this.rechargeCardService.rebuildCardByCards(
+            dto.appid,
+            dto.cards,
+            dto.description,
+            (query: UpdateQueryBuilder<RechargeCard>) => {
+                query.andWhere("status != 'used'");
+                query.andWhere('creator = :creator', { creator: saler.id });
+            },
+        );
+        return { affectedCount: affected };
     }
 }

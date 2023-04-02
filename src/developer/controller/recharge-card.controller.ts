@@ -35,11 +35,7 @@ export class RechargeCardController extends BaseController {
 
     @WriteDeveloperActionLog('生产充值卡')
     @Post('create')
-    async createRechargeCard(
-        @TakeApplication() app: Application,
-        @Body() developerCreateRechargeCardDto: DeveloperCreateRechargeCardDto,
-        @Req() req: any,
-    ) {
+    async createRechargeCard(@TakeApplication() app: Application, @Body() developerCreateRechargeCardDto: DeveloperCreateRechargeCardDto) {
         const cardType = await this.rechargeCardTypeService.findByAppidAndId(app.id, developerCreateRechargeCardDto.typeId);
         if (!cardType) {
             throw new NotAcceptableException('充值卡类型不存在');
@@ -48,8 +44,8 @@ export class RechargeCardController extends BaseController {
             app.id,
             cardType,
             developerCreateRechargeCardDto.description,
-            req.user.id,
-            req.user.username,
+            0,
+            '开发者',
             developerCreateRechargeCardDto.count,
         );
         return this.setAffected({ cards }, `${cardType.name}[${developerCreateRechargeCardDto.count}]张`);
@@ -103,7 +99,7 @@ export class RechargeCardController extends BaseController {
     @Throttle(10, 180)
     @Post('export-by-eligible')
     async exportByEligible(@TakeApplication() app: Application, @Body() dto: ExportRechargeCardListDto) {
-        return await this.rechargeCardService.exportByEligible(app.id, dto);
+        return await this.rechargeCardService.exportByEligibleByDeveloper(app.id, dto);
     }
 
     @WriteDeveloperActionLog('设置充值卡状态')
