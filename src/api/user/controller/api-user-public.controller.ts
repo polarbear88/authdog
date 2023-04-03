@@ -120,7 +120,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
         if (user.expirationTime.getTime() <= time) {
             throw new NotAcceptableException('账号已过期无法操作');
         }
-        if (app.unbindDeductTime > 0 && time - user.expirationTime.getTime() < app.unbindDeductTime * 1000 * 60) {
+        if (app.unbindDeductTime > 0 && user.expirationTime.getTime() - time < app.unbindDeductTime * 1000 * 60) {
             throw new NotAcceptableException('账号剩余时间不足，无法扣时');
         }
         if (app.unbindDeductCount > 0 && user.balance < app.unbindDeductCount) {
@@ -131,6 +131,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
             await this.userService.subUserBalanceAndExpirationTime(user, app.unbindDeductTime, app.unbindDeductCount, '解绑扣减');
         }
         await this.userService.setCurrentDeviceId(user.id, null);
+        await this.userService.incUnbindCount(user.id, 1);
         return null;
     }
 

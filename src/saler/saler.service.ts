@@ -15,7 +15,7 @@ import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
 import { ChangeUserPwdByDevDto } from 'src/user/user.dto';
 import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { SalerEntryLink } from './entry-link/entry-link.entity';
-import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLoginDto, SetSalerAppsDto } from './saler.dto';
+import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLoginDto, SetSalerAppsDto, SetSubordinatePriceDto } from './saler.dto';
 import { Saler } from './saler.entity';
 import { SalerStatus } from './saler.type';
 import { NumberUtils } from 'src/common/utils/number.utils';
@@ -465,5 +465,16 @@ export class SalerService extends BaseService {
         } catch (e) {
             throw new NotAcceptableException('划转失败');
         }
+    }
+
+    async setSubordinatePrice(saler: Saler, dto: SetSubordinatePriceDto) {
+        await this.repo.update(
+            {
+                id: saler.id,
+            },
+            {
+                subordinatePrice: dto.subordinatePrice,
+            },
+        );
     }
 }

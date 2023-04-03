@@ -10,7 +10,9 @@ import {
     IsOptional,
     IsString,
     Length,
+    Max,
     MaxLength,
+    Min,
     ValidateNested,
 } from 'class-validator';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
@@ -159,4 +161,26 @@ export class FundTransferDto {
     @IsNotEmpty({ message: '转账用户id不能为空' })
     @IsNumber()
     id: number;
+}
+
+export class SetSubordinatePriceItemDto {
+    @IsNotEmpty({ message: '应用id不能为空' })
+    @IsInt()
+    appid: number;
+
+    @IsNotEmpty({ message: '卡类型id不能为空' })
+    @IsInt()
+    cardTypeId: number;
+
+    @IsNotEmpty({ message: '溢价比例不能为空' })
+    @IsInt()
+    @Min(1)
+    percentage: number;
+}
+export class SetSubordinatePriceDto {
+    @ValidateNested({ each: true })
+    @Type(() => SetSubordinatePriceItemDto)
+    @ArrayMinSize(1)
+    @ArrayMaxSize(100)
+    subordinatePrice: SetSubordinatePriceItemDto[];
 }

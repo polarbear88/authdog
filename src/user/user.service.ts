@@ -578,4 +578,8 @@ export class UserService extends BaseService {
             throw new NotAcceptableException('未登录');
         }
     }
+
+    async incUnbindCount(userId: number, count: number) {
+        await this.userRepository.update(userId, { unbindCount: () => `unbindCount + ${count}` });
+    }
 }
