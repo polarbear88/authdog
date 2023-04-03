@@ -27,7 +27,7 @@ export class UserFinancial extends BaseEntity {
     @Column()
     direction: 'in' | 'out';
 
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
+    @Column()
     value: number;
 
     @Column()

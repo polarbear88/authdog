@@ -43,7 +43,7 @@ export class SalerController extends BaseController {
     @WriteDeveloperActionLog('修改代理密码')
     @Post('change-password')
     async changePassword(@TakeDeveloper() developer: any, @Body() dto: ChangeUserPwdByDevDto) {
-        const saler = await this.salerService.changePasswordByDev(developer.id, dto);
+        const saler = await this.salerService.changePassword(developer.id, dto);
         return this.setAffected({}, saler.name);
     }
 
@@ -59,7 +59,7 @@ export class SalerController extends BaseController {
     @WriteDeveloperActionLog('增减代理余额')
     @Post('add-banlance')
     async addBanlance(@TakeDeveloper(ParseDeveloperPipe) developer: Developer, @Body() dto: AddSalerBanlanceDto) {
-        if (dto.amount === 0) {
+        if (dto.amount === 0 || isNaN(dto.amount)) {
             throw new NotAcceptableException('操作失败');
         }
         const saler = await this.salerService.findByIdAndDeveloperId(developer.id, dto.id);

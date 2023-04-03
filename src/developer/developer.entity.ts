@@ -32,7 +32,7 @@ export class Developer extends BaseEntity {
     status: DeveloperStatus;
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    income: number;
+    income: string;
 
     shield = ['password', 'rawPassword', 'salt', 'ip'];
 }

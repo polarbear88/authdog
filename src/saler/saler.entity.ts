@@ -46,7 +46,7 @@ export class Saler extends BaseEntity {
     status: SalerStatus;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    balance: number;
+    balance: string;
 
     @Column('json')
     apps: Array<{ id: number; name: string }>;

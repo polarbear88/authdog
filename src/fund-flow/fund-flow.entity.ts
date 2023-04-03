@@ -25,14 +25,14 @@ export class FundFlow extends BaseEntity {
     @Column()
     direction: 'in' | 'out';
 
-    @Column()
-    amount: number;
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    amount: string;
 
     @Column()
     reason: string;
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    before: number;
+    before: string;
 
     @Column({ nullable: true })
     other: string;

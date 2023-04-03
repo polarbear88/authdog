@@ -13,11 +13,12 @@ import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type
 import { SalerRoles } from 'src/saler-roles/saler-roles.entity';
 import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
 import { ChangeUserPwdByDevDto } from 'src/user/user.dto';
-import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { SalerEntryLink } from './entry-link/entry-link.entity';
 import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLoginDto, SetSalerAppsDto } from './saler.dto';
 import { Saler } from './saler.entity';
 import { SalerStatus } from './saler.type';
+import { NumberUtils } from 'src/common/utils/number.utils';
 
 @Injectable()
 export class SalerService extends BaseService {
@@ -27,6 +28,7 @@ export class SalerService extends BaseService {
         private fundFlowService: FundFlowService,
         private applicationService: ApplicationService,
         private salerRoleService: SalerRolesService,
+        private readonly entityManager: EntityManager,
     ) {
         super(repo);
     }
@@ -95,7 +97,7 @@ export class SalerService extends BaseService {
             isp: null,
             ipv4: '127.0.0.1',
         };
-        saler.balance = 0;
+        saler.balance = '0';
         saler.apps = [];
         saler.fromToken = '后台创建';
         saler.topSalerId = 0;
@@ -120,7 +122,7 @@ export class SalerService extends BaseService {
             isp: null,
             ipv4,
         };
-        saler.balance = 0;
+        saler.balance = '0';
         saler.apps = [];
         saler.fromToken = entryLink.token;
         if (entryLink.salerId) {
@@ -130,6 +132,35 @@ export class SalerService extends BaseService {
             } else {
                 saler.topSalerId = topSaler.id;
             }
+        }
+        saler.subordinatePrice = [];
+        return await this.repo.save(saler);
+    }
+
+    async createBySaler(parentSaler: Saler, dto: CreateSalerByDevloperDto) {
+        const saler = new Saler();
+        saler.developerId = parentSaler.developerId;
+        saler.name = dto.name;
+        saler.mobile = dto.mobile;
+        saler.rawPassword = dto.password;
+        saler.salt = CryptoUtils.makeSalt();
+        saler.password = CryptoUtils.encryptPassword(dto.password, saler.salt);
+        saler.parentId = parentSaler.id;
+        saler.parentName = parentSaler.name;
+        saler.ip = {
+            country: null,
+            province: null,
+            city: null,
+            isp: null,
+            ipv4: '127.0.0.1',
+        };
+        saler.balance = '0';
+        saler.apps = [];
+        saler.fromToken = '代理创建';
+        if (parentSaler.topSalerId) {
+            saler.topSalerId = parentSaler.topSalerId;
+        } else {
+            saler.topSalerId = parentSaler.id;
         }
         saler.subordinatePrice = [];
         return await this.repo.save(saler);
@@ -157,9 +188,12 @@ export class SalerService extends BaseService {
         });
     }
 
-    async changePasswordByDev(developerId: number, dto: ChangeUserPwdByDevDto) {
+    async changePassword(developerId: number, dto: ChangeUserPwdByDevDto, parentId?: number) {
         const saler = await this.findByIdAndDeveloperId(developerId, dto.id);
         if (saler) {
+            if (parentId && saler.parentId !== parentId) {
+                throw new NotAcceptableException('代理不存在');
+            }
             const salt = CryptoUtils.makeSalt();
             const password = CryptoUtils.encryptPassword(dto.password, salt);
             await this.repo.update(saler.id, { salt, password, rawPassword: dto.password });
@@ -211,7 +245,7 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createSubBalance(developer, saler, amount, reason, saler.balance);
+                await this.fundFlowService.createSubBalance(developer, saler, amount, reason, Number(saler.balance));
             }
             return affected.affected;
         }
@@ -245,7 +279,7 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createAddBalance(developer, saler, amount, reason, saler.balance);
+                await this.fundFlowService.createAddBalance(developer, saler, amount, reason, Number(saler.balance));
             }
             return affected.affected;
         }
@@ -327,7 +361,7 @@ export class SalerService extends BaseService {
         // 颠倒层级顺序
         salerLevelList.reverse();
         salerLevelList.push(saler);
-        let price = cardType.price;
+        let price = Number(cardType.price);
         // 计算到顶级代理的价格
         const topSaler = salerLevelList[0];
         // 从层级中删除顶级代理
@@ -379,6 +413,8 @@ export class SalerService extends BaseService {
             result,
             // 最终制卡价格
             price,
+            // 顶级代理的利润比例
+            topProfit,
         };
     }
 
@@ -409,5 +445,24 @@ export class SalerService extends BaseService {
                 salerRoleName: '',
             },
         );
+    }
+
+    async fundTransfer(developer: Developer, fromSaler: Saler, toSaler: Saler, amount: number) {
+        if (isNaN(amount) || amount <= 0) {
+            throw new NotAcceptableException('金额错误');
+        }
+        amount = Math.abs(amount);
+        amount = NumberUtils.toFixedTwo(amount);
+        if (Number(fromSaler.balance) < amount) {
+            throw new NotAcceptableException('余额不足');
+        }
+        try {
+            await this.entityManager.transaction(async (manager) => {
+                await this.subBanlance(developer, fromSaler, amount, `向[${toSaler.name}]划转`, false, undefined, manager.getRepository(Saler));
+                await this.addBanlance(developer, toSaler, amount, `来自[${fromSaler.name}]划转`, undefined, manager.getRepository(Saler));
+            });
+        } catch (e) {
+            throw new NotAcceptableException('划转失败');
+        }
     }
 }

@@ -27,10 +27,10 @@ export class FundFlowService extends BaseService {
             fundflow.roleType = 'developer';
         }
         fundflow.direction = direction;
-        fundflow.amount = amount;
+        fundflow.amount = amount.toFixed(2);
         fundflow.reason = reason;
         fundflow.other = other;
-        fundflow.before = before;
+        fundflow.before = before.toFixed(2);
         return this.repo.save(fundflow);
     }
 

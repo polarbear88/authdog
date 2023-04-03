@@ -35,7 +35,7 @@ export class RechargeCardTypeService extends BaseService {
         rechargeCardType.isNeedPassword = createRechargeCardTypeDto.isNeedPassword;
         rechargeCardType.time = createRechargeCardTypeDto.time;
         rechargeCardType.money = createRechargeCardTypeDto.money;
-        rechargeCardType.price = createRechargeCardTypeDto.price;
+        rechargeCardType.price = createRechargeCardTypeDto.price.toFixed(2);
         rechargeCardType.salerProfit = createRechargeCardTypeDto.salerProfit;
         return await this.rechargeCardTypeRepository.save(rechargeCardType);
     }
@@ -79,7 +79,7 @@ export class RechargeCardTypeService extends BaseService {
         rechargeCardType.prefix = updateRechargeCardTypeDto.prefix ? updateRechargeCardTypeDto.prefix.trim() : '';
         rechargeCardType.time = updateRechargeCardTypeDto.time;
         rechargeCardType.money = updateRechargeCardTypeDto.money;
-        rechargeCardType.price = updateRechargeCardTypeDto.price;
+        rechargeCardType.price = updateRechargeCardTypeDto.price.toFixed(2);
         rechargeCardType.salerProfit = updateRechargeCardTypeDto.salerProfit;
         return await this.rechargeCardTypeRepository.save(rechargeCardType);
     }

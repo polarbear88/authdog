@@ -150,3 +150,13 @@ export class SalerSetRoleDto {
     @IsInt({ message: '角色id必须是整数' })
     roleId: number;
 }
+
+export class FundTransferDto {
+    @IsNotEmpty({ message: '转账金额不能为空' })
+    @IsNumber()
+    amount: number;
+
+    @IsNotEmpty({ message: '转账用户id不能为空' })
+    @IsNumber()
+    id: number;
+}

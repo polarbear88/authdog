@@ -24,7 +24,7 @@ export class SalerControlService {
     async createRechargeCardBySaler(dto: SalerCreateRechargeCardDto, saler: Saler, cardType: RechargeCardType) {
         // 计算价格
         const priceResult = await this.salerService.getRechargeCardTypePrice(saler, cardType);
-        if (saler.balance < priceResult.price * dto.count) {
+        if (Number(saler.balance) < priceResult.price * dto.count) {
             throw new NotAcceptableException('余额不足');
         }
         const developer = (await this.developerService.findById(saler.developerId)) as Developer;
@@ -63,10 +63,11 @@ export class SalerControlService {
                     );
                 }
                 // 为开发者写入明细
+                const cardTypePrice = Number(cardType.price);
                 await this.fundFlowService.createAddBalance(
                     developer,
                     null,
-                    NumberUtils.toFixedTwo((cardType.price - cardType.price * cardType.salerProfit) * dto.count),
+                    NumberUtils.toFixedTwo((cardTypePrice - cardTypePrice * priceResult.topProfit) * dto.count),
                     `[${saler.name}]制作充值卡[${cardType.name}${dto.count}张]`,
                     0,
                 );
