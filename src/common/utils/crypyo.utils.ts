@@ -1,5 +1,8 @@
 import crypto from 'crypto';
 import { RandomUtils } from './random.utils';
+import { ECDHUtils } from './ecdh.utils';
+import { BadRequestException } from '@nestjs/common';
+import { RSAUtils } from './rsa.utils';
 const _md5 = require('md5-node');
 
 export class CryptoUtils {
@@ -81,5 +84,49 @@ export class CryptoUtils {
 
     public static makeSalt(): string {
         return RandomUtils.getHexString(8);
+    }
+
+    public static decryptECDHJSON(data: any, clientPublicKey: string, privateKey: string) {
+        try {
+            const ecdh = new ECDHUtils();
+            ecdh.setPrivateKey(Buffer.from(privateKey, 'hex'));
+            const sharedSecret = ecdh.getSharedSecret(Buffer.from(clientPublicKey, 'hex')).toString('hex');
+            const aesKey = sharedSecret.slice(0, 32);
+            return {
+                data: this.decryptAESJSON(data, aesKey),
+                aesKey,
+            };
+        } catch (error) {
+            throw new BadRequestException('错误的请求');
+        }
+    }
+
+    public static decryptRSAJSON(data: string, aesKeyData: string, privateKey: string) {
+        try {
+            const rsa = new RSAUtils();
+            rsa.setPrivateKey(privateKey);
+            const aeskey = rsa.decrypt(Buffer.from(aesKeyData, 'base64')).toString();
+            if (!aeskey || aeskey.length !== 32) {
+                throw new BadRequestException('错误的请求');
+            }
+            return {
+                data: this.decryptAESJSON(data, aeskey),
+                aesKey: aeskey,
+            };
+        } catch (error) {
+            throw new BadRequestException('错误的请求');
+        }
+    }
+
+    public static decryptAESJSON(data: string, key: string) {
+        try {
+            const decryptData = CryptoUtils.aesCBCDecrypt(Buffer.from(data, 'base64'), key, 'aes-256-cbc', '0000000000000000', true);
+            if (!decryptData) {
+                throw new BadRequestException('错误的请求');
+            }
+            return JSON.parse(decryptData.toString());
+        } catch (error) {
+            throw new BadRequestException('错误的请求');
+        }
     }
 }

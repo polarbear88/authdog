@@ -31,9 +31,7 @@ import { UserFinancial } from './user-financial/user-financial.entity';
 import { Saler } from './saler/saler.entity';
 import { FundFlow } from './fund-flow/fund-flow.entity';
 import { SalerEntryLink } from './saler/entry-link/entry-link.entity';
-import { SalerModule } from './saler/saler.module';
 import { SalerControlModule } from './saler-control/saler-control.module';
-import { SalerRolesModule } from './saler-roles/saler-roles.module';
 import { SalerRoles } from './saler-roles/saler-roles.entity';
 
 @Module({

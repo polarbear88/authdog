@@ -4,6 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import express from 'express';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { TcpApiModule } from './api/tcp-api/tcp-api.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -27,5 +29,15 @@ async function bootstrap() {
     // SwaggerModule.setup('api', app, document);
 
     await app.listen(+configService.get('APP_PORT'));
+
+    // TCP API
+    const tcpApiApp = await NestFactory.createMicroservice<MicroserviceOptions>(TcpApiModule, {
+        transport: Transport.TCP,
+        options: {
+            port: +configService.get('TCP_API_PORT'),
+            host: '0.0.0.0',
+        },
+    });
+    tcpApiApp.listen();
 }
 bootstrap();
