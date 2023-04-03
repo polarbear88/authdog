@@ -488,4 +488,23 @@ export class SalerService extends BaseService {
             },
         );
     }
+
+    async deleteSaler(developerId: number, salerId: number) {
+        let count = 0;
+        const subordinates = await this.repo.find({
+            where: {
+                developerId,
+                parentId: salerId,
+            },
+        });
+        for (const subordinate of subordinates) {
+            count += await this.deleteSaler(developerId, subordinate.id);
+        }
+        await this.repo.delete({
+            developerId,
+            id: salerId,
+        });
+        count++;
+        return count;
+    }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, NotAcceptableException, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nestjs/common';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
@@ -94,5 +94,14 @@ export class SalerController extends BaseController {
             query.andWhere('parentId = 0');
         });
         return this.setAffected({ affectedCount: affected }, `操作${affected}个代理[${role.name}]`);
+    }
+
+    @WriteDeveloperActionLog('删除代理')
+    @Get('delete')
+    async delete(@TakeDeveloper() developer: any, @Query('id') id: string) {
+        const salerId = parseInt(id.trim());
+        if (!salerId) throw new NotAcceptableException('参数错误');
+        const affected = await this.salerService.deleteSaler(developer.id, salerId);
+        return this.setAffected({ affectedCount: affected }, `影响${affected}个代理`);
     }
 }
