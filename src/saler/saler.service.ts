@@ -395,9 +395,10 @@ export class SalerService extends BaseService {
         // 计算其他层级溢价
         let previousPrice = price;
         for (const itemSaler of salerLevelList) {
-            let overflowPercentage = itemSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
+            const overflowPercentage = itemSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
             if (!overflowPercentage) {
-                overflowPercentage = 0;
+                // overflowPercentage = 0;
+                throw new NotAcceptableException('上级代理价格配置异常');
             }
             previousPrice = price;
             price = price + price * (overflowPercentage / 100);

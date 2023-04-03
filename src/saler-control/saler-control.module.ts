@@ -12,6 +12,8 @@ import { RechargeCardController } from './controller/recharge-card.controller';
 import { SalerController } from './controller/saler.controller';
 import { SalerControlService } from './saler-control.service';
 import { SubordinateController } from './controller/subordinate.controller';
+import { SalerEntryLinkModule } from 'src/saler/entry-link/entry-link.module';
+import { SubordinateEntryController } from './controller/subordinate-entry-link.controller';
 
 // saler的控制器不能放在saler模块中，因为saler控制器需要访问developer的service，
 // 而developer又依赖saler的service，这样就会造成循环依赖，所以这里把saler的控制器单独放在一个模块中
@@ -32,8 +34,9 @@ import { SubordinateController } from './controller/subordinate.controller';
         RechargeCardTypeModule,
         RechargeCardModule,
         FundFlowModule,
+        SalerEntryLinkModule,
     ],
     providers: [SalerControlService],
-    controllers: [SalerController, RechargeCardController, SubordinateController],
+    controllers: [SalerController, RechargeCardController, SubordinateController, SubordinateEntryController],
 })
 export class SalerControlModule {}

@@ -56,7 +56,7 @@ export class Saler extends BaseEntity {
 
     // 下属代理溢价配置 百分比
     @Column({ type: 'json' })
-    subordinatePrice: Array<{ cardTypeId: number; percentage: number }>;
+    subordinatePrice: Array<{ appid: number; cardTypeId: number; percentage: number }>;
 
     @Column({ default: 0 })
     salerRoleId: number;
