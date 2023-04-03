@@ -8,6 +8,10 @@ import { UserStatus } from '../user/user.type';
 export class Device extends BaseEntity {
     @Index()
     @Column()
+    developerId: number;
+
+    @Index()
+    @Column()
     appid: number;
 
     @Column()

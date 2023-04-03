@@ -44,7 +44,8 @@ export class SalerControlService {
                     developer,
                     saler,
                     NumberUtils.toFixedTwo(priceResult.price * dto.count),
-                    `制作充值卡[${cardType.name}${dto.count}张]`,
+                    '制作充值卡',
+                    `[${cardType.name}${dto.count}张]`,
                     false,
                     undefined,
                     manager.getRepository(Saler),
@@ -57,7 +58,8 @@ export class SalerControlService {
                         developer,
                         item.saler,
                         NumberUtils.toFixedTwo(item.profit * dto.count),
-                        `下级[${priceResult.result[i - 1].saler.name}]制作充值卡[${cardType.name}${dto.count}张]`,
+                        `制作充值卡`,
+                        `下级[${priceResult.result[i - 1].saler.name}][${cardType.name}${dto.count}张]`,
                         undefined,
                         manager.getRepository(Saler),
                     );
@@ -68,8 +70,9 @@ export class SalerControlService {
                     developer,
                     null,
                     NumberUtils.toFixedTwo((cardTypePrice - cardTypePrice * priceResult.topProfit) * dto.count),
-                    `[${saler.name}]制作充值卡[${cardType.name}${dto.count}张]`,
+                    `制作充值卡`,
                     0,
+                    `[${saler.name}]${cardType.name}${dto.count}张`,
                 );
                 // 生成充值卡
                 cards = await this.rechargeService.createRechargeCard(

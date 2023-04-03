@@ -5,6 +5,8 @@ import { Developer } from 'src/developer/developer.entity';
 import { Saler } from 'src/saler/saler.entity';
 import { Repository } from 'typeorm';
 import { FundFlow } from './fund-flow.entity';
+import { FundFlowGetListDto } from './fund-flow.dto';
+import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 
 @Injectable()
 export class FundFlowService extends BaseService {
@@ -40,5 +42,20 @@ export class FundFlowService extends BaseService {
 
     async createAddBalance(developer: Developer, saler: Saler | null, amount: number, reason: string, before: number, other?: string) {
         return await this.create('in', developer, saler, amount, reason, before, other);
+    }
+
+    async getList(developerId: number, salerId: number, dto: FundFlowGetListDto) {
+        const where = [['developerId = :developerId', { developerId }]];
+        if (salerId) {
+            (where as any).push(['salerId = :salerId', { salerId }]);
+        }
+        const clDto = PaginationUtils.objectToDto(dto, new FundFlowGetListDto());
+        const data = await super.getPage(clDto, where, 'id', 'DESC');
+        const amount_total = (await super.getAllQuery(clDto, where).select('SUM(amount) as amount_total').execute())[0];
+        return {
+            total: data[1],
+            list: data[0],
+            amount_total: amount_total.amount_total,
+        };
     }
 }

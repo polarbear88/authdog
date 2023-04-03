@@ -9,6 +9,10 @@ import { UserStatus } from './user.type';
 export class User extends BaseEntity {
     @Index()
     @Column()
+    developerId: number;
+
+    @Index()
+    @Column()
     appid: number;
 
     @Column({ length: 16 })

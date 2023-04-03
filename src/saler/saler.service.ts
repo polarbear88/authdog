@@ -219,6 +219,7 @@ export class SalerService extends BaseService {
         saler: Saler | Array<number>,
         amount: number,
         reason: string,
+        otherInfo: string,
         force = false,
         whereCallback?: (query: SelectQueryBuilder<Saler>) => void,
         manager?: Repository<Saler>,
@@ -245,7 +246,7 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createSubBalance(developer, saler, amount, reason, Number(saler.balance));
+                await this.fundFlowService.createSubBalance(developer, saler, amount, reason, Number(saler.balance), otherInfo);
             }
             return affected.affected;
         }
@@ -257,6 +258,7 @@ export class SalerService extends BaseService {
         saler: Saler | Array<number>,
         amount: number,
         reason: string,
+        otherInfo: string,
         whereCallback?: (query: SelectQueryBuilder<Saler>) => void,
         manager?: Repository<Saler>,
     ) {
@@ -279,7 +281,7 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createAddBalance(developer, saler, amount, reason, Number(saler.balance));
+                await this.fundFlowService.createAddBalance(developer, saler, amount, reason, Number(saler.balance), otherInfo);
             }
             return affected.affected;
         }
@@ -459,8 +461,17 @@ export class SalerService extends BaseService {
         }
         try {
             await this.entityManager.transaction(async (manager) => {
-                await this.subBanlance(developer, fromSaler, amount, `向[${toSaler.name}]划转`, false, undefined, manager.getRepository(Saler));
-                await this.addBanlance(developer, toSaler, amount, `来自[${fromSaler.name}]划转`, undefined, manager.getRepository(Saler));
+                await this.subBanlance(
+                    developer,
+                    fromSaler,
+                    amount,
+                    '资金划转',
+                    `向[${toSaler.name}]`,
+                    false,
+                    undefined,
+                    manager.getRepository(Saler),
+                );
+                await this.addBanlance(developer, toSaler, amount, '资金划转', `来自[${fromSaler.name}]`, undefined, manager.getRepository(Saler));
             });
         } catch (e) {
             throw new NotAcceptableException('划转失败');

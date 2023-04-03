@@ -40,6 +40,7 @@ export class DeviceService extends BaseService {
         const device = new Device();
         device.appid = app.id;
         device.deviceId = deviceDto.deviceId;
+        device.developerId = app.developerId;
         if (StringUtils.isNotEmpty(deviceDto.otherInfo)) {
             device.otherInfo = deviceDto.otherInfo;
         }

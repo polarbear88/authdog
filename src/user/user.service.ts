@@ -97,6 +97,7 @@ export class UserService extends BaseService {
     async create(createUserDto: CreateUserDto, app: Application, ip: string) {
         const user = new User();
         user.appid = app.id;
+        user.developerId = app.developerId;
         user.name = createUserDto.name;
         user.mobile = StringUtils.toString(createUserDto.mobile);
         user.otherInfo = StringUtils.toString(createUserDto.otherInfo);

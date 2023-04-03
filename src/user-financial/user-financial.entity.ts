@@ -8,6 +8,9 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity()
 export class UserFinancial extends BaseEntity {
     @Column()
+    developerId: number;
+
+    @Column()
     appid: number;
 
     @Column()

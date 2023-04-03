@@ -5,6 +5,8 @@ import { Device } from 'src/device/device.entity';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserFinancial } from './user-financial.entity';
+import { UserFinancialGetListDto } from './user-financial.dto';
+import { PaginationUtils } from 'src/common/pagination/pagination.utils';
 
 @Injectable()
 export class UserFinancialService extends BaseService {
@@ -18,6 +20,7 @@ export class UserFinancialService extends BaseService {
     async createSubUserTime(user: User | Device, value: number, reason: string, before: string, other?: string) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
+        userFinancial.developerId = user.developerId;
         if (user instanceof User) {
             userFinancial.userType = 'user';
             userFinancial.userId = user.id;
@@ -39,6 +42,7 @@ export class UserFinancialService extends BaseService {
     async createAddUserTime(user: User | Device, value: number, reason: string, before: string, other?: string) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
+        userFinancial.developerId = user.developerId;
         if (user instanceof User) {
             userFinancial.userType = 'user';
             userFinancial.userId = user.id;
@@ -60,6 +64,7 @@ export class UserFinancialService extends BaseService {
     async createSubUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
+        userFinancial.developerId = user.developerId;
         if (user instanceof User) {
             userFinancial.userType = 'user';
             userFinancial.userId = user.id;
@@ -81,6 +86,7 @@ export class UserFinancialService extends BaseService {
     async createAddUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
+        userFinancial.developerId = user.developerId;
         if (user instanceof User) {
             userFinancial.userType = 'user';
             userFinancial.userId = user.id;
@@ -97,5 +103,17 @@ export class UserFinancialService extends BaseService {
         userFinancial.other = other;
         userFinancial.before = before;
         return this.repo.save(userFinancial);
+    }
+
+    async getList(developerId: number, dto: UserFinancialGetListDto) {
+        const where = [['developerId = :developerId', { developerId }]];
+        const clDto = PaginationUtils.objectToDto(dto, new UserFinancialGetListDto());
+        const data = await super.getPage(clDto, where, 'id', 'DESC');
+        const amount_total = (await super.getAllQuery(clDto, where).select('SUM(value) as amount_total').execute())[0];
+        return {
+            total: data[1],
+            list: data[0],
+            amount_total: amount_total.amount_total,
+        };
     }
 }

@@ -31,6 +31,10 @@ import { SalerEntryLinkModule } from 'src/saler/entry-link/entry-link.module';
 import { SalerEntryLinkController } from './controller/saler-entry-link.controller';
 import { SalerRolesModule } from 'src/saler-roles/saler-roles.module';
 import { SalerRolesController } from './controller/saler-roles.controller';
+import { FundFlowController } from './controller/fund-flow.controller';
+import { FundFlowModule } from 'src/fund-flow/fund-flow.module';
+import { UserFinancialModule } from 'src/user-financial/user-financial.module';
+import { UserFinancialController } from './controller/user-financial.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -57,6 +61,8 @@ import { SalerRolesController } from './controller/saler-roles.controller';
         SalerModule,
         SalerEntryLinkModule,
         SalerRolesModule,
+        FundFlowModule,
+        UserFinancialModule,
     ],
     controllers: [
         DeveloperController,
@@ -72,6 +78,8 @@ import { SalerRolesController } from './controller/saler-roles.controller';
         SalerController,
         SalerEntryLinkController,
         SalerRolesController,
+        FundFlowController,
+        UserFinancialController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
