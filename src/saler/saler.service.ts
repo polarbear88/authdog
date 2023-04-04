@@ -396,8 +396,9 @@ export class SalerService extends BaseService {
         });
         // 计算其他层级溢价
         let previousPrice = price;
+        let lastSaler = topSaler;
         for (const itemSaler of salerLevelList) {
-            const overflowPercentage = itemSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
+            const overflowPercentage = lastSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
             if (!overflowPercentage) {
                 // overflowPercentage = 0;
                 throw new NotAcceptableException('上级代理价格配置异常');
@@ -410,6 +411,7 @@ export class SalerService extends BaseService {
                 price,
                 profit: 0,
             });
+            lastSaler = itemSaler;
         }
         return {
             // 每层的代理和制卡价格和利润
