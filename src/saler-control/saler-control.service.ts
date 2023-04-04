@@ -52,14 +52,14 @@ export class SalerControlService {
                 );
                 // 为每层代理加钱
                 // 不处理最后一层代理 因为是他在制作充值卡
-                for (let i = 1; i < priceResult.result.length; i++) {
+                for (let i = 0; i < priceResult.result.length - 1; i++) {
                     const item = priceResult.result[i];
                     await this.salerService.addBanlance(
                         developer,
                         item.saler,
                         NumberUtils.toFixedTwo(item.profit * dto.count),
                         `制作充值卡`,
-                        `下级[${priceResult.result[i - 1].saler.name}][${cardType.name}${dto.count}张]`,
+                        `下级[${priceResult.result[i + 1].saler.name}][${cardType.name}${dto.count}张]`,
                         undefined,
                         manager.getRepository(Saler),
                     );
