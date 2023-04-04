@@ -1,14 +1,13 @@
-import { Controller, NotAcceptableException, Post, UseInterceptors } from '@nestjs/common';
+import { Controller, NotAcceptableException, Post, SetMetadata, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/application/application.entity';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
 import { DeveloperService } from 'src/developer/developer.service';
-import { ApiEncryptInterceptor } from '../api-encrypt.interceptor';
 import { ApiUserDeviceInterceptor } from '../api-user-device.interceptor';
 import { ApiTakeApp } from '../decorator/api-take-app.decorator';
 
 @Public()
-@UseInterceptors(ApiUserDeviceInterceptor, ApiEncryptInterceptor)
+@UseInterceptors(ApiUserDeviceInterceptor)
 @Controller({ version: '1' })
 export class ApiAppController extends BaseController {
     constructor(private developerService: DeveloperService) {

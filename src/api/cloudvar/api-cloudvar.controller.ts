@@ -1,4 +1,4 @@
-import { Body, Controller, NotAcceptableException, Post, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, NotAcceptableException, Post, Req, SetMetadata, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/application/application.entity';
 import { GetCloudvarDto } from 'src/cloudvar/cloudvar.dto';
 import { CloudvarService } from 'src/cloudvar/cloudvar.service';
@@ -7,12 +7,11 @@ import { Public } from 'src/common/decorator/public.decorator';
 import { DeveloperService } from 'src/developer/developer.service';
 import { DeviceService } from 'src/device/device.service';
 import { UserService } from 'src/user/user.service';
-import { ApiEncryptInterceptor } from '../api-encrypt.interceptor';
 import { ApiUserDeviceInterceptor } from '../api-user-device.interceptor';
 import { ApiTakeApp } from '../decorator/api-take-app.decorator';
 
 @Public()
-@UseInterceptors(ApiUserDeviceInterceptor, ApiEncryptInterceptor)
+@UseInterceptors(ApiUserDeviceInterceptor)
 @Controller({ version: '1' })
 export class ApiCloudvarController extends BaseController {
     constructor(

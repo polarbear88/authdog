@@ -1,4 +1,4 @@
-import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Req, SetMetadata, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/application/application.entity';
 import { CloudfunRuner } from 'src/cloudfun/cloudfun-runer';
 import { RunCloudfunDto } from 'src/Cloudfun/cloudfun.dto';
@@ -10,12 +10,11 @@ import { Device } from 'src/device/device.entity';
 import { DeviceService } from 'src/device/device.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
-import { ApiEncryptInterceptor } from '../api-encrypt.interceptor';
 import { ApiUserDeviceInterceptor } from '../api-user-device.interceptor';
 import { ApiTakeApp } from '../decorator/api-take-app.decorator';
 
 @Public()
-@UseInterceptors(ApiUserDeviceInterceptor, ApiEncryptInterceptor)
+@UseInterceptors(ApiUserDeviceInterceptor)
 @Controller({ version: '1' })
 export class ApiCloudfunController extends BaseController {
     constructor(

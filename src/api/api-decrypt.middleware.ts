@@ -32,6 +32,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             throw new BadRequestException('请传入客户端版本号');
         }
         request['clientVersion'] = decryptData.clientVersion;
+        request['is_need_encrypt_res'] = true;
         next();
     }
 
