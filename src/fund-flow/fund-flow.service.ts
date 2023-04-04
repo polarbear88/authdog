@@ -17,7 +17,16 @@ export class FundFlowService extends BaseService {
         super(repo);
     }
 
-    async create(direction: 'in' | 'out', developer: Developer, saler: Saler | null, amount: number, reason: string, before: number, other?: string) {
+    async create(
+        direction: 'in' | 'out',
+        developer: Developer,
+        saler: Saler | null,
+        amount: number,
+        reason: string,
+        before: number,
+        other?: string,
+        mgr = this.repo,
+    ) {
         const fundflow = new FundFlow();
         fundflow.developerId = developer.id;
         fundflow.developerName = developer.name;
@@ -33,15 +42,31 @@ export class FundFlowService extends BaseService {
         fundflow.reason = reason;
         fundflow.other = other;
         fundflow.before = before.toFixed(2);
-        return this.repo.save(fundflow);
+        return mgr.save(fundflow);
     }
 
-    async createSubBalance(developer: Developer, saler: Saler | null, amount: number, reason: string, before: number, other?: string) {
-        return await this.create('out', developer, saler, -amount, reason, before, other);
+    async createSubBalance(
+        developer: Developer,
+        saler: Saler | null,
+        amount: number,
+        reason: string,
+        before: number,
+        other?: string,
+        mgr = this.repo,
+    ) {
+        return await this.create('out', developer, saler, -amount, reason, before, other, mgr);
     }
 
-    async createAddBalance(developer: Developer, saler: Saler | null, amount: number, reason: string, before: number, other?: string) {
-        return await this.create('in', developer, saler, amount, reason, before, other);
+    async createAddBalance(
+        developer: Developer,
+        saler: Saler | null,
+        amount: number,
+        reason: string,
+        before: number,
+        other?: string,
+        mgr = this.repo,
+    ) {
+        return await this.create('in', developer, saler, amount, reason, before, other, mgr);
     }
 
     async getList(developerId: number, salerId: number, dto: FundFlowGetListDto) {

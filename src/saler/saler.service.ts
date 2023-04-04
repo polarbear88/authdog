@@ -19,6 +19,7 @@ import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLogin
 import { Saler } from './saler.entity';
 import { SalerStatus } from './saler.type';
 import { NumberUtils } from 'src/common/utils/number.utils';
+import { FundFlow } from 'src/fund-flow/fund-flow.entity';
 
 @Injectable()
 export class SalerService extends BaseService {
@@ -246,7 +247,15 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createSubBalance(developer, saler, amount, reason, Number(saler.balance), otherInfo);
+                await this.fundFlowService.createSubBalance(
+                    developer,
+                    saler,
+                    amount,
+                    reason,
+                    Number(saler.balance),
+                    otherInfo,
+                    manager.manager.getRepository(FundFlow),
+                );
             }
             return affected.affected;
         }
@@ -281,7 +290,15 @@ export class SalerService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(saler)) {
-                await this.fundFlowService.createAddBalance(developer, saler, amount, reason, Number(saler.balance), otherInfo);
+                await this.fundFlowService.createAddBalance(
+                    developer,
+                    saler,
+                    amount,
+                    reason,
+                    Number(saler.balance),
+                    otherInfo,
+                    manager.manager.getRepository(FundFlow),
+                );
             }
             return affected.affected;
         }

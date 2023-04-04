@@ -2,6 +2,7 @@ import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { NumberUtils } from 'src/common/utils/number.utils';
 import { Developer } from 'src/developer/developer.entity';
 import { DeveloperService } from 'src/developer/developer.service';
+import { FundFlow } from 'src/fund-flow/fund-flow.entity';
 import { FundFlowService } from 'src/fund-flow/fund-flow.service';
 import { RechargeCardType } from 'src/recharge-card/card-type/recharge-card-type.entity';
 import { SalerCreateRechargeCardDto } from 'src/recharge-card/recharge-card.dto';
@@ -73,6 +74,7 @@ export class SalerControlService {
                     `制作充值卡`,
                     0,
                     `[${saler.name}]${cardType.name}${dto.count}张`,
+                    manager.getRepository(FundFlow),
                 );
                 // 生成充值卡
                 cards = await this.rechargeService.createRechargeCard(

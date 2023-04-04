@@ -27,6 +27,7 @@ import {
 } from './user.dto';
 import { User } from './user.entity';
 import { UserStatus } from './user.type';
+import { UserFinancial } from 'src/user-financial/user-financial.entity';
 
 @Injectable()
 export class UserService extends BaseService {
@@ -366,7 +367,14 @@ export class UserService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(user)) {
-                await this.userFinancialService.createAddUserBalance(user, balance, reason, user.balance + '');
+                await this.userFinancialService.createAddUserBalance(
+                    user,
+                    balance,
+                    reason,
+                    user.balance + '',
+                    undefined,
+                    manager.manager.getRepository(UserFinancial),
+                );
             }
             return affected.affected;
         }
@@ -398,7 +406,14 @@ export class UserService extends BaseService {
             .execute();
         if (affected.affected > 0) {
             if (!Array.isArray(user)) {
-                await this.userFinancialService.createAddUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+                await this.userFinancialService.createAddUserTime(
+                    user,
+                    minute,
+                    reason,
+                    DateUtils.formatDateTime(user.expirationTime),
+                    undefined,
+                    manager.manager.getRepository(UserFinancial),
+                );
             }
             return affected.affected;
         }
@@ -418,8 +433,22 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
-            await this.userFinancialService.createAddUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
-            await this.userFinancialService.createAddUserBalance(user, balance, reason, user.balance + '');
+            await this.userFinancialService.createAddUserTime(
+                user,
+                minute,
+                reason,
+                DateUtils.formatDateTime(user.expirationTime),
+                undefined,
+                manager.manager.getRepository(UserFinancial),
+            );
+            await this.userFinancialService.createAddUserBalance(
+                user,
+                balance,
+                reason,
+                user.balance + '',
+                undefined,
+                manager.manager.getRepository(UserFinancial),
+            );
             return true;
         }
         throw new NotAcceptableException('操作失败');

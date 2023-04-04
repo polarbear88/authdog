@@ -17,7 +17,7 @@ export class UserFinancialService extends BaseService {
         super(repo);
     }
 
-    async createSubUserTime(user: User | Device, value: number, reason: string, before: string, other?: string) {
+    async createSubUserTime(user: User | Device, value: number, reason: string, before: string, other?: string, mgr = this.repo) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
         userFinancial.developerId = user.developerId;
@@ -36,10 +36,10 @@ export class UserFinancialService extends BaseService {
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;
-        return this.repo.save(userFinancial);
+        return mgr.save(userFinancial);
     }
 
-    async createAddUserTime(user: User | Device, value: number, reason: string, before: string, other?: string) {
+    async createAddUserTime(user: User | Device, value: number, reason: string, before: string, other?: string, mgr = this.repo) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
         userFinancial.developerId = user.developerId;
@@ -58,10 +58,10 @@ export class UserFinancialService extends BaseService {
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;
-        return this.repo.save(userFinancial);
+        return mgr.save(userFinancial);
     }
 
-    async createSubUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string) {
+    async createSubUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string, mgr = this.repo) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
         userFinancial.developerId = user.developerId;
@@ -80,10 +80,10 @@ export class UserFinancialService extends BaseService {
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;
-        return this.repo.save(userFinancial);
+        return mgr.save(userFinancial);
     }
 
-    async createAddUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string) {
+    async createAddUserBalance(user: User | Device, value: number, reason: string, before: string, other?: string, mgr = this.repo) {
         const userFinancial = new UserFinancial();
         userFinancial.appid = user.appid;
         userFinancial.developerId = user.developerId;
@@ -102,7 +102,7 @@ export class UserFinancialService extends BaseService {
         userFinancial.reason = reason;
         userFinancial.other = other;
         userFinancial.before = before;
-        return this.repo.save(userFinancial);
+        return mgr.save(userFinancial);
     }
 
     async getList(developerId: number, dto: UserFinancialGetListDto) {
