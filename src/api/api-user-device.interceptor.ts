@@ -19,6 +19,7 @@ export class ApiUserDeviceInterceptor implements NestInterceptor {
         if (!(await this.userDeviceService.existByDeviceId(app.id, deviceId))) {
             await this.userDeviceService.create(app, ExpressUtils.getIp(request), request.body);
         }
+        request.currentDeviceId = deviceId;
         return next.handle();
     }
 }

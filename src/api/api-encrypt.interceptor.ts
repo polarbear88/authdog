@@ -20,6 +20,9 @@ export class ApiEncryptInterceptor implements NestInterceptor {
         if (data === null || data === undefined) {
             return data;
         }
+        if (typeof data === 'object') {
+            data.currentDeviceId = request.currentDeviceId;
+        }
         const app = request.application as Application;
         if (!app) {
             throw new InternalServerErrorException('服务器错误');
