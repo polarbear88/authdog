@@ -37,6 +37,7 @@ import { UserFinancialModule } from 'src/user-financial/user-financial.module';
 import { UserFinancialController } from './controller/user-financial.controller';
 import { StatisticsController } from './controller/statistics.controller';
 import * as redisStore from 'cache-manager-ioredis';
+import { ActionLogController } from './controller/action-log.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -95,6 +96,7 @@ import * as redisStore from 'cache-manager-ioredis';
         FundFlowController,
         UserFinancialController,
         StatisticsController,
+        ActionLogController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
