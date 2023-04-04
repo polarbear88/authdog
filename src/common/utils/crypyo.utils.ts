@@ -129,4 +129,53 @@ export class CryptoUtils {
             throw new BadRequestException('错误的请求');
         }
     }
+
+    private static g_sam_key = Buffer.from('8hXyFfIV8hXyFfIV8hXyFQ==', 'base64');
+    private static g_sam_iv = Buffer.from('ERIyFfIV8hKiFTIVwhVmiA==', 'base64');
+
+    public static samenc(data: Buffer) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        for (let i = 0; i < data.length; i++) {
+            data[i] ^= 33;
+            data[i] ^= 17;
+            data[i] ^= 49;
+            if (i % 2 == 0) {
+                data[i] ^= 79;
+                data[i] ^= this.g_sam_iv[i % 16];
+            }
+            if (i % 3 == 0) {
+                data[i] ^= 11;
+                data[i] ^= this.g_sam_iv[i % 16];
+            }
+            for (let j = 0; j < 16; j++) {
+                data[i] ^= this.g_sam_key[j];
+            }
+        }
+        return data;
+    }
+
+    public static samdec(data: Buffer) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        for (let i = 0; i < data.length; i++) {
+            data[i] ^= 33;
+            data[i] ^= 17;
+            data[i] ^= 49;
+            if (i % 2 == 0) {
+                data[i] ^= 79;
+                data[i] ^= this.g_sam_iv[i % 16];
+            }
+            if (i % 3 == 0) {
+                data[i] ^= 11;
+                data[i] ^= this.g_sam_iv[i % 16];
+            }
+            for (let j = 0; j < 16; j++) {
+                data[i] ^= this.g_sam_key[j];
+            }
+        }
+        return data;
+    }
 }

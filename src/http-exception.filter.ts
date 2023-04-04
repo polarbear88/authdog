@@ -61,6 +61,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
             return data;
         }
         data = typeof data === 'object' ? JSON.stringify(data) : data + '';
+        if (app.cryptoMode === 'samenc') {
+            return CryptoUtils.samenc(Buffer.from(data));
+        }
         const key = request.aesKey;
         if (!key) {
             throw new InternalServerErrorException('服务器错误');

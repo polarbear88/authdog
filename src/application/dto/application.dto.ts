@@ -12,7 +12,7 @@ export class CreateApplicationDto {
     @Length(1, 32, { message: '应用版本长度必须在1-32位之间' })
     version: string;
 
-    @IsIn(['none', 'aes', 'rsa', 'ecdh'], { message: '加密模式不正确' })
+    @IsIn(['none', 'aes', 'rsa', 'ecdh', 'samenc'], { message: '加密模式不正确' })
     cryptoMode: AppCryptoMode;
 
     @IsIn(['deviceid', 'user'], { message: '授权模式不正确' })
@@ -34,7 +34,7 @@ export class SetApplicationDownloadUrlDto {
 }
 
 export class ResetApplicationCryptoModeDto {
-    @IsIn(['none', 'aes', 'rsa', 'ecdh'], { message: '加密模式不正确' })
+    @IsIn(['none', 'aes', 'rsa', 'ecdh', 'samenc'], { message: '加密模式不正确' })
     cryptoMode: AppCryptoMode;
 }
 
