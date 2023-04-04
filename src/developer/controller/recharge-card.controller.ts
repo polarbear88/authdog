@@ -41,6 +41,7 @@ export class RechargeCardController extends BaseController {
             throw new NotAcceptableException('充值卡类型不存在');
         }
         const cards = await this.rechargeCardService.createRechargeCard(
+            app.developerId,
             app.id,
             cardType,
             developerCreateRechargeCardDto.description,

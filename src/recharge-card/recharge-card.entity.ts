@@ -7,6 +7,10 @@ import { RechargeCardStatus } from './recharge-card.type';
 export class RechargeCard extends BaseEntity {
     @Index()
     @Column()
+    developerId: number;
+
+    @Index()
+    @Column()
     appid: number;
 
     @Column()
@@ -50,6 +54,7 @@ export class RechargeCard extends BaseEntity {
     user: number;
 
     // 使用时间
+    @Index()
     @Column({ nullable: true })
     useTime: Date;
 

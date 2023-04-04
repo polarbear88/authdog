@@ -19,6 +19,7 @@ export class RechargeCardService extends BaseService {
     }
 
     async createRechargeCard(
+        developerId: number,
         appid: number,
         rechargeCardType: RechargeCardType,
         description: string,
@@ -31,6 +32,7 @@ export class RechargeCardService extends BaseService {
         const rechargeCards = [];
         for (let i = 0; i < count; i++) {
             const rechargeCard = new RechargeCard();
+            rechargeCard.developerId = developerId;
             rechargeCard.appid = appid;
             rechargeCard.cardTypeId = rechargeCardType.id;
             rechargeCard.cardTypeName = rechargeCardType.name;

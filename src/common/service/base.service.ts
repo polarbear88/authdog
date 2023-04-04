@@ -60,4 +60,12 @@ export class BaseService {
     async getCount(dto: any, where?: Array<Array<any>>) {
         return await this.getAllQuery(dto, where).getCount();
     }
+
+    async count(where: any) {
+        return await this.repository.count({ where });
+    }
+
+    getRepo() {
+        return this.repository;
+    }
 }

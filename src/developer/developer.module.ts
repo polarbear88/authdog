@@ -1,4 +1,4 @@
-import { Module, SetMetadata } from '@nestjs/common';
+import { CacheModule, Module, SetMetadata } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeveloperController } from './controller/developer.controller';
 import { Developer } from './developer.entity';
@@ -35,6 +35,8 @@ import { FundFlowController } from './controller/fund-flow.controller';
 import { FundFlowModule } from 'src/fund-flow/fund-flow.module';
 import { UserFinancialModule } from 'src/user-financial/user-financial.module';
 import { UserFinancialController } from './controller/user-financial.controller';
+import { StatisticsController } from './controller/statistics.controller';
+import * as redisStore from 'cache-manager-ioredis';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -63,6 +65,18 @@ import { UserFinancialController } from './controller/user-financial.controller'
         SalerRolesModule,
         FundFlowModule,
         UserFinancialModule,
+        CacheModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                isGlobal: true,
+                store: redisStore,
+                host: configService.get('REDIS_HOST'),
+                port: +configService.get('REDIS_PORT'),
+                password: configService.get('REDIS_PASSWORD'),
+                ttl: 60,
+            }),
+        }),
     ],
     controllers: [
         DeveloperController,
@@ -80,6 +94,7 @@ import { UserFinancialController } from './controller/user-financial.controller'
         SalerRolesController,
         FundFlowController,
         UserFinancialController,
+        StatisticsController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

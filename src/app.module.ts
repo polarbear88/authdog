@@ -1,4 +1,4 @@
-import { CacheModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,7 +23,6 @@ import { Device } from './device/device.entity';
 import { UserDevice } from './user-device/user-device.entity';
 import { ApiModule } from './api/api.module';
 import { ApiDecryptMiddleware } from './api/api-decrypt.middleware';
-import * as redisStore from 'cache-manager-ioredis';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { RechargeCard } from './recharge-card/recharge-card.entity';
 import { RechargeCardType } from './recharge-card/card-type/recharge-card-type.entity';
@@ -71,6 +70,7 @@ import { SalerRoles } from './saler-roles/saler-roles.entity';
                     SalerEntryLink,
                     SalerRoles,
                 ],
+                // logging: true,
             }),
         }),
         // 导入请求频率限制器
@@ -91,17 +91,6 @@ import { SalerRoles } from './saler-roles/saler-roles.entity';
         AuthModule,
         ApplicationModule,
         ApiModule,
-        CacheModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                isGlobal: true,
-                store: redisStore,
-                host: configService.get('REDIS_HOST'),
-                port: +configService.get('REDIS_PORT'),
-                password: configService.get('REDIS_PASSWORD'),
-            }),
-        }),
         RedisModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

@@ -78,6 +78,7 @@ export class SalerControlService {
                 );
                 // 生成充值卡
                 cards = await this.rechargeService.createRechargeCard(
+                    developer.id,
                     dto.appid,
                     cardType,
                     dto.description,

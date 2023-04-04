@@ -4,7 +4,6 @@ import { map } from 'rxjs/operators';
 import { ExpressUtils } from './common/utils/express.utils';
 import { CryptoUtils } from './common/utils/crypyo.utils';
 import { Application } from './application/application.entity';
-import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
