@@ -9,7 +9,7 @@ import { Column, Entity, Index, Unique } from 'typeorm';
 export class UserDevice extends BaseEntity {
     @Index()
     @Column()
-    develoeprId: number;
+    developerId: number;
 
     @Index()
     @Column()

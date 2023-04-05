@@ -13,6 +13,8 @@ import { DeviceService } from 'src/device/device.service';
 import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
 import { Raw, SelectQueryBuilder } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base.entity';
+import { CacheTTL } from 'src/common/decorator/caceh-ttl.decorator';
+import { UserDeviceService } from 'src/user-device/user-device.service';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'statistics' })
@@ -23,6 +25,7 @@ export class StatisticsController extends BaseController {
         private userService: UserService,
         private deviceService: DeviceService,
         private rechargeCardService: RechargeCardService,
+        private userDeviceService: UserDeviceService,
     ) {
         super();
     }
@@ -109,5 +112,19 @@ export class StatisticsController extends BaseController {
         }
         data.active += await query.getCount();
         return data;
+    }
+
+    @UseInterceptors(CacheInterceptor)
+    @CacheTTL(300)
+    @Get('user-area')
+    async getUserAreaStatistics(@TakeDeveloper() developer: any) {
+        return await this.userDeviceService.getAreaStatistics(developer.id);
+    }
+
+    @UseInterceptors(CacheInterceptor)
+    @CacheTTL(300)
+    @Get('user-brand')
+    async getUserBrandStatistics(@TakeDeveloper() developer: any) {
+        return await this.userDeviceService.getBrandStatistics(developer.id);
     }
 }

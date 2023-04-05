@@ -1,22 +1,26 @@
-import { CACHE_MANAGER, CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { map, of } from 'rxjs';
-import { Cache } from 'cache-manager';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { Reflector } from '@nestjs/core';
+import { CACHE_TTL_KEY } from './common/decorator/caceh-ttl.decorator';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
-    constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+    constructor(@InjectRedis() private readonly redis: Redis, private reflector: Reflector) {}
+
     async intercept(context: ExecutionContext, next: CallHandler) {
         const request = context.switchToHttp().getRequest();
         if (request.user && request.user.id) {
             const key = `cache:res:${request.user.roles[0]}:${request.user.id}:${request.originalUrl}`;
-            const data = await this.cacheManager.get(key);
+            const data = await this.redis.get(key);
             if (data) {
                 return of(JSON.parse(data as string));
             }
+            const cache_ttl = this.reflector.getAllAndOverride(CACHE_TTL_KEY, [context.getHandler(), context.getClass()]) || 60;
             return next.handle().pipe(
                 map((data) => {
-                    this.cacheManager
-                        .set(key, JSON.stringify(data), 60)
+                    this.redis
+                        .set(key, JSON.stringify(data), 'EX', cache_ttl)
                         .then(() => {
                             //
                         })

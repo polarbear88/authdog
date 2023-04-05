@@ -37,7 +37,7 @@ export class UserDeviceService extends BaseService {
 
     async create(app: Application, ip: string, baseUserDeviceDto: BaseUserDeviceDto) {
         const userDevice = new UserDevice();
-        userDevice.develoeprId = app.developerId;
+        userDevice.developerId = app.developerId;
         userDevice.appid = app.id;
         userDevice.authMode = app.authMode;
         userDevice.brand = StringUtils.toString(baseUserDeviceDto.brand);
@@ -63,5 +63,23 @@ export class UserDeviceService extends BaseService {
                 isp: iap.isp,
             },
         });
+    }
+
+    async getAreaStatistics(developerId: number) {
+        return await this.userDeviceRepository
+            .createQueryBuilder()
+            .where('developerId = :developerId', { developerId })
+            .select(['ipProvince as `name`', 'COUNT(ipProvince) as `value`'])
+            .groupBy('ipProvince')
+            .getRawMany();
+    }
+
+    async getBrandStatistics(developerId: number) {
+        return await this.userDeviceRepository
+            .createQueryBuilder()
+            .where('developerId = :developerId', { developerId })
+            .select(['brand as `name`', 'COUNT(brand) as `value`'])
+            .groupBy('brand')
+            .getRawMany();
     }
 }
