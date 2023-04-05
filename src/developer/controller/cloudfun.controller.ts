@@ -1,6 +1,6 @@
 import { Body, Controller, Get, InternalServerErrorException, NotAcceptableException, Post, Query } from '@nestjs/common';
 import { CloudfunRuner } from 'src/cloudfun/cloudfun-runer';
-import { CreateCloudfunDto, TryRunCloudfunDto, UpdateCloudfunDto } from 'src/Cloudfun/cloudfun.dto';
+import { CreateCloudfunDto, TryRunCloudfunDto, UpdateCloudfunDto } from 'src/cloudfun/cloudfun.dto';
 import { CloudfunService } from 'src/cloudfun/cloudfun.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
