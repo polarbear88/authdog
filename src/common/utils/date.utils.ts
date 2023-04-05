@@ -52,4 +52,11 @@ export class DateUtils {
         }
         return moment(date).format(format);
     }
+
+    public static getYesterday() {
+        const now = new Date();
+        const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        yesterday.setHours(0, 0, 0, 0);
+        return yesterday;
+    }
 }

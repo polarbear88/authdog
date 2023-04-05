@@ -32,6 +32,8 @@ import { FundFlow } from './fund-flow/fund-flow.entity';
 import { SalerEntryLink } from './saler/entry-link/entry-link.entity';
 import { SalerControlModule } from './saler-control/saler-control.module';
 import { SalerRoles } from './saler-roles/saler-roles.entity';
+import { PeriodicStatisticsModule } from './periodic-statistics/periodic-statistics.module';
+import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.entity';
 
 @Module({
     imports: [
@@ -69,6 +71,7 @@ import { SalerRoles } from './saler-roles/saler-roles.entity';
                     FundFlow,
                     SalerEntryLink,
                     SalerRoles,
+                    PeriodicStatistics,
                 ],
                 // logging: true,
             }),
@@ -103,6 +106,7 @@ import { SalerRoles } from './saler-roles/saler-roles.entity';
             }),
         }),
         SalerControlModule,
+        PeriodicStatisticsModule,
     ],
     controllers: [AppController],
     providers: [

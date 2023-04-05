@@ -205,12 +205,12 @@ export class UserRechargeDto extends BaseUserDeviceDto {
 
     @IsString()
     @IsNotEmpty({ message: '卡号不能为空' })
-    @MaxLength(200, { message: '卡号最大长度为200' })
+    @MaxLength(200, { message: '请传入正确的卡号' })
     card: string;
 
     @IsOptional()
     @IsString()
-    @MaxLength(200, { message: '密码最大长度为200' })
+    @MaxLength(200, { message: '请传入正确的密码' })
     password: string;
 }
 

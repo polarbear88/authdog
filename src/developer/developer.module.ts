@@ -38,6 +38,7 @@ import { UserFinancialController } from './controller/user-financial.controller'
 import { StatisticsController } from './controller/statistics.controller';
 import { ActionLogController } from './controller/action-log.controller';
 import { UserDeviceModule } from 'src/user-device/user-device.module';
+import { PeriodicStatisticsModule } from 'src/periodic-statistics/periodic-statistics.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -67,6 +68,7 @@ import { UserDeviceModule } from 'src/user-device/user-device.module';
         FundFlowModule,
         UserFinancialModule,
         UserDeviceModule,
+        PeriodicStatisticsModule,
     ],
     controllers: [
         DeveloperController,

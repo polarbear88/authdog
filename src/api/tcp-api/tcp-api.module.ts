@@ -40,7 +40,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
                 username: configService.get('DATABASE_USERNAME'),
                 password: configService.get('DATABASE_PASSWORD'),
                 database: configService.get('DATABASE_NAME'),
-                synchronize: configService.get('DATABASE_SYNCHRONIZE') == 'true',
+                synchronize: false,
                 autoLoadEntities: true,
                 entities: [
                     Developer,
