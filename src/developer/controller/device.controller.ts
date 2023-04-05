@@ -33,7 +33,7 @@ export class DeviceController extends BaseController {
     }
 
     @WriteDeveloperActionLog('增减次数')
-    @Post('add-banlance')
+    @Post('add-balance')
     async addBanlance(@TakeApplication() app: Application, @Body() addDeviceBanlanceDto: AddDeviceBanlanceDto) {
         const affected = await this.deviceService.addBanlanceByDev(app.id, addDeviceBanlanceDto);
         return this.setAffected({ affectedCount: affected }, `操作${affected}个设备[${addDeviceBanlanceDto.money}次]`);

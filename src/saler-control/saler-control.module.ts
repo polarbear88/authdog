@@ -16,6 +16,7 @@ import { SalerEntryLinkModule } from 'src/saler/entry-link/entry-link.module';
 import { SubordinateEntryController } from './controller/subordinate-entry-link.controller';
 import { ProfileController } from './controller/profile.contoller';
 import { FundFlowController } from './controller/fund-flow.controller';
+import { StatisticsController } from './controller/statistics.controller';
 
 // saler的控制器不能放在saler模块中，因为saler控制器需要访问developer的service，
 // 而developer又依赖saler的service，这样就会造成循环依赖，所以这里把saler的控制器单独放在一个模块中
@@ -40,6 +41,14 @@ import { FundFlowController } from './controller/fund-flow.controller';
         FundFlowModule,
     ],
     providers: [SalerControlService],
-    controllers: [SalerController, RechargeCardController, SubordinateController, SubordinateEntryController, ProfileController, FundFlowController],
+    controllers: [
+        SalerController,
+        RechargeCardController,
+        SubordinateController,
+        SubordinateEntryController,
+        ProfileController,
+        FundFlowController,
+        StatisticsController,
+    ],
 })
 export class SalerControlModule {}

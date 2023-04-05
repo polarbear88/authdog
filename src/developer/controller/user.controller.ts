@@ -40,7 +40,7 @@ export class UserController extends BaseController {
     }
 
     @WriteDeveloperActionLog('增减次数')
-    @Post('add-banlance')
+    @Post('add-balance')
     async addBanlance(@TakeApplication() app: Application, @Body() addUserBanlanceDto: AddUserBanlanceDto) {
         const affected = await this.userService.addBanlanceByDev(app.id, addUserBanlanceDto);
         return this.setAffected({ affectedCount: affected }, `操作${affected}个用户[${addUserBanlanceDto.money}次]`);

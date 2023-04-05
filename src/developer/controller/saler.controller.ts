@@ -57,7 +57,7 @@ export class SalerController extends BaseController {
     }
 
     @WriteDeveloperActionLog('增减代理余额')
-    @Post('add-banlance')
+    @Post('add-balance')
     async addBanlance(@TakeDeveloper(ParseDeveloperPipe) developer: Developer, @Body() dto: AddSalerBanlanceDto) {
         if (dto.amount === 0 || isNaN(dto.amount)) {
             throw new NotAcceptableException('操作失败');
