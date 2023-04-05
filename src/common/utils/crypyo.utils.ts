@@ -178,4 +178,11 @@ export class CryptoUtils {
         }
         return data;
     }
+
+    public static hmacsha256(key: string, data: string | Buffer) {
+        const hmac = crypto.createHmac('sha256', key);
+        hmac.update(data);
+        const hash = hmac.digest('hex');
+        return hash;
+    }
 }

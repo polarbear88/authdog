@@ -19,6 +19,7 @@ export class UserRechargeStatisticsService {
                 .select(['developerId', 'appid', 'count(1) as addcount'])
                 .where('useTime >= CAST(CURDATE() - INTERVAL 1 DAY AS DATETIME)')
                 .andWhere('useTime < CURDATE()')
+                .groupBy('developerId,appid')
                 .getRawMany();
             for (const item of data) {
                 const row = new PeriodicStatistics();

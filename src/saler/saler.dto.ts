@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
+import { GeetestDto } from 'src/man-machine-inspect/geetest.dto';
 export class CreateSalerByDevloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
     name: string;
@@ -35,8 +36,13 @@ export class CreateSalerByDevloperDto {
 export class RegisterSalerDto extends CreateSalerByDevloperDto {
     @IsNotEmpty({ message: 'token不能为空' })
     @IsString()
-    @MaxLength(100, { message: 'token不能超过100个字符' })
+    @MaxLength(100, { message: 'token错误' })
     token: string;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => GeetestDto)
+    geetest_captcha: GeetestDto;
 }
 
 export class GetSalerListDto {
@@ -136,8 +142,13 @@ export class SalerLoginDto {
 
     @IsNotEmpty({ message: 'token不能为空' })
     @IsString()
-    @MaxLength(100, { message: 'token不能超过100个字符' })
+    @MaxLength(100, { message: 'token错误' })
     token: string;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => GeetestDto)
+    geetest_captcha: GeetestDto;
 }
 
 export class SalerSetRoleDto {

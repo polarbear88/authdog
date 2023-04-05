@@ -34,6 +34,7 @@ import { SalerControlModule } from './saler-control/saler-control.module';
 import { SalerRoles } from './saler-roles/saler-roles.entity';
 import { PeriodicStatisticsModule } from './periodic-statistics/periodic-statistics.module';
 import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.entity';
+import { ManMachineInspectModule } from './man-machine-inspect/man-machine-inspect.module';
 
 @Module({
     imports: [
@@ -73,7 +74,7 @@ import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.en
                     SalerRoles,
                     PeriodicStatistics,
                 ],
-                // logging: true,
+                logging: ['error'],
             }),
         }),
         // 导入请求频率限制器
@@ -107,6 +108,7 @@ import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.en
         }),
         SalerControlModule,
         PeriodicStatisticsModule,
+        ManMachineInspectModule,
     ],
     controllers: [AppController],
     providers: [

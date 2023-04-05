@@ -17,6 +17,7 @@ import { SubordinateEntryController } from './controller/subordinate-entry-link.
 import { ProfileController } from './controller/profile.contoller';
 import { FundFlowController } from './controller/fund-flow.controller';
 import { StatisticsController } from './controller/statistics.controller';
+import { ManMachineInspectModule } from 'src/man-machine-inspect/man-machine-inspect.module';
 
 // saler的控制器不能放在saler模块中，因为saler控制器需要访问developer的service，
 // 而developer又依赖saler的service，这样就会造成循环依赖，所以这里把saler的控制器单独放在一个模块中
@@ -39,6 +40,7 @@ import { StatisticsController } from './controller/statistics.controller';
         FundFlowModule,
         SalerEntryLinkModule,
         FundFlowModule,
+        ManMachineInspectModule,
     ],
     providers: [SalerControlService],
     controllers: [

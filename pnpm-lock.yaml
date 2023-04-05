@@ -24,6 +24,7 @@ specifiers:
   '@types/node': ^16.18.23
   '@types/passport-jwt': ^3.0.8
   '@types/passport-local': ^1.0.35
+  '@types/qs': ^6.9.7
   '@types/supertest': ^2.0.12
   '@types/uuid': ^9.0.1
   '@typescript-eslint/eslint-plugin': ^5.57.0
@@ -46,6 +47,7 @@ specifiers:
   passport-jwt: ^4.0.1
   passport-local: ^1.0.0
   prettier: ^2.8.7
+  qs: ^6.11.1
   reflect-metadata: ^0.1.13
   rimraf: ^3.0.2
   rxjs: ^7.8.0
@@ -76,6 +78,7 @@ dependencies:
   '@nestjs/throttler': 4.0.0_bgmtsjzu2jyijhogwtog4e3a6e
   '@nestjs/typeorm': 9.0.1_tczrxjq6l4bicygw3hjjbo47ua
   '@types/moment': 2.13.0
+  '@types/qs': 6.9.7
   axios: 1.3.4
   class-transformer: 0.5.1
   class-validator: 0.14.0
@@ -89,6 +92,7 @@ dependencies:
   passport: 0.6.0
   passport-jwt: 4.0.1
   passport-local: 1.0.0
+  qs: 6.11.1
   reflect-metadata: 0.1.13
   rimraf: 3.0.2
   rxjs: 7.8.0
@@ -1532,7 +1536,6 @@ packages:
 
   /@types/qs/6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
-    dev: true
 
   /@types/range-parser/1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
@@ -4701,7 +4704,6 @@ packages:
     engines: {node: '>=0.6'}
     dependencies:
       side-channel: 1.0.4
-    dev: true
 
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
