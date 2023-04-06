@@ -78,6 +78,7 @@ export class UserDeviceService extends BaseService {
         return await this.userDeviceRepository
             .createQueryBuilder()
             .where('developerId = :developerId', { developerId })
+            .andWhere('brand IS NOT NULL')
             .select(['brand as `name`', 'COUNT(brand) as `value`'])
             .groupBy('brand')
             .getRawMany();
