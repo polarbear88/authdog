@@ -2,7 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Inter
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { CryptoUtils } from './common/utils/crypyo.utils';
-import { Application } from './application/application.entity';
+import { Application } from './provide/application/application.entity';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

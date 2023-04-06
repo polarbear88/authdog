@@ -4,7 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PeriodicStatistics } from './periodic-statistics.entity';
 import { PeriodicStatisticsCycleEnum, PeriodicStatisticsMatterEnum } from './periodic-statistics.enum';
 import { DateUtils } from 'src/common/utils/date.utils';
-import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
+import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 
 @Injectable()
 export class UserRechargeStatisticsService {

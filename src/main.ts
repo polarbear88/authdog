@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import express from 'express';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { TcpApiModule } from './api/tcp-api/tcp-api.module';
+import { TcpApiModule } from './user/api/tcp-api/tcp-api.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);

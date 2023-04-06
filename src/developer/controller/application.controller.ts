@@ -1,6 +1,6 @@
 import { Body, Controller, Get, InternalServerErrorException, NotAcceptableException, Post, UseGuards } from '@nestjs/common';
-import { Application } from 'src/application/application.entity';
-import { ApplicationService } from 'src/application/application.service';
+import { Application } from 'src/provide/application/application.entity';
+import { ApplicationService } from 'src/provide/application/application.service';
 import {
     CreateApplicationDto,
     SetApplicationDownloadUrlDto,
@@ -19,7 +19,7 @@ import {
     SetApplicationtTrialCountDto,
     SetApplicationAllowForceLoginDto,
     SetApplicationVersionDto,
-} from 'src/application/dto/application.dto';
+} from 'src/provide/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';

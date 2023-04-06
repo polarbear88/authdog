@@ -2,9 +2,9 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { DeleteFeedbackDto, GetFeedbackListDto, SetFeedbackStatusDto } from 'src/feedback/feedback.dto';
-import { FeedbackService } from 'src/feedback/feedback.service';
-import { FeedbackStatus } from 'src/feedback/feedback.type';
+import { DeleteFeedbackDto, GetFeedbackListDto, SetFeedbackStatusDto } from 'src/provide/feedback/feedback.dto';
+import { FeedbackService } from 'src/provide/feedback/feedback.service';
+import { FeedbackStatus } from 'src/provide/feedback/feedback.type';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
 
 @Roles(Role.Developer)

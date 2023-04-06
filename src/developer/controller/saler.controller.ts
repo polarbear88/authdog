@@ -2,12 +2,12 @@ import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nes
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
-import { AddSalerBanlanceDto, CreateSalerByDevloperDto, GetSalerListDto, SalerSetRoleDto, SetSalerAppsDto } from 'src/saler/saler.dto';
-import { Saler } from 'src/saler/saler.entity';
-import { SalerService } from 'src/saler/saler.service';
-import { SalerStatus } from 'src/saler/saler.type';
-import { ChangeUserPwdByDevDto, SetUserStatusDto } from 'src/user/user.dto';
+import { SalerRolesService } from 'src/saler/saler-roles/saler-roles.service';
+import { AddSalerBanlanceDto, CreateSalerByDevloperDto, GetSalerListDto, SalerSetRoleDto, SetSalerAppsDto } from 'src/saler/saler/saler.dto';
+import { Saler } from 'src/saler/saler/saler.entity';
+import { SalerService } from 'src/saler/saler/saler.service';
+import { SalerStatus } from 'src/saler/saler/saler.type';
+import { ChangeUserPwdByDevDto, SetUserStatusDto } from 'src/user/user/user.dto';
 import { UpdateQueryBuilder } from 'typeorm';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';

@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PeriodicStatisticsService } from './periodic-statistics.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DeviceService } from 'src/device/device.service';
+import { DeviceService } from 'src/user/device/device.service';
 import { PeriodicStatistics } from './periodic-statistics.entity';
 import { PeriodicStatisticsCycleEnum, PeriodicStatisticsMatterEnum } from './periodic-statistics.enum';
 import { DateUtils } from 'src/common/utils/date.utils';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/user/user.service';
 
 @Injectable()
 export class UserAddedStatisticsService {

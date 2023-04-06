@@ -1,5 +1,5 @@
 import { Controller, Get, NotAcceptableException, Query, UseInterceptors } from '@nestjs/common';
-import { ApplicationService } from 'src/application/application.service';
+import { ApplicationService } from 'src/provide/application/application.service';
 import { CacheInterceptor } from 'src/cache.interceptor';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -7,14 +7,14 @@ import { Role } from 'src/common/enums/role.enum';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
 import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
 import { Developer } from '../developer.entity';
-import { SalerService } from 'src/saler/saler.service';
-import { UserService } from 'src/user/user.service';
-import { DeviceService } from 'src/device/device.service';
-import { RechargeCardService } from 'src/recharge-card/recharge-card.service';
+import { SalerService } from 'src/saler/saler/saler.service';
+import { UserService } from 'src/user/user/user.service';
+import { DeviceService } from 'src/user/device/device.service';
+import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 import { Raw, SelectQueryBuilder } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base.entity';
 import { CacheTTL } from 'src/common/decorator/caceh-ttl.decorator';
-import { UserDeviceService } from 'src/user-device/user-device.service';
+import { UserDeviceService } from 'src/user/user-device/user-device.service';
 import { PeriodicStatisticsService } from 'src/periodic-statistics/periodic-statistics.service';
 import { PeriodicStatisticsMatterEnum } from 'src/periodic-statistics/periodic-statistics.enum';
 

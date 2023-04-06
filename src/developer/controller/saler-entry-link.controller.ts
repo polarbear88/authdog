@@ -2,7 +2,7 @@ import { Controller, Get, NotAcceptableException, Post, Query } from '@nestjs/co
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { SalerEntryLinkService } from 'src/saler/entry-link/entry-link.service';
+import { SalerEntryLinkService } from 'src/saler/saler/entry-link/entry-link.service';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
 
 @Roles(Role.Developer)

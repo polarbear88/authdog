@@ -2,9 +2,9 @@ import { Body, Controller, Get, NotAcceptableException, Post, Query } from '@nes
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { SalerRolesSetPriceConfigDto } from 'src/saler-roles/saler-roles.dto';
-import { SalerRolesService } from 'src/saler-roles/saler-roles.service';
-import { SalerService } from 'src/saler/saler.service';
+import { SalerRolesSetPriceConfigDto } from 'src/saler/saler-roles/saler-roles.dto';
+import { SalerRolesService } from 'src/saler/saler-roles/saler-roles.service';
+import { SalerService } from 'src/saler/saler/saler.service';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
 

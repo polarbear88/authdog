@@ -1,6 +1,6 @@
 import { Body, Controller, Get, InternalServerErrorException, NotAcceptableException, Post, Query } from '@nestjs/common';
-import { CreateCloudvarDto, UpdateCloudvarDto } from 'src/cloudvar/cloudvar.dto';
-import { CloudvarService } from 'src/cloudvar/cloudvar.service';
+import { CreateCloudvarDto, UpdateCloudvarDto } from 'src/provide/cloudvar/cloudvar.dto';
+import { CloudvarService } from 'src/provide/cloudvar/cloudvar.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';

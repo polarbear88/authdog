@@ -3,10 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DeveloperService } from 'src/developer/developer.service';
-import { UserService } from 'src/user/user.service';
-import { LoginDeviceManageService } from 'src/login-device-manage/login-device-manage.service';
-import { Application } from 'src/application/application.entity';
-import { SalerService } from 'src/saler/saler.service';
+import { UserService } from 'src/user/user/user.service';
+import { LoginDeviceManageService } from 'src/helpers/login-device-manage/login-device-manage.service';
+import { Application } from 'src/provide/application/application.entity';
+import { SalerService } from 'src/saler/saler/saler.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

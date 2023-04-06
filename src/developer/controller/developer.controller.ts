@@ -9,8 +9,8 @@ import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { CreateDeveloperDto, LoginDeveloperDto } from '../dto/developer.dto';
 import { DeveloperService } from '../developer.service';
-import { ManMachineInspect } from 'src/man-machine-inspect/man-machine-inspect.decorator';
-import { ManMachineInspectEnum } from 'src/man-machine-inspect/man-machine-inspect.enum';
+import { ManMachineInspect } from 'src/helpers/man-machine-inspect/man-machine-inspect.decorator';
+import { ManMachineInspectEnum } from 'src/helpers/man-machine-inspect/man-machine-inspect.enum';
 import { ConfigService } from '@nestjs/config';
 // import ivm from 'isolated-vm';
 

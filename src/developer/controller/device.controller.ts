@@ -1,12 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { Application } from 'src/application/application.entity';
+import { Application } from 'src/provide/application/application.entity';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { AddDeviceBanlanceDto, AddDeviceTimeDto, GetDeviceListDto, SetDeviceStatusDto } from 'src/device/device.dto';
-import { Device } from 'src/device/device.entity';
-import { DeviceService } from 'src/device/device.service';
-import { UserStatus } from 'src/user/user.type';
+import { AddDeviceBanlanceDto, AddDeviceTimeDto, GetDeviceListDto, SetDeviceStatusDto } from 'src/user/device/device.dto';
+import { Device } from 'src/user/device/device.entity';
+import { DeviceService } from 'src/user/device/device.service';
+import { UserStatus } from 'src/user/user/user.type';
 import { UpdateQueryBuilder } from 'typeorm';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeApplication } from '../decorator/take-application.decorator';

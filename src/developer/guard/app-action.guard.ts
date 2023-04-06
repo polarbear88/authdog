@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, NotAcceptableException } from '@nestjs/common';
-import { ApplicationService } from 'src/application/application.service';
+import { ApplicationService } from 'src/provide/application/application.service';
 
 /**
  * 应用操作守卫 - 用于检查应用是否存在并将应用获取保存到请求对象中

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 import { UserName } from '../../common/validate/username.validate';
-import { GeetestDto } from 'src/man-machine-inspect/geetest.dto';
+import { GeetestDto } from 'src/helpers/man-machine-inspect/geetest.dto';
 import { Type } from 'class-transformer';
 
 export class CreateDeveloperDto {

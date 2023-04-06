@@ -1,12 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { Application } from 'src/application/application.entity';
+import { Application } from 'src/provide/application/application.entity';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { AddUserBanlanceDto, AddUserTimeDto, ChangeUserPwdByDevDto, GetUserListDto, OnlyUserIdDto, SetUserStatusDto } from 'src/user/user.dto';
-import { User } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
-import { UserStatus } from 'src/user/user.type';
+import { AddUserBanlanceDto, AddUserTimeDto, ChangeUserPwdByDevDto, GetUserListDto, OnlyUserIdDto, SetUserStatusDto } from 'src/user/user/user.dto';
+import { User } from 'src/user/user/user.entity';
+import { UserService } from 'src/user/user/user.service';
+import { UserStatus } from 'src/user/user/user.type';
 import { UpdateQueryBuilder } from 'typeorm';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeApplication } from '../decorator/take-application.decorator';

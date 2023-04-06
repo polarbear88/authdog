@@ -3,9 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DeveloperModule } from 'src/developer/developer.module';
-import { LoginDeviceManageModule } from 'src/login-device-manage/login-device-manage.module';
-import { SalerModule } from 'src/saler/saler.module';
-import { UserModule } from 'src/user/user.module';
+import { LoginDeviceManageModule } from 'src/helpers/login-device-manage/login-device-manage.module';
+import { SalerModule } from 'src/saler/saler/saler.module';
+import { UserModule } from 'src/user/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({

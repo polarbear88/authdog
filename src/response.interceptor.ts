@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExpressUtils } from './common/utils/express.utils';
 import { CryptoUtils } from './common/utils/crypyo.utils';
-import { Application } from './application/application.entity';
+import { Application } from './provide/application/application.entity';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
