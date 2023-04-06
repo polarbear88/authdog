@@ -21,6 +21,11 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
+        "@alicloud/dysmsapi20170525": "^2.0.23",
+        "@alicloud/ecs20140526": "^3.0.4",
+        "@alicloud/openapi-client": "^0.4.5",
+        "@alicloud/tea-typescript": "^1.8.0",
+        "@alicloud/tea-util": "^1.4.5",
         "@nestjs-modules/ioredis": "^1.0.1",
         "@nestjs/axios": "^2.0.0",
         "@nestjs/common": "^9.3.12",
