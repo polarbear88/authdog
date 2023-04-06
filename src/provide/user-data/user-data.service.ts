@@ -91,4 +91,8 @@ export class UserDataService extends BaseService {
     async findByUserIdAndId(appid: number, userId: number, id: number) {
         return await this.repo.findOne({ where: { appid, userId, id } });
     }
+
+    async deleteByDeveloperIdAndId(developerId: number, id: number | number[]) {
+        return await this.repo.delete({ developerId, id: Array.isArray(id) ? In(id) : id });
+    }
 }

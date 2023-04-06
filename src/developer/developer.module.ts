@@ -41,6 +41,7 @@ import { UserDeviceModule } from 'src/user/user-device/user-device.module';
 import { PeriodicStatisticsModule } from 'src/periodic-statistics/periodic-statistics.module';
 import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-machine-inspect.module';
 import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module';
+import { UserDataModule } from 'src/provide/user-data/user-data.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -73,6 +74,7 @@ import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module'
         PeriodicStatisticsModule,
         ManMachineInspectModule,
         SmsValidateModule,
+        UserDataModule,
     ],
     controllers: [
         DeveloperController,
@@ -92,6 +94,7 @@ import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module'
         UserFinancialController,
         StatisticsController,
         ActionLogController,
+        UserController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
