@@ -4,7 +4,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DeveloperService } from 'src/developer/developer.service';
 import { UserService } from 'src/user/user/user.service';
-import { LoginDeviceManageService } from 'src/helpers/login-device-manage/login-device-manage.service';
+import { LoginDeviceManageService } from 'src/user/login-device-manage/login-device-manage.service';
 import { Application } from 'src/provide/application/application.entity';
 import { SalerService } from 'src/saler/saler/saler.service';
 

@@ -10,7 +10,7 @@ import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { DateUtils } from 'src/common/utils/date.utils';
 import { EntityUtils } from 'src/common/utils/entity.utils';
 import { StringUtils } from 'src/common/utils/string.utils';
-import { LoginDeviceManageService } from 'src/helpers/login-device-manage/login-device-manage.service';
+import { LoginDeviceManageService } from 'src/user/login-device-manage/login-device-manage.service';
 import { RechargeCard } from 'src/provide/recharge-card/recharge-card.entity';
 import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user/user-financial/user-financial.service';

@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IPAddrModule } from 'src/helpers/ipaddr/ipaddr.module';
 import { IPAddrService } from 'src/helpers/ipaddr/ipaddr.service';
-import { LoginDeviceManageModule } from 'src/helpers/login-device-manage/login-device-manage.module';
+import { LoginDeviceManageModule } from 'src/user/login-device-manage/login-device-manage.module';
 import { RechargeCardModule } from 'src/provide/recharge-card/recharge-card.module';
 import { UserFinancialModule } from 'src/user/user-financial/user-financial.module';
 import { User } from './user.entity';
