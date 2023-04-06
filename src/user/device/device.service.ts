@@ -402,7 +402,7 @@ export class DeviceService extends BaseService {
                     .andWhere('ver = :ver', { ver: card.ver })
                     .execute();
                 if (result.affected <= 0) {
-                    throw new Error('系统异常');
+                    throw new InternalServerErrorException('系统异常');
                 }
                 if (card.time > 0 && card.money > 0) {
                     await this.addBanlanceAndExpirationTime(device, card.time, card.money, '充值卡充值', manager.getRepository(Device));

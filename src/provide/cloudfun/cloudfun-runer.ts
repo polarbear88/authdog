@@ -1,3 +1,4 @@
+import { NotAcceptableException } from '@nestjs/common';
 import ivm from 'isolated-vm';
 export class CloudfunRuner {
     private isolate: ivm.Isolate;
@@ -29,7 +30,7 @@ export class CloudfunRuner {
         this.context.release();
         this.isolate.dispose();
         if (result !== undefined && typeof result !== 'string') {
-            throw new Error('返回值必须为字符串或不返回');
+            throw new NotAcceptableException('返回值必须为字符串或不返回');
         }
         return result;
     }

@@ -31,7 +31,7 @@ export class ApiUserDataController extends BaseController {
     async create(@ApiTakeApp() app: Application, @ApiTakeUser() user: User | Device, @Body() dto: CreateUserDataDto) {
         if (dto.uniqueValue) {
             if (await this.userDataService.findByUserIdAndUniqueValue(app.id, user.id, dto.uniqueValue)) {
-                throw new Error('uniqueValue已存在');
+                throw new NotAcceptableException('uniqueValue已存在');
             }
         }
         const data = await this.userDataService.create(dto, app, user.id, app.authMode === 'user' ? (user as User).name : (user as Device).deviceId);

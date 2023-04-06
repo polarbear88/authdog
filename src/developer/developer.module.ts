@@ -42,6 +42,7 @@ import { PeriodicStatisticsModule } from 'src/periodic-statistics/periodic-stati
 import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-machine-inspect.module';
 import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module';
 import { UserDataModule } from 'src/provide/user-data/user-data.module';
+import { UserDataController } from './controller/user-data.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -95,6 +96,7 @@ import { UserDataModule } from 'src/provide/user-data/user-data.module';
         StatisticsController,
         ActionLogController,
         UserController,
+        UserDataController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
