@@ -237,7 +237,29 @@ export class RechargeCardReBuildByCardsSalerDto {
     description: string;
 }
 
+export class RechargeCardQueryByCardsSalerDto {
+    @IsNotEmpty({ message: '应用id不能为空' })
+    @IsNumber({}, { message: '应用id必须是数字' })
+    appid: number;
+
+    @IsNotEmpty({ message: '卡数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '卡数组不能为空' })
+    @ArrayMaxSize(200, { message: '卡数组最多200个' })
+    @IsString({ each: true })
+    cards: string[];
+}
+
 export class RechargeCardDeleteByCardsDto {
+    @IsNotEmpty({ message: '卡数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '卡数组不能为空' })
+    @ArrayMaxSize(200, { message: '卡数组最多200个' })
+    @IsString({ each: true })
+    cards: string[];
+}
+
+export class RechargeCardQueryByCardsDto {
     @IsNotEmpty({ message: '卡数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '卡数组不能为空' })

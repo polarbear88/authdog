@@ -254,4 +254,12 @@ export class RechargeCardService extends BaseService {
     async findByCard(appid: number, card: string) {
         return await this.rechargeCardRepository.findOne({ where: { appid, card } });
     }
+
+    async findByCards(appid: number, cards: Array<string>, whereCallback?: (query: SelectQueryBuilder<RechargeCard>) => void) {
+        const query = this.rechargeCardRepository.createQueryBuilder().where('card in (:...cards)', { cards }).andWhere('appid = :appid', { appid });
+        if (whereCallback) {
+            whereCallback(query);
+        }
+        return await query.getMany();
+    }
 }

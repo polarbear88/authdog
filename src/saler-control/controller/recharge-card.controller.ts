@@ -10,6 +10,7 @@ import {
     ExportRechargeCardListDto,
     GetRechargeCardListDto,
     RechargeCardExportDto,
+    RechargeCardQueryByCardsSalerDto,
     RechargeCardReBuildByCardsSalerDto,
     RechargeCardReBuildDto,
     RechargeCardSetStatusByCardsSalerDto,
@@ -154,5 +155,12 @@ export class RechargeCardController extends BaseController {
             },
         );
         return { affectedCount: affected };
+    }
+
+    @Post('find-by-cards')
+    async findByCards(@TakeSaler() saler: any, @Body() dto: RechargeCardQueryByCardsSalerDto) {
+        return await this.rechargeCardService.findByCards(dto.appid, dto.cards, (query: SelectQueryBuilder<RechargeCard>) => {
+            query.andWhere('creator = :creator', { creator: saler.id });
+        });
     }
 }

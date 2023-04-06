@@ -12,6 +12,7 @@ import {
     RechargeCardDeleteByCardsDto,
     RechargeCardDeleteDto,
     RechargeCardExportDto,
+    RechargeCardQueryByCardsDto,
     RechargeCardReBuildByCardsDto,
     RechargeCardReBuildDto,
     RechargeCardSetStatusByCardsDto,
@@ -136,5 +137,10 @@ export class RechargeCardController extends BaseController {
     async deleteByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardDeleteByCardsDto) {
         const affected = await this.rechargeCardService.deleteByCards(app.id, dto.cards);
         return this.setAffected({ affectedCount: affected }, `操作${affected}张卡`);
+    }
+
+    @Post('find-by-cards')
+    async findByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardQueryByCardsDto) {
+        return await this.rechargeCardService.findByCards(app.id, dto.cards);
     }
 }
