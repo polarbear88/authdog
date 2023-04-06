@@ -40,6 +40,7 @@ import { ActionLogController } from './controller/action-log.controller';
 import { UserDeviceModule } from 'src/user/user-device/user-device.module';
 import { PeriodicStatisticsModule } from 'src/periodic-statistics/periodic-statistics.module';
 import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-machine-inspect.module';
+import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -71,6 +72,7 @@ import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-mac
         UserDeviceModule,
         PeriodicStatisticsModule,
         ManMachineInspectModule,
+        SmsValidateModule,
     ],
     controllers: [
         DeveloperController,

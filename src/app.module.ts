@@ -43,7 +43,7 @@ import { ManMachineInspectModule } from './helpers/man-machine-inspect/man-machi
             isGlobal: true,
             // 缓存配置
             cache: true,
-            envFilePath: ['.env.dev', '.env'],
+            envFilePath: ['.env.dev', '.env.prod', '.env'],
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],

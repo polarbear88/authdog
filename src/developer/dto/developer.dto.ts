@@ -1,7 +1,6 @@
-import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
 import { UserName } from '../../common/validate/username.validate';
-import { GeetestDto } from 'src/helpers/man-machine-inspect/geetest.dto';
-import { Type } from 'class-transformer';
+import { Optional } from '@nestjs/common';
 
 export class CreateDeveloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
@@ -16,6 +15,11 @@ export class CreateDeveloperDto {
     @IsNumberString(undefined, { message: '手机号必须为数字字符串' })
     @Length(11, 11, { message: '手机号必须为11位' })
     mobile: string;
+
+    @IsOptional()
+    @IsString({ message: '验证码必须是字符串' })
+    @Length(6, 6, { message: '验证码错误' })
+    smscode: string;
 }
 
 export class LoginDeveloperDto {

@@ -26,6 +26,11 @@ export class ManMachineInspectGuard implements CanActivate {
                 await this.manMachineInspectService.validateCaptchaRegister(await this.getGetestCaptcha(context));
             }
         }
+        if (type === ManMachineInspectEnum.SENDSMS) {
+            if (this.manMachineInspectService.getConfig().validate_enable_sendsms) {
+                await this.manMachineInspectService.validateCaptchaRegister(await this.getGetestCaptcha(context));
+            }
+        }
         return true;
     }
 

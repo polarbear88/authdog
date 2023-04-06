@@ -12,12 +12,21 @@ import { DeveloperService } from '../developer.service';
 import { ManMachineInspect } from 'src/helpers/man-machine-inspect/man-machine-inspect.decorator';
 import { ManMachineInspectEnum } from 'src/helpers/man-machine-inspect/man-machine-inspect.enum';
 import { ConfigService } from '@nestjs/config';
+import { SendSmsDto } from 'src/helpers/sms-validate/sms-validate.dto';
+import { SMSValidateService } from 'src/helpers/sms-validate/sms-validate.service';
+import { ManMachineInspectService } from 'src/helpers/man-machine-inspect/man-machine-inspect.service';
 // import ivm from 'isolated-vm';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })
 export class DeveloperController extends BaseController {
-    constructor(private developerService: DeveloperService, private jwtService: JwtService, private configService: ConfigService) {
+    constructor(
+        private developerService: DeveloperService,
+        private jwtService: JwtService,
+        private configService: ConfigService,
+        private smsValidateService: SMSValidateService,
+        private manMachineInspectService: ManMachineInspectService,
+    ) {
         super();
     }
 
@@ -34,6 +43,12 @@ export class DeveloperController extends BaseController {
         }
         if (await this.developerService.existsByMobile(createDeveloperDto.mobile)) {
             throw new NotAcceptableException('手机号已存在');
+        }
+        if (this.manMachineInspectService.getConfig().developer_register_enable_sms) {
+            if (!createDeveloperDto.smscode) {
+                throw new NotAcceptableException('验证码不能为空');
+            }
+            await this.smsValidateService.validate(createDeveloperDto.mobile, createDeveloperDto.smscode);
         }
         const developer = await this.developerService.createDeveloper(createDeveloperDto, ip);
         if (!developer) {
@@ -57,6 +72,16 @@ export class DeveloperController extends BaseController {
         req.user = developer;
         (developer as any).access_token = access_token;
         return developer;
+    }
+
+    @ManMachineInspect(ManMachineInspectEnum.SENDSMS)
+    @Post('send-sms')
+    async sendSms(@Body() dto: SendSmsDto, @RealIP() ip: string) {
+        if (!this.manMachineInspectService.getConfig().developer_register_enable_sms) {
+            throw new NotAcceptableException('不允许发送短信');
+        }
+        await this.smsValidateService.send(dto.mobile, ip);
+        return null;
     }
 
     // @Post('test')

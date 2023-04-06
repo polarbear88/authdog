@@ -1,5 +1,4 @@
-import { Optional } from '@nestjs/common';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class TcpApiCommonDto {
     @IsInt()
@@ -9,7 +8,7 @@ export class TcpApiCommonDto {
     @IsNotEmpty()
     ciphertext: any;
 
-    @Optional()
+    @IsOptional()
     @IsString()
     key: string;
 }

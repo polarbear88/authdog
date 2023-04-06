@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
@@ -12,7 +11,7 @@ export class AliSMSService {
     private signName: string;
     private templateCode: string;
 
-    constructor(private configService: ConfigService, private readonly httpService: HttpService) {
+    constructor(private configService: ConfigService) {
         const config = new $OpenApi.Config({
             // 必填，您的 AccessKey ID
             accessKeyId: this.configService.get('ALIYUN_ACCESS_KEY_ID'),
