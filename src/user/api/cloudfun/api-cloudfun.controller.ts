@@ -1,36 +1,27 @@
-import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Req, SetMetadata, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/provide/application/application.entity';
 import { CloudfunRuner } from 'src/provide/cloudfun/cloudfun-runer';
 import { RunCloudfunDto } from 'src/provide/cloudfun/cloudfun.dto';
 import { CloudfunService } from 'src/provide/cloudfun/cloudfun.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
-import { DeveloperService } from 'src/developer/developer.service';
-import { Device } from 'src/user/device/device.entity';
 import { DeviceService } from 'src/user/device/device.service';
-import { User } from 'src/user/user/user.entity';
 import { UserService } from 'src/user/user/user.service';
 import { ApiUserDeviceInterceptor } from '../api-user-device.interceptor';
 import { ApiTakeApp } from '../decorator/api-take-app.decorator';
+import { ApiUserOrDevicePaidGuard } from '../api-user-or-device-paid.guard';
 
 @Public()
+@UseGuards(ApiUserOrDevicePaidGuard)
 @UseInterceptors(ApiUserDeviceInterceptor)
 @Controller({ version: '1' })
 export class ApiCloudfunController extends BaseController {
-    constructor(
-        private cloudfunService: CloudfunService,
-        private developerService: DeveloperService,
-        private userService: UserService,
-        private deviceService: DeviceService,
-    ) {
+    constructor(private cloudfunService: CloudfunService, private userService: UserService, private deviceService: DeviceService) {
         super();
     }
 
     @Post('run')
     async run(@ApiTakeApp() app: Application, @Body() dto: RunCloudfunDto, @Req() request: any) {
-        if ((await this.developerService.getStatus(app.developerId)) !== 'normal') {
-            throw new NotAcceptableException('开发者已被禁用');
-        }
         const cloudfun = await this.cloudfunService.findByDeveloperIdAndId(app.developerId, dto.id);
         if (!cloudfun) {
             throw new NotAcceptableException('函数不存在');
@@ -38,20 +29,7 @@ export class ApiCloudfunController extends BaseController {
         if (!cloudfun.isGlobal && cloudfun.applicationId !== app.id) {
             throw new NotAcceptableException('函数不存在');
         }
-        let user: User | Device;
-        if (app.authMode === 'user') {
-            const token = request.headers['token'] as string;
-            user = await this.userService.validateUserAuthForToken(app, token, dto.deviceId);
-        } else {
-            const device = await this.deviceService.findByAppidAndDeviceId(app.id, dto.deviceId);
-            if (!device || device.status !== 'normal') {
-                throw new NotAcceptableException('设备已被禁用');
-            }
-            if (!this.deviceService.validateUserAuth(app, device).result) {
-                throw new NotAcceptableException('用户未授权');
-            }
-            user = device;
-        }
+        const user = request.user;
         const args = dto.args || [];
         try {
             // eslint-disable-next-line @typescript-eslint/no-empty-function

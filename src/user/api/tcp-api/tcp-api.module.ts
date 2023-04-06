@@ -28,7 +28,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
             isGlobal: true,
             // 缓存配置
             cache: true,
-            envFilePath: ['.env.dev', '.env'],
+            envFilePath: ['.env.dev', '.env.prod', '.env'],
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],

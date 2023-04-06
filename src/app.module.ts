@@ -35,6 +35,7 @@ import { SalerRoles } from './saler/saler-roles/saler-roles.entity';
 import { PeriodicStatisticsModule } from './periodic-statistics/periodic-statistics.module';
 import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.entity';
 import { ManMachineInspectModule } from './helpers/man-machine-inspect/man-machine-inspect.module';
+import { UserData } from './provide/user-data/user-data.entity';
 
 @Module({
     imports: [
@@ -73,6 +74,7 @@ import { ManMachineInspectModule } from './helpers/man-machine-inspect/man-machi
                     SalerEntryLink,
                     SalerRoles,
                     PeriodicStatistics,
+                    UserData,
                 ],
                 logging: ['error'],
             }),
@@ -143,6 +145,14 @@ export class AppModule implements NestModule {
         // 应用API解密中间件
         consumer
             .apply(ApiDecryptMiddleware)
-            .forRoutes('/v[0-9]/user/*', '/v[0-9]/app/*', '/v[0-9]/device/*', '/v[0-9]/cloudvar/*', '/v[0-9]/feedback/*', '/v[0-9]/cloudfun/*');
+            .forRoutes(
+                '/v[0-9]/user/*',
+                '/v[0-9]/app/*',
+                '/v[0-9]/device/*',
+                '/v[0-9]/cloudvar/*',
+                '/v[0-9]/feedback/*',
+                '/v[0-9]/cloudfun/*',
+                '/v[0-9]/userdata/*',
+            );
     }
 }
