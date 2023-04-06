@@ -38,11 +38,6 @@ export class RegisterSalerDto extends CreateSalerByDevloperDto {
     @IsString()
     @MaxLength(100, { message: 'token错误' })
     token: string;
-
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => GeetestDto)
-    geetest_captcha: GeetestDto;
 }
 
 export class GetSalerListDto {
@@ -144,11 +139,6 @@ export class SalerLoginDto {
     @IsString()
     @MaxLength(100, { message: 'token错误' })
     token: string;
-
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => GeetestDto)
-    geetest_captcha: GeetestDto;
 }
 
 export class SalerSetRoleDto {

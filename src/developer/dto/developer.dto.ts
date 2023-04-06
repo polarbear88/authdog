@@ -16,11 +16,6 @@ export class CreateDeveloperDto {
     @IsNumberString(undefined, { message: '手机号必须为数字字符串' })
     @Length(11, 11, { message: '手机号必须为11位' })
     mobile: string;
-
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => GeetestDto)
-    geetest_captcha: GeetestDto;
 }
 
 export class LoginDeveloperDto {
@@ -32,9 +27,4 @@ export class LoginDeveloperDto {
     @IsString({ message: '密码必须是字符串' })
     @Length(32, 32, { message: '密码错误' })
     password: string;
-
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => GeetestDto)
-    geetest_captcha: GeetestDto;
 }

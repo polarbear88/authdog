@@ -9,29 +9,25 @@ import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { CreateDeveloperDto, LoginDeveloperDto } from '../dto/developer.dto';
 import { DeveloperService } from '../developer.service';
-import { ManMachineInspectService } from 'src/man-machine-inspect/man-machine-inspect.service';
+import { ManMachineInspect } from 'src/man-machine-inspect/man-machine-inspect.decorator';
+import { ManMachineInspectEnum } from 'src/man-machine-inspect/man-machine-inspect.enum';
+import { ConfigService } from '@nestjs/config';
 // import ivm from 'isolated-vm';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })
 export class DeveloperController extends BaseController {
-    constructor(
-        private developerService: DeveloperService,
-        private jwtService: JwtService,
-        private manMachineInspectService: ManMachineInspectService,
-    ) {
+    constructor(private developerService: DeveloperService, private jwtService: JwtService, private configService: ConfigService) {
         super();
     }
 
     // 开发者注册
+    @ManMachineInspect(ManMachineInspectEnum.REGISTER)
     @Throttle(20, 3600) // 限制一小时内只能请求20次
     @Post('register')
     async register(@Body() createDeveloperDto: CreateDeveloperDto, @RealIP() ip: string) {
-        if (this.manMachineInspectService.getConfig().validate_enable_register) {
-            if (!createDeveloperDto.geetest_captcha) {
-                throw new NotAcceptableException('请先完成人机验证');
-            }
-            await this.manMachineInspectService.validateCaptchaRegister(createDeveloperDto.geetest_captcha);
+        if (this.configService.get('DISABLE_DEVELOPER_REGISTER') === 'true') {
+            throw new NotAcceptableException('不允许注册');
         }
         if (await this.developerService.existsByName(createDeveloperDto.username)) {
             throw new NotAcceptableException('用户名已存在');
@@ -47,15 +43,10 @@ export class DeveloperController extends BaseController {
     }
 
     // 开发者登录
+    @ManMachineInspect(ManMachineInspectEnum.LOGIN)
     @WriteDeveloperActionLog('登录')
     @Post('login')
     async login(@Body() loginDeveloperDto: LoginDeveloperDto, @Request() req: any) {
-        if (this.manMachineInspectService.getConfig().validate_enable_login) {
-            if (!loginDeveloperDto.geetest_captcha) {
-                throw new NotAcceptableException('请先完成人机验证');
-            }
-            await this.manMachineInspectService.validateCaptchaLogin(loginDeveloperDto.geetest_captcha);
-        }
         // 验证用户
         const developer = await this.developerService.validateUser(loginDeveloperDto);
         // 生成token

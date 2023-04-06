@@ -11,7 +11,8 @@ import { DeveloperService } from 'src/developer/developer.service';
 import { SalerEntryLinkService } from '../../saler/entry-link/entry-link.service';
 import { RegisterSalerDto, SalerLoginDto } from '../../saler/saler.dto';
 import { SalerService } from '../../saler/saler.service';
-import { ManMachineInspectService } from 'src/man-machine-inspect/man-machine-inspect.service';
+import { ManMachineInspect } from 'src/man-machine-inspect/man-machine-inspect.decorator';
+import { ManMachineInspectEnum } from 'src/man-machine-inspect/man-machine-inspect.enum';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })
@@ -21,7 +22,6 @@ export class SalerController extends BaseController {
         private jwtService: JwtService,
         private developerService: DeveloperService,
         private enteyService: SalerEntryLinkService,
-        private manMachineInspectService: ManMachineInspectService,
     ) {
         super();
     }
@@ -39,15 +39,10 @@ export class SalerController extends BaseController {
     }
 
     // 代理注册
+    @ManMachineInspect(ManMachineInspectEnum.REGISTER)
     @Throttle(20, 3600) // 限制一小时内只能请求20次
     @Post('register')
     async register(@Body() dto: RegisterSalerDto, @RealIP() ip: string) {
-        if (this.manMachineInspectService.getConfig().validate_enable_register) {
-            if (!dto.geetest_captcha) {
-                throw new NotAcceptableException('请先完成人机验证');
-            }
-            await this.manMachineInspectService.validateCaptchaRegister(dto.geetest_captcha);
-        }
         const entryLink = await this.enteyService.findByToken(dto.token);
         if (!entryLink || entryLink.type !== 'register') {
             throw new NotAcceptableException('入口链接不存在');
@@ -70,14 +65,9 @@ export class SalerController extends BaseController {
     }
 
     // 代理登录
+    @ManMachineInspect(ManMachineInspectEnum.LOGIN)
     @Post('login')
     async login(@Body() dto: SalerLoginDto, @Request() req: any) {
-        if (this.manMachineInspectService.getConfig().validate_enable_login) {
-            if (!dto.geetest_captcha) {
-                throw new NotAcceptableException('请先完成人机验证');
-            }
-            await this.manMachineInspectService.validateCaptchaLogin(dto.geetest_captcha);
-        }
         const entryLink = await this.enteyService.findByToken(dto.token);
         if (!entryLink) {
             throw new NotAcceptableException('入口链接不存在');
