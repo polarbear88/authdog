@@ -28,7 +28,10 @@ async function bootstrap() {
     // });
     // SwaggerModule.setup('api', app, document);
 
-    app.getHttpServer().set('trust proxy', true);
+    if (configService.get('TRUST_PROXY') === 'true') {
+        (app.getHttpAdapter() as any).instance.set('trust proxy', true);
+    }
+
     await app.listen(+configService.get('APP_PORT'));
 
     // TCP API
