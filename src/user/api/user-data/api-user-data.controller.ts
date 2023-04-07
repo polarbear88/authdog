@@ -17,6 +17,7 @@ import { Device } from 'src/user/device/device.entity';
 import { UserDataService } from 'src/provide/user-data/user-data.service';
 import { Application } from 'src/provide/application/application.entity';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Public()
 @UseGuards(ApiUserOrDevicePaidGuard)
@@ -27,6 +28,7 @@ export class ApiUserDataController extends BaseController {
         super();
     }
 
+    @Throttle(300, 3600)
     @Post('create')
     async create(@ApiTakeApp() app: Application, @ApiTakeUser() user: User | Device, @Body() dto: CreateUserDataDto) {
         if (dto.uniqueValue) {
