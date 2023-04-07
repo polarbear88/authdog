@@ -25,7 +25,7 @@ export class ResponseInterceptor implements NestInterceptor {
         );
     }
 
-    private encrypt(data: any, request: any) {
+    private encrypt(data: any, request: any): string {
         if (data === null || data === undefined) {
             return data;
         }
@@ -41,7 +41,7 @@ export class ResponseInterceptor implements NestInterceptor {
         }
         data = typeof data === 'object' ? JSON.stringify(data) : data + '';
         if (app.cryptoMode === 'samenc') {
-            return CryptoUtils.samenc(Buffer.from(data));
+            return CryptoUtils.samenc(Buffer.from(data)).toString('base64');
         }
         const key = request.aesKey;
         if (!key) {
