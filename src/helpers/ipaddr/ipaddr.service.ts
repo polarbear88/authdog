@@ -7,7 +7,10 @@ import { IPAddrAscriptionPlace } from '../../common/dto/ipaddr-ascription-place'
 @Injectable()
 export class IPAddrService {
     private readonly logger = new Logger(IPAddrService.name);
-    constructor(private readonly httpService: HttpService, private configService: ConfigService) {}
+    private isDisable = false;
+    constructor(private readonly httpService: HttpService, private configService: ConfigService) {
+        this.isDisable = !this.configService.get('IP_API_KEY');
+    }
 
     /**
      * 获取IP地址归属地
@@ -22,6 +25,15 @@ export class IPAddrService {
             iap.city = 'LAN';
             iap.district = 'LAN';
             iap.country = 'LAN';
+            return iap;
+        }
+        if (this.isDisable) {
+            const iap = new IPAddrAscriptionPlace();
+            iap.isp = 'Disable';
+            iap.region = 'Disable';
+            iap.city = 'Disable';
+            iap.district = 'Disable';
+            iap.country = 'Disable';
             return iap;
         }
         const { data } = await firstValueFrom(
