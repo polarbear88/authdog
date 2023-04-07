@@ -21,6 +21,11 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             throw new BadRequestException('错误的请求');
         }
         const decryptData = this.decryptBody(request, app);
+        // 为了方便写api文档又兼容以前的传参新的公用参数放在baseBody中，这里将其合并到data中
+        if (decryptData.baseBody) {
+            Object.assign(decryptData, decryptData.baseBody);
+            delete decryptData.baseBody;
+        }
         // 校验时间戳，检查请求是否超时 防止请求重放
         this.checkTimestamp(parseInt(decryptData.timestamp));
         decryptData.appid = app.id;
