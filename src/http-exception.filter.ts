@@ -23,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         let resData = {
             statusCode: status,
             message: message,
-            data: null,
+            data: {},
             timestamp: new Date().getTime(),
         };
         if (isEncrypt) {
@@ -36,7 +36,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 resData = {
                     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
                     message: '服务器错误',
-                    data: null,
+                    data: {},
                     timestamp: new Date().getTime(),
                 };
             }
