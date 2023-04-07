@@ -82,7 +82,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
         const access_token = this.jwtService.sign(payload, {
             expiresIn: JwtExpiresInConfig.user,
         });
-        (user as any).access_token = access_token;
+        // (user as any).access_token = access_token;
         // 判断是否记录绑定的设备
         if (app.bindDevice && !user.currentDeviceId) {
             // 记录绑定的设备
@@ -96,6 +96,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
                 expire: user.expirationTime.getTime(),
                 balance: user.balance,
                 isTryTime: user.trialExpiration.getTime() > new Date().getTime(),
+                access_token,
             },
         };
     }
