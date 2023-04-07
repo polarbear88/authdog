@@ -27,6 +27,9 @@ import { WriteDeveloperActionLog } from '../action-log/write-developer-action-lo
 import { TakeApplication } from '../decorator/take-application.decorator';
 import { TakeDeveloper } from '../decorator/take-developer.decorator';
 import { AppActionGuard } from '../guard/app-action.guard';
+import { CryptoUtils } from 'src/common/utils/crypyo.utils';
+import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
+import { Developer } from '../developer.entity';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'app' })
@@ -228,6 +231,18 @@ export class ApplicationController extends BaseController {
     @Post('set-version')
     async setVersion(@Body() setApplicationVersionDto: SetApplicationVersionDto, @TakeApplication() app: Application) {
         await this.applicationService.setVersion(app.id, setApplicationVersionDto.version);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('删除应用')
+    @Post('delete')
+    async delete(@TakeApplication() app: Application, @Body('password') password: string, @TakeDeveloper(ParseDeveloperPipe) developer: Developer) {
+        // 验证密码
+        if (!CryptoUtils.validatePassword(password, developer.salt, developer.password)) {
+            throw new NotAcceptableException('密码错误');
+        }
+        await this.applicationService.delete(app);
         return this.setAffected({}, app.name);
     }
 }

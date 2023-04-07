@@ -8,12 +8,36 @@ import { Repository } from 'typeorm';
 import { Application } from './application.entity';
 import { AppCryptoMode, AppStatus } from './application.type';
 import { CreateApplicationDto } from './dto/application.dto';
+import { UserService } from 'src/user/user/user.service';
+import { DeviceService } from 'src/user/device/device.service';
+import { UserDataService } from '../user-data/user-data.service';
+import { UserFinancialService } from 'src/user/user-financial/user-financial.service';
+import { Device } from 'src/user/device/device.entity';
+import { User } from 'src/user/user/user.entity';
+import { UserFinancial } from 'src/user/user-financial/user-financial.entity';
+import { UserData } from '../user-data/user-data.entity';
+import { UserDeviceService } from 'src/user/user-device/user-device.service';
+import { UserDevice } from 'src/user/user-device/user-device.entity';
+import { RechargeCardTypeService } from '../recharge-card/card-type/recharge-card-type.service';
+import { RechargeCardService } from '../recharge-card/recharge-card.service';
+import { RechargeCardType } from '../recharge-card/card-type/recharge-card-type.entity';
+import { RechargeCard } from '../recharge-card/recharge-card.entity';
+import { FeedbackService } from '../feedback/feedback.service';
+import { Feedback } from '../feedback/feedback.entity';
 
 @Injectable()
 export class ApplicationService extends BaseService {
     constructor(
         @InjectRepository(Application)
         private applicationRepository: Repository<Application>,
+        private userService: UserService,
+        private deviceService: DeviceService,
+        private userDataService: UserDataService,
+        private userFinancialService: UserFinancialService,
+        private userDeviceService: UserDeviceService,
+        private rechargeCardTypeService: RechargeCardTypeService,
+        private rechargeCardService: RechargeCardService,
+        private feedbackService: FeedbackService,
     ) {
         super(applicationRepository);
     }
@@ -166,5 +190,43 @@ export class ApplicationService extends BaseService {
 
     async setVersion(id: number, version: string) {
         await this.applicationRepository.update(id, { version });
+    }
+
+    async delete(app: Application) {
+        await this.applicationRepository.delete(app.id);
+        // 删除用户
+        if (app.authMode === 'deviceid') {
+            await (this.deviceService.getRepo() as Repository<Device>).delete({
+                appid: app.id,
+            });
+        } else {
+            await (this.userService.getRepo() as Repository<User>).delete({
+                appid: app.id,
+            });
+        }
+        // 删除用户财务动态
+        await (this.userFinancialService.getRepo() as Repository<UserFinancial>).delete({
+            appid: app.id,
+        });
+        // 删除用户数据
+        await (this.userDataService.getRepo() as Repository<UserData>).delete({
+            appid: app.id,
+        });
+        // 删除用户设备记录
+        await (this.userDeviceService.getRepo() as Repository<UserDevice>).delete({
+            appid: app.id,
+        });
+        // 删除卡类型
+        await (this.rechargeCardTypeService.getRepo() as Repository<RechargeCardType>).delete({
+            appid: app.id,
+        });
+        // 删除充值卡
+        await (this.rechargeCardService.getRepo() as Repository<RechargeCard>).delete({
+            appid: app.id,
+        });
+        // 删除用户反馈数据
+        await (this.feedbackService.getRepo() as Repository<Feedback>).delete({
+            appid: app.id,
+        });
     }
 }
