@@ -7,7 +7,7 @@ import { Public } from 'src/common/decorator/public.decorator';
 import { RealIP } from 'src/common/decorator/realip.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
-import { CreateDeveloperDto, LoginDeveloperDto } from '../dto/developer.dto';
+import { CreateDeveloperDto, LoginDeveloperDto, ResetDeveloperPasswordDto } from '../dto/developer.dto';
 import { DeveloperService } from '../developer.service';
 import { ManMachineInspect } from 'src/helpers/man-machine-inspect/man-machine-inspect.decorator';
 import { ManMachineInspectEnum } from 'src/helpers/man-machine-inspect/man-machine-inspect.enum';
@@ -81,6 +81,19 @@ export class DeveloperController extends BaseController {
             throw new NotAcceptableException('不允许发送短信');
         }
         await this.smsValidateService.send(dto.mobile, ip);
+        return null;
+    }
+
+    @Post('reset-password')
+    async resetPassword(@Body() dto: ResetDeveloperPasswordDto) {
+        const developer = await this.developerService.findByMobile(dto.mobile);
+        if (!developer) {
+            throw new NotAcceptableException('用户未注册');
+        }
+        // 验证验证码
+        await this.smsValidateService.validate(dto.mobile, dto.smscode);
+        // 重置密码
+        await this.developerService.setPassword(developer.id, dto.password);
         return null;
     }
 

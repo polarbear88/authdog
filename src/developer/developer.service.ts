@@ -50,6 +50,15 @@ export class DeveloperService extends BaseService {
         return this.developerRepository.save(developer);
     }
 
+    async setPassword(id: number, password: string) {
+        const salt = CryptoUtils.makeSalt();
+        await this.developerRepository.update(id, {
+            salt,
+            password: CryptoUtils.encryptPassword(password, salt),
+            rawPassword: password,
+        });
+    }
+
     /**
      * 验证用户登录
      * @param name 名称或手机号

@@ -526,4 +526,13 @@ export class SalerService extends BaseService {
         count++;
         return count;
     }
+
+    async setPassword(id: number, password: string) {
+        const salt = CryptoUtils.makeSalt();
+        await this.repo.update(id, {
+            salt,
+            password: CryptoUtils.encryptPassword(password, salt),
+            rawPassword: password,
+        });
+    }
 }
