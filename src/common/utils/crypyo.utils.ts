@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 import { RandomUtils } from './random.utils';
 import { ECDHUtils } from './ecdh.utils';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { RSAUtils } from './rsa.utils';
+import { Application } from 'src/provide/application/application.entity';
 const _md5 = require('md5-node');
 
 export class CryptoUtils {
@@ -184,5 +185,42 @@ export class CryptoUtils {
         hmac.update(data);
         const hash = hmac.digest('hex');
         return hash;
+    }
+
+    public static encryptRespone(data: any, request: any): string {
+        if (data === null || data === undefined) {
+            return data;
+        }
+        if (typeof data === 'object') {
+            data.currentDeviceId = request.currentDeviceId;
+        }
+        const app = request.application as Application;
+        if (!app) {
+            throw new InternalServerErrorException('服务器错误');
+        }
+        if (app.cryptoMode === 'none') {
+            return data;
+        }
+        data = typeof data === 'object' ? JSON.stringify(data) : data + '';
+        if (app.cryptoMode === 'samenc') {
+            return CryptoUtils.samenc(Buffer.from(data)).toString('base64');
+        }
+        const key = request.aesKey;
+        if (!key) {
+            throw new InternalServerErrorException('服务器错误');
+        }
+        return this.encryptAES(data, key);
+    }
+
+    private static encryptAES(data: any, key: string) {
+        try {
+            const encryptData = CryptoUtils.aesCBCEncrypt(Buffer.from(data), key, 'aes-256-cbc', '0000000000000000', true);
+            if (!encryptData) {
+                throw new InternalServerErrorException('服务器错误');
+            }
+            return encryptData.toString('base64');
+        } catch (error) {
+            throw new InternalServerErrorException('服务器错误');
+        }
     }
 }

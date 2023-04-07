@@ -1,8 +1,6 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CryptoUtils } from './common/utils/crypyo.utils';
-import { Application } from './provide/application/application.entity';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -31,7 +29,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         if (isEncrypt) {
             try {
                 (resData as any) = {
-                    data: this.encrypt(resData, request),
+                    data: CryptoUtils.encryptRespone(resData, request),
                 };
             } catch (e) {
                 resData = {
@@ -42,44 +40,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 };
             }
         }
-
         response.status(HttpStatus.OK).json(resData);
-    }
-
-    private encrypt(data: any, request: any) {
-        if (data === null || data === undefined) {
-            return data;
-        }
-        if (typeof data === 'object') {
-            data.currentDeviceId = request.currentDeviceId;
-        }
-        const app = request.application as Application;
-        if (!app) {
-            throw new InternalServerErrorException('服务器错误');
-        }
-        if (app.cryptoMode === 'none') {
-            return data;
-        }
-        data = typeof data === 'object' ? JSON.stringify(data) : data + '';
-        if (app.cryptoMode === 'samenc') {
-            return CryptoUtils.samenc(Buffer.from(data));
-        }
-        const key = request.aesKey;
-        if (!key) {
-            throw new InternalServerErrorException('服务器错误');
-        }
-        return this.encryptAES(data, key);
-    }
-
-    private encryptAES(data: any, key: string) {
-        try {
-            const encryptData = CryptoUtils.aesCBCEncrypt(Buffer.from(data), key, 'aes-256-cbc', '0000000000000000', true);
-            if (!encryptData) {
-                throw new InternalServerErrorException('服务器错误');
-            }
-            return encryptData.toString('base64');
-        } catch (error) {
-            throw new InternalServerErrorException('服务器错误');
-        }
     }
 }
