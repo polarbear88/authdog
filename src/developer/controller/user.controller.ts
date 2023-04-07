@@ -76,4 +76,11 @@ export class UserController extends BaseController {
         );
         return this.setAffected({ affectedCount: affected }, `操作${affected}个用户[${setUserStatusDto.status}]`);
     }
+
+    @WriteDeveloperActionLog('删除用户')
+    @Post('delete')
+    async delete(@TakeApplication() app: Application, @Body() onlyUserIdDto: OnlyUserIdDto) {
+        const affected = await this.userService.deleteByIds(app.developerId, onlyUserIdDto.ids);
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
+    }
 }

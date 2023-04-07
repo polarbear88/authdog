@@ -11,6 +11,7 @@ import { UpdateQueryBuilder } from 'typeorm';
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeApplication } from '../decorator/take-application.decorator';
 import { AppActionGuard } from '../guard/app-action.guard';
+import { OnlyUserIdDto } from 'src/user/user/user.dto';
 
 @UseGuards(AppActionGuard)
 @Roles(Role.Developer)
@@ -50,5 +51,12 @@ export class DeviceController extends BaseController {
             },
         );
         return this.setAffected({ affectedCount: affected }, `操作${affected}个设备[${setDeviceStatusDto.status}]`);
+    }
+
+    @WriteDeveloperActionLog('删除用户]')
+    @Post('delete')
+    async delete(@TakeApplication() app: Application, @Body() onlyUserIdDto: OnlyUserIdDto) {
+        const affected = await this.deviceService.deleteByIds(app.developerId, onlyUserIdDto.ids);
+        return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
     }
 }

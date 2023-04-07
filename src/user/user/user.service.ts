@@ -14,7 +14,7 @@ import { LoginDeviceManageService } from 'src/user/login-device-manage/login-dev
 import { RechargeCard } from 'src/provide/recharge-card/recharge-card.entity';
 import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user/user-financial/user-financial.service';
-import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { EntityManager, In, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import {
     AddUserBanlanceDto,
     AddUserTimeDto,
@@ -28,6 +28,8 @@ import {
 import { User } from './user.entity';
 import { UserStatus } from './user.type';
 import { UserFinancial } from 'src/user/user-financial/user-financial.entity';
+import { UserDataService } from 'src/provide/user-data/user-data.service';
+import { UserData } from 'src/provide/user-data/user-data.entity';
 
 @Injectable()
 export class UserService extends BaseService {
@@ -39,6 +41,7 @@ export class UserService extends BaseService {
         private rechargeCardService: RechargeCardService,
         private readonly entityManager: EntityManager,
         private jwtService: JwtService,
+        private userDataService: UserDataService,
     ) {
         super(userRepository);
     }
@@ -611,5 +614,14 @@ export class UserService extends BaseService {
 
     async incUnbindCount(userId: number, count: number) {
         await this.userRepository.update(userId, { unbindCount: () => `unbindCount + ${count}` });
+    }
+
+    async deleteByIds(developerId: number, ids: Array<number>) {
+        const result = await this.userRepository.delete({ id: In(ids), developerId });
+        // 连带删除用户数据
+        await (this.userDataService.getRepo() as Repository<UserData>).delete({ userId: In(ids), developerId });
+        // 删除用户财产动态记录
+        await (this.userFinancialService.getRepo() as Repository<UserFinancial>).delete({ userId: In(ids), developerId });
+        return result.affected;
     }
 }

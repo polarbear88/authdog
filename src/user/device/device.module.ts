@@ -7,9 +7,10 @@ import { UserFinancialModule } from 'src/user/user-financial/user-financial.modu
 import { Device } from './device.entity';
 import { DeviceService } from './device.service';
 import { DeviceSubscriber } from './device.subscriber';
+import { UserDataModule } from 'src/provide/user-data/user-data.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Device]), IPAddrModule, UserFinancialModule, RechargeCardModule],
+    imports: [TypeOrmModule.forFeature([Device]), IPAddrModule, UserFinancialModule, RechargeCardModule, UserDataModule],
     providers: [DeviceService, IPAddrService, DeviceSubscriber],
     exports: [DeviceService],
 })

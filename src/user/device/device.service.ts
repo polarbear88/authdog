@@ -11,10 +11,12 @@ import { RechargeCard } from 'src/provide/recharge-card/recharge-card.entity';
 import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user/user-financial/user-financial.service';
 import { UserStatus } from 'src/user/user/user.type';
-import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { EntityManager, In, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { AddDeviceBanlanceDto, AddDeviceTimeDto, DeviceDto, DeviceRechargeDto, GetDeviceListDto } from './device.dto';
 import { Device } from './device.entity';
 import { UserFinancial } from 'src/user/user-financial/user-financial.entity';
+import { UserDataService } from 'src/provide/user-data/user-data.service';
+import { UserData } from 'src/provide/user-data/user-data.entity';
 
 @Injectable()
 export class DeviceService extends BaseService {
@@ -24,6 +26,7 @@ export class DeviceService extends BaseService {
         private userFinancialService: UserFinancialService,
         private rechargeCardService: RechargeCardService,
         private readonly entityManager: EntityManager,
+        private userDataService: UserDataService,
     ) {
         super(deviceRepository);
     }
@@ -418,5 +421,14 @@ export class DeviceService extends BaseService {
         } catch (error) {
             throw new InternalServerErrorException('操作失败，系统错误');
         }
+    }
+
+    async deleteByIds(developerId: number, ids: Array<number>) {
+        const result = await this.deviceRepository.delete({ id: In(ids), developerId });
+        // 连带删除用户数据
+        await (this.userDataService.getRepo() as Repository<UserData>).delete({ userId: In(ids), developerId });
+        // 删除用户财产动态记录
+        await (this.userFinancialService.getRepo() as Repository<UserFinancial>).delete({ userId: In(ids), developerId });
+        return result.affected;
     }
 }

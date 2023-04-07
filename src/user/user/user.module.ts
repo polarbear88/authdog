@@ -10,6 +10,7 @@ import { UserFinancialModule } from 'src/user/user-financial/user-financial.modu
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UserSubscriber } from './user.subscriber';
+import { UserDataModule } from 'src/provide/user-data/user-data.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { UserSubscriber } from './user.subscriber';
                 signOptions: { expiresIn: '24h' },
             }),
         }),
+        UserDataModule,
     ],
     providers: [UserService, IPAddrService, UserSubscriber],
     exports: [UserService],
