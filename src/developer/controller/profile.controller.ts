@@ -8,11 +8,12 @@ import { DeveloperService } from '../developer.service';
 import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
 import { DeveloperChangePasswordDto } from '../dto/developer.dto';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
+import { JwtService } from '@nestjs/jwt';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'profile' })
 export class ProfileController extends BaseController {
-    constructor(private developerService: DeveloperService) {
+    constructor(private developerService: DeveloperService, private jwtService: JwtService) {
         super();
     }
 
@@ -28,5 +29,17 @@ export class ProfileController extends BaseController {
         }
         await this.developerService.setPassword(developer.id, dto.newPassword);
         return null;
+    }
+
+    @Get('sign-jwt-token')
+    async signJwtToken(@TakeDeveloper(ParseDeveloperPipe) developer: Developer) {
+        const payload = { username: developer.name, id: developer.id, roles: [Role.Developer], isApi: true };
+        const access_token = this.jwtService.sign(payload, {
+            expiresIn: '3650d',
+        });
+        (developer as any).access_token = access_token;
+        return {
+            access_token,
+        };
     }
 }
