@@ -66,7 +66,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             return CryptoUtils.decryptAESJSON(data, app.cryptoSecret);
         }
         if (app.cryptoMode === 'samenc') {
-            return CryptoUtils.samdec(Buffer.from(data, 'base64'));
+            return JSON.parse(CryptoUtils.samdec(Buffer.from(data, 'base64')).toString());
         }
         if (!body.key || typeof body.key !== 'string') {
             throw new BadRequestException('错误的请求');
