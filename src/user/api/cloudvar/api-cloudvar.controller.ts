@@ -37,9 +37,11 @@ export class ApiCloudvarController extends BaseController {
         }
         if (!cloudvar.isPublic) {
             if (app.authMode === 'user') {
+                // 用户模式下检查授权
                 const token = request.headers['token'] as string;
                 await this.userService.validateUserAuthForToken(app, token, dto.deviceId);
             } else {
+                // 设备模式下检查授权
                 const device = await this.deviceService.findByAppidAndDeviceId(app.id, dto.deviceId);
                 if (!device || device.status !== 'normal') {
                     throw new NotAcceptableException('设备已被禁用');

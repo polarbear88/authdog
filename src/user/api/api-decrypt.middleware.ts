@@ -21,6 +21,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             throw new BadRequestException('错误的请求');
         }
         const decryptData = this.decryptBody(request, app);
+        // 校验时间戳，检查请求是否超时 防止请求重放
         this.checkTimestamp(parseInt(decryptData.timestamp));
         decryptData.appid = app.id;
         request.body = decryptData;
@@ -32,6 +33,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             throw new BadRequestException('请传入客户端版本号');
         }
         request['clientVersion'] = decryptData.clientVersion;
+        // 标记是否需要加密返回
         request['is_need_encrypt_res'] = true;
         next();
     }

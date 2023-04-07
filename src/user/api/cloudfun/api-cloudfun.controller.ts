@@ -36,6 +36,7 @@ export class ApiCloudfunController extends BaseController {
             const result = await new CloudfunRuner(user._serialization(), cloudfun.script, (balance: number, reason: string) => {
                 if (typeof balance === 'number' && typeof reason === 'string' && balance > 0) {
                     const service = app.authMode === 'user' ? this.userService : this.deviceService;
+                    // 由于此函数在虚拟机中运行，并且不支持await，所以这里立即返回然后在后台执行
                     service
                         .subBanlance(user as any, balance, reason)
                         .then(() => {

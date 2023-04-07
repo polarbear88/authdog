@@ -27,6 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             timestamp: new Date().getTime(),
         };
         if (isEncrypt) {
+            // 加密响应
             try {
                 (resData as any) = {
                     data: CryptoUtils.encryptRespone(resData, request),
