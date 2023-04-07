@@ -131,8 +131,8 @@ export class CryptoUtils {
         }
     }
 
-    private static g_sam_key = Buffer.from('8hXyFfIV8hXyFfIV8hXyFQ==', 'base64');
-    private static g_sam_iv = Buffer.from('ERIyFfIV8hKiFTIVwhVmiA==', 'base64');
+    private static g_sam_key = Buffer.from('D2 78 F2 15 F2 25 F2 12 F2 15 F2 34 F2 15 F2 15'.replace(/ /g, ''), 'hex');
+    private static g_sam_iv = Buffer.from('3D 45 32 67 F2 15 F2 12 A2 15 32 15 C2 15 66 88'.replace(/ /g, ''), 'hex');
 
     public static samenc(data: Buffer) {
         if (data == null || data.length == 0) {
