@@ -121,7 +121,7 @@ export class DeviceService extends BaseService {
         };
     }
 
-    private validateUserAuthForDate(device: Device, app: Application) {
+    validateUserAuthForDate(device: Device, app: Application) {
         if (app.free) {
             return {
                 result: true,

@@ -214,7 +214,7 @@ export class UserService extends BaseService {
         };
     }
 
-    private validateUserAuthForDate(user: User, app: Application) {
+    validateUserAuthForDate(user: User, app: Application) {
         if (app.free) {
             return {
                 result: true,
@@ -603,8 +603,8 @@ export class UserService extends BaseService {
             if (user.status !== 'normal') {
                 throw new NotAcceptableException('用户已被禁用');
             }
-            if (!this.validateUserAuth(user, app, deviceId).result) {
-                throw new NotAcceptableException('用户未授权');
+            if (!this.validateUserAuthForDate(user, app).result) {
+                throw new NotAcceptableException('已到期');
             }
             return user;
         } catch (error) {

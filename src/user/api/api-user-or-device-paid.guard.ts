@@ -26,7 +26,7 @@ export class ApiUserOrDevicePaidGuard implements CanActivate {
             if (!device || device.status !== 'normal') {
                 throw new NotAcceptableException('设备已被禁用');
             }
-            if (!this.deviceService.validateUserAuth(app, device).result) {
+            if (!this.deviceService.validateUserAuthForDate(device, app).result) {
                 throw new NotAcceptableException('用户未授权');
             }
             user = device;

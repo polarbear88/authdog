@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiTakeApp } from 'src/user/api/decorator/api-take-app.decorator';
 import { ApiTakeUser } from 'src/user/api/decorator/api-take-user.decorator';
 import { Application } from 'src/provide/application/application.entity';
@@ -8,9 +8,10 @@ import { BaseUserDeviceDto } from 'src/user/user-device/user-device.dto';
 import { UserReduceCountDto } from 'src/user/user/user.dto';
 import { User } from 'src/user/user/user.entity';
 import { UserService } from 'src/user/user/user.service';
-import { ApiParseUserPipe } from '../api-parse-user.pipe';
 import { ApiUserBaseController } from './api-user-base.controller';
+import { ApiUserDeviceValidateGuard } from '../api-user-device-validate.guard';
 
+@UseGuards(ApiUserDeviceValidateGuard)
 @Roles(Role.User)
 @Controller({ version: '1' })
 export class ApiUserController extends ApiUserBaseController {
@@ -19,7 +20,7 @@ export class ApiUserController extends ApiUserBaseController {
     }
 
     @Post('poll')
-    async poll(@ApiTakeUser(ApiParseUserPipe) user: User, @Body() dto: BaseUserDeviceDto, @ApiTakeApp() app: Application) {
+    async poll(@ApiTakeUser() user: User, @Body() dto: BaseUserDeviceDto, @ApiTakeApp() app: Application) {
         const authResult = this.userService.validateUserAuth(user, app, dto.deviceId);
         return {
             user: user._serialization(),
@@ -33,7 +34,7 @@ export class ApiUserController extends ApiUserBaseController {
     }
 
     @Post('reduce-count')
-    async reduceCount(@ApiTakeUser(ApiParseUserPipe) user: User, @Body() dto: UserReduceCountDto) {
+    async reduceCount(@ApiTakeUser() user: User, @Body() dto: UserReduceCountDto) {
         if (user.balance < dto.count) {
             return {
                 user: user._serialization(),
