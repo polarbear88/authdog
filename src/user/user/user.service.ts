@@ -350,7 +350,7 @@ export class UserService extends BaseService {
         balance: number,
         reason: string,
         whereCallback?: (query: SelectQueryBuilder<User>) => void,
-        manager?: Repository<User>,
+        manager: Repository<User> = this.userRepository,
     ) {
         const mgr = manager || this.userRepository;
         const query = mgr.createQueryBuilder();
@@ -389,7 +389,7 @@ export class UserService extends BaseService {
         minute: number,
         reason: string,
         whereCallback?: (query: SelectQueryBuilder<User>) => void,
-        manager?: Repository<User>,
+        manager: Repository<User> = this.userRepository,
     ) {
         const mgr = manager || this.userRepository;
         const query = mgr.createQueryBuilder();
@@ -423,7 +423,7 @@ export class UserService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string, manager?: Repository<User>) {
+    async addBanlanceAndExpirationTime(user: User, minute: number, balance: number, reason: string, manager: Repository<User> = this.userRepository) {
         const mgr = manager || this.userRepository;
         const affected = await mgr
             .createQueryBuilder()

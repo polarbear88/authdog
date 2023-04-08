@@ -237,7 +237,7 @@ export class DeviceService extends BaseService {
         balance: number,
         reason: string,
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
-        manager?: Repository<Device>,
+        manager: Repository<Device> = this.deviceRepository,
     ) {
         const mgr = manager || this.deviceRepository;
         const query = mgr.createQueryBuilder();
@@ -276,7 +276,7 @@ export class DeviceService extends BaseService {
         minute: number,
         reason: string,
         whereCallback?: (query: SelectQueryBuilder<Device>) => void,
-        manager?: Repository<Device>,
+        manager: Repository<Device> = this.deviceRepository,
     ) {
         const mgr = manager || this.deviceRepository;
         const query = mgr.createQueryBuilder();
@@ -310,7 +310,13 @@ export class DeviceService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async addBanlanceAndExpirationTime(device: Device, minute: number, balance: number, reason: string, manager?: Repository<Device>) {
+    async addBanlanceAndExpirationTime(
+        device: Device,
+        minute: number,
+        balance: number,
+        reason: string,
+        manager: Repository<Device> = this.deviceRepository,
+    ) {
         const mgr = manager || this.deviceRepository;
         const affected = await mgr
             .createQueryBuilder()

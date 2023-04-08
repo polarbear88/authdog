@@ -223,7 +223,7 @@ export class SalerService extends BaseService {
         otherInfo: string,
         force = false,
         whereCallback?: (query: SelectQueryBuilder<Saler>) => void,
-        manager?: Repository<Saler>,
+        manager: Repository<Saler> = this.repo,
     ) {
         const mgr = manager || this.repo;
         const query = mgr.createQueryBuilder();
@@ -269,7 +269,7 @@ export class SalerService extends BaseService {
         reason: string,
         otherInfo: string,
         whereCallback?: (query: SelectQueryBuilder<Saler>) => void,
-        manager?: Repository<Saler>,
+        manager: Repository<Saler> = this.repo,
     ) {
         const mgr = manager || this.repo;
         const query = mgr.createQueryBuilder();
