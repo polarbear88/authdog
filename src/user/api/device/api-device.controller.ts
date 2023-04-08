@@ -28,6 +28,7 @@ export class ApiDeviceController extends ApiDeviceBaseController {
                 message: authResult.msg,
                 expire: device.expirationTime.getTime(),
                 balance: device.balance,
+                isTryTime: device.trialExpiration.getTime() > new Date().getTime(),
             },
         };
     }
