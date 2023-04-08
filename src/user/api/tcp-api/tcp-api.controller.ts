@@ -1,7 +1,7 @@
 import { BadRequestException, Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { TcpApiCommonDto } from './tcp-api.dto';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ApplicationService } from 'src/provide/application/application.service';
 import { Application } from 'src/provide/application/application.entity';
@@ -31,7 +31,7 @@ export class TcpApiController {
         return app;
     }
 
-    async decryptBody(data: any, app: Application, pbkey: string) {
+    decryptBody(data: any, app: Application, pbkey: string) {
         let aesKey = '';
         if (app.cryptoMode === 'none') {
             if (typeof data !== 'object') {
@@ -64,7 +64,7 @@ export class TcpApiController {
         throw new BadRequestException('错误的请求');
     }
 
-    async encryptBody(data: any, aesKey: string) {
+    encryptBody(data: any, aesKey: string) {
         if (!aesKey) {
             return data;
         }
@@ -77,7 +77,7 @@ export class TcpApiController {
         try {
             const dto = await this.validateTcpApiCommonDto(JSON.parse(data));
             const app = await this.getApp(dto.appid);
-            const { data: body, aesKey } = await this.decryptBody(dto.ciphertext, app, dto.key);
+            const { data: body, aesKey } = this.decryptBody(dto.ciphertext, app, dto.key);
             if (!body.deviceId || typeof body.deviceId !== 'string') {
                 throw new BadRequestException('错误的请求');
             }
@@ -86,7 +86,7 @@ export class TcpApiController {
                 throw new BadRequestException('设备不存在');
             }
             const authResult = this.deviceService.validateUserAuth(app, device);
-            return {
+            const retData = JSON.stringify({
                 code: 200,
                 msg: 'OK',
                 data: this.encryptBody(
@@ -101,9 +101,10 @@ export class TcpApiController {
                     },
                     aesKey,
                 ),
-            };
+            });
+            return retData;
         } catch (error) {
-            return { code: 400, msg: error.message };
+            return JSON.stringify({ code: 400, msg: error.message });
         }
     }
 
@@ -113,7 +114,7 @@ export class TcpApiController {
         try {
             const dto = await this.validateTcpApiCommonDto(JSON.parse(data));
             const app = await this.getApp(dto.appid);
-            const { data: body, aesKey } = await this.decryptBody(dto.ciphertext, app, dto.key);
+            const { data: body, aesKey } = this.decryptBody(dto.ciphertext, app, dto.key);
             if (!body.name || typeof body.name !== 'string') {
                 throw new BadRequestException('错误的请求');
             }
@@ -121,14 +122,14 @@ export class TcpApiController {
                 throw new BadRequestException('错误的请求');
             }
             const user = await this.userService.validateUser(
-                plainToInstance(LoginUserDto, {
+                plainToClass(LoginUserDto, {
                     appid: app.id,
                     name: body.name,
                     password: body.password,
                 }),
             );
             const authResult = this.userService.validateUserAuth(user, app, user.currentDeviceId);
-            return {
+            const retData = JSON.stringify({
                 code: 200,
                 msg: 'OK',
                 data: this.encryptBody(
@@ -143,9 +144,10 @@ export class TcpApiController {
                     },
                     aesKey,
                 ),
-            };
+            });
+            return retData;
         } catch (error) {
-            return { code: 400, msg: error.message };
+            return JSON.stringify({ code: 400, msg: error.message });
         }
     }
 }
