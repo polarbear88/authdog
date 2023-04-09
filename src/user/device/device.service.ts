@@ -437,4 +437,8 @@ export class DeviceService extends BaseService {
         await (this.userFinancialService.getRepo() as Repository<UserFinancial>).delete({ userId: In(ids), developerId });
         return result.affected;
     }
+
+    async getCountByDeveloperId(developerId: number) {
+        return await this.deviceRepository.count({ where: { developerId } });
+    }
 }

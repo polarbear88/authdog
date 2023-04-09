@@ -36,6 +36,8 @@ import { PeriodicStatisticsModule } from './periodic-statistics/periodic-statist
 import { PeriodicStatistics } from './periodic-statistics/periodic-statistics.entity';
 import { ManMachineInspectModule } from './helpers/man-machine-inspect/man-machine-inspect.module';
 import { UserData } from './provide/user-data/user-data.entity';
+import { Quota } from './quota/quota.entity';
+import { QuotaModule } from './quota/quota.module';
 
 @Module({
     imports: [
@@ -75,6 +77,7 @@ import { UserData } from './provide/user-data/user-data.entity';
                     SalerRoles,
                     PeriodicStatistics,
                     UserData,
+                    Quota,
                 ],
                 logging: ['error'],
             }),
@@ -111,6 +114,7 @@ import { UserData } from './provide/user-data/user-data.entity';
         SalerControlModule,
         PeriodicStatisticsModule,
         ManMachineInspectModule,
+        QuotaModule,
     ],
     controllers: [AppController],
     providers: [

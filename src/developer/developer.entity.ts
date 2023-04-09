@@ -34,5 +34,8 @@ export class Developer extends BaseEntity {
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     income: string;
 
+    @Column({ default: 'default' })
+    quota: string;
+
     shield = ['password', 'rawPassword', 'salt', 'ip'];
 }

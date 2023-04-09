@@ -533,4 +533,12 @@ export class SalerService extends BaseService {
             rawPassword: password,
         });
     }
+
+    async getCountByDeveloperId(developerId: number) {
+        return this.repo.count({
+            where: {
+                developerId,
+            },
+        });
+    }
 }

@@ -95,4 +95,8 @@ export class UserDataService extends BaseService {
     async deleteByDeveloperIdAndId(developerId: number, id: number | number[]) {
         return await this.repo.delete({ developerId, id: Array.isArray(id) ? In(id) : id });
     }
+
+    async getCountByDeveloperId(developerId: number) {
+        return await this.repo.count({ where: { developerId } });
+    }
 }

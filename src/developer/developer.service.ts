@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateDeveloperDto, LoginDeveloperDto } from './dto/developer.dto';
 import { Developer } from './developer.entity';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
+import { QuotaService } from '../quota/quota.service';
 
 @Injectable()
 export class DeveloperService extends BaseService {
@@ -118,5 +119,16 @@ export class DeveloperService extends BaseService {
 
     async decIncome(developerId: number, amount: number) {
         await this.developerRepository.update(developerId, { income: () => `income - ${amount}` });
+    }
+
+    async getQuota(developerId: number) {
+        const developer = await this.developerRepository.findOne({
+            where: { id: developerId },
+            select: ['quota'],
+        });
+        if (developer) {
+            return developer.quota;
+        }
+        return null;
     }
 }

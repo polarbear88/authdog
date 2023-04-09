@@ -116,4 +116,12 @@ export class CloudfunService extends BaseService {
         }
         return await this.repo.save(cf);
     }
+
+    async getCountByDeveloperId(developerId: number): Promise<number> {
+        return await this.repo.count({
+            where: {
+                developerId,
+            },
+        });
+    }
 }

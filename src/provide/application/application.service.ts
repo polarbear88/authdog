@@ -229,4 +229,8 @@ export class ApplicationService extends BaseService {
             appid: app.id,
         });
     }
+
+    async getDeveloperAppCount(developerId: number) {
+        return this.applicationRepository.count({ where: { developerId } });
+    }
 }
