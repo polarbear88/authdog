@@ -112,9 +112,12 @@ export class ApiDecryptMiddleware implements NestMiddleware {
         if (!appid) {
             throw new NotAcceptableException('请传入appid');
         }
-        const app = await this.applicationService.findById(appid);
+        const app = (await this.applicationService.findById(appid)) as Application;
         if (!app) {
             throw new NotAcceptableException('应用不存在');
+        }
+        if (app.deactivated) {
+            throw new NotAcceptableException('应用已被停用');
         }
         request.application = app as Application;
         return app as Application;

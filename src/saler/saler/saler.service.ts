@@ -359,6 +359,9 @@ export class SalerService extends BaseService {
         if (!app || app.status !== 'published') {
             throw new NotAcceptableException('应用不存在或被禁用');
         }
+        if (app.deactivated) {
+            throw new NotAcceptableException('应用已停用');
+        }
         return {
             app,
             topSaler,

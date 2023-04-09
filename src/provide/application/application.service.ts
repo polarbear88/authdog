@@ -233,4 +233,8 @@ export class ApplicationService extends BaseService {
     async getDeveloperAppCount(developerId: number) {
         return this.applicationRepository.count({ where: { developerId } });
     }
+
+    async setDeactivated(id: number, bool: boolean) {
+        await this.applicationRepository.update(id, { deactivated: bool });
+    }
 }

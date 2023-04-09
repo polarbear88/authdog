@@ -15,6 +15,8 @@ import { UserDataModule } from 'src/provide/user-data/user-data.module';
 import { UserDataSubscriber } from './subscriber/userdata.subscriber';
 import { SalerModule } from 'src/saler/saler/saler.module';
 import { SalerSubscriber } from './subscriber/saler.subscriber';
+import { DeveloperSubscriber } from './subscriber/developer.subscriber';
+// import { DeactivateAppCronService } from './deactivate-app-cron.service';
 
 @Module({
     imports: [
@@ -28,7 +30,17 @@ import { SalerSubscriber } from './subscriber/saler.subscriber';
         SalerModule,
     ],
     controllers: [],
-    providers: [QuotaService, ApplicationSubscriber, UserSubscriber, DeviceSubscriber, CloudfunSubscriber, UserDataSubscriber, SalerSubscriber],
+    providers: [
+        QuotaService,
+        ApplicationSubscriber,
+        UserSubscriber,
+        DeviceSubscriber,
+        CloudfunSubscriber,
+        UserDataSubscriber,
+        SalerSubscriber,
+        // DeactivateAppCronService,
+        DeveloperSubscriber,
+    ],
     exports: [QuotaService],
 })
 export class QuotaModule {}

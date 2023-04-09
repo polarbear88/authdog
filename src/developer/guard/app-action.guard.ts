@@ -28,6 +28,9 @@ export class AppActionGuard implements CanActivate {
         if (!app) {
             throw new NotAcceptableException('应用不存在');
         }
+        if (app.deactivated) {
+            throw new NotAcceptableException('应用已被系统停用');
+        }
         request.application = app;
         return true;
     }
