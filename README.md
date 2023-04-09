@@ -77,3 +77,6 @@ sudo yum -y install gcc gcc-c++
 
 windows or macos
 npm i node-gyp -g
+
+制卡
+/api/v1/96b64c62a0552b9e7bc04774b0850c17?token=4d3247eede5354cdce53ab8bc94e0687&quota=vip
