@@ -15,6 +15,6 @@ export class SalerRoles extends BaseEntity {
     priceConfig: Array<{
         appid: number;
         cardTypeId: number;
-        salerProfit: number;
+        topSalerPrice: number;
     }>;
 }

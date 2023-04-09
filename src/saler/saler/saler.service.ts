@@ -380,26 +380,24 @@ export class SalerService extends BaseService {
         // 颠倒层级顺序
         salerLevelList.reverse();
         salerLevelList.push(saler);
-        let price = Number(cardType.price);
-        // 计算到顶级代理的价格
+        let price = Number(cardType.topSalerPrice);
         const topSaler = salerLevelList[0];
         // 从层级中删除顶级代理
         salerLevelList.shift();
-        // 获取顶级代理制卡价格
-        let topProfit = cardType.salerProfit;
+        // 判断是否设置顶级代理的角色
         if (topSaler.salerRoleId) {
-            // 从角色中获取利润比例
+            // 从角色中获取价格配置
             const salerRole = (await this.salerRoleService.findById(topSaler.salerRoleId)) as SalerRoles;
             if (salerRole) {
-                const roleProfit = salerRole.priceConfig.find((item) => {
+                const priceConfig = salerRole.priceConfig.find((item) => {
                     return item.appid === cardType.appid && item.cardTypeId === cardType.id;
                 });
-                if (roleProfit) {
-                    topProfit = roleProfit.salerProfit;
+                if (priceConfig) {
+                    price = priceConfig.topSalerPrice;
                 }
             }
         }
-        price = price - price * (topProfit / 100);
+        const topSalerPrice = price;
         // 保存每一层的制卡价格和应得利润
         const result: Array<{
             saler: Saler;
@@ -422,6 +420,7 @@ export class SalerService extends BaseService {
             }
             previousPrice = price;
             price = price + price * (overflowPercentage / 100);
+            // 计算上级应得利润
             result[result.length - 1].profit = price - previousPrice;
             result.push({
                 saler: itemSaler,
@@ -435,8 +434,7 @@ export class SalerService extends BaseService {
             result,
             // 最终制卡价格
             price,
-            // 顶级代理的利润比例
-            topProfit,
+            topSalerPrice,
         };
     }
 

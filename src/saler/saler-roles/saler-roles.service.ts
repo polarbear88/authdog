@@ -30,6 +30,10 @@ export class SalerRolesService extends BaseService {
     }
 
     async setPriceConfig(id: number, priceConfig: SalerRoles['priceConfig']) {
+        priceConfig.map((item) => {
+            item.topSalerPrice = Number(item.topSalerPrice.toFixed(2));
+            return item;
+        });
         return await this.repo.update(id, { priceConfig });
     }
 

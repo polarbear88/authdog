@@ -40,7 +40,7 @@ export class RechargeCard extends BaseEntity {
     status: RechargeCardStatus;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    price: string;
+    finalPrice: string;
 
     // 如果是0 表示开发者创建的
     @Column()

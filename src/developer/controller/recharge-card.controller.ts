@@ -49,6 +49,7 @@ export class RechargeCardController extends BaseController {
             0,
             '开发者',
             developerCreateRechargeCardDto.count,
+            '0',
         );
         return this.setAffected({ cards }, `${cardType.name}[${developerCreateRechargeCardDto.count}]张`);
     }

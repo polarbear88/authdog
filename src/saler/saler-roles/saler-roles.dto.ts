@@ -10,11 +10,11 @@ export class SalerRolesSetPriceConfigItemDto {
     @IsNotEmpty()
     cardTypeId: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    @Min(0)
-    @Max(99)
-    salerProfit: number;
+    @IsNotEmpty({ message: '顶级代理价格不能为空' })
+    @IsNumber({}, { message: '顶级代理价格必须是数字' })
+    @Max(10000000, { message: '顶级代理价格最大值为1000万' })
+    @Min(0, { message: '顶级代理价格最小值为0' })
+    topSalerPrice: number;
 }
 
 export class SalerRolesSetPriceConfigDto {

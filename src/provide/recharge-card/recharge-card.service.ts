@@ -26,6 +26,7 @@ export class RechargeCardService extends BaseService {
         creator: number,
         creatorName: string,
         count: number,
+        finalPrice: string,
         createDetail = '开发者',
         mgr: Repository<RechargeCard> = this.rechargeCardRepository,
     ) {
@@ -46,7 +47,7 @@ export class RechargeCardService extends BaseService {
             rechargeCard.time = rechargeCardType.time;
             rechargeCard.money = rechargeCardType.money;
             rechargeCard.status = 'unused';
-            rechargeCard.price = rechargeCardType.price;
+            rechargeCard.finalPrice = finalPrice;
             rechargeCard.creator = creator;
             rechargeCard.creatorName = creatorName;
             rechargeCard.createDetail = createDetail;

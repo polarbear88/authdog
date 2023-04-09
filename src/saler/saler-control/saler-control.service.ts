@@ -66,11 +66,10 @@ export class SalerControlService {
                     );
                 }
                 // 为开发者写入明细
-                const cardTypePrice = Number(cardType.price);
                 await this.fundFlowService.createAddBalance(
                     developer,
                     null,
-                    NumberUtils.toFixedTwo((cardTypePrice - cardTypePrice * priceResult.topProfit) * dto.count),
+                    NumberUtils.toFixedTwo(priceResult.topSalerPrice * dto.count),
                     `制作充值卡`,
                     0,
                     `[${saler.name}]${cardType.name}${dto.count}张`,
@@ -85,6 +84,7 @@ export class SalerControlService {
                     saler.id,
                     saler.name,
                     dto.count,
+                    priceResult.price.toFixed(2),
                     createDetail,
                     manager.getRepository(RechargeCard),
                 );

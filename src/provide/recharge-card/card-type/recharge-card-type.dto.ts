@@ -27,17 +27,11 @@ export class CreateRechargeCardTypeDto {
     @Min(0, { message: '次数最小值为0' })
     money: number;
 
-    @IsNotEmpty({ message: '价格不能为空' })
-    @IsNumber({}, { message: '价格必须是数字' })
-    @Max(10000000, { message: '价格最大值为1000万' })
-    @Min(0, { message: '价格最小值为0' })
-    price: number;
-
-    @IsNotEmpty({ message: '代理利润不能为空' })
-    @IsInt({ message: '代理利润必须是数字' })
-    @Max(99, { message: '代理利润最大值为99' })
-    @Min(0, { message: '代理价格最小值为0' })
-    salerProfit: number;
+    @IsNotEmpty({ message: '顶级代理价格不能为空' })
+    @IsNumber({}, { message: '顶级代理价格必须是数字' })
+    @Max(10000000, { message: '顶级代理价格最大值为1000万' })
+    @Min(0, { message: '顶级代理价格最小值为0' })
+    topSalerPrice: number;
 }
 
 export class DeleteRechargeCardTypeDto {
@@ -72,15 +66,9 @@ export class UpdateRechargeCardTypeDto {
     @Min(0, { message: '次数最小值为0' })
     money: number;
 
-    @IsNotEmpty({ message: '价格不能为空' })
-    @IsNumber({}, { message: '价格必须是数字' })
-    @Max(10000000, { message: '价格最大值为1000万' })
-    @Min(0, { message: '价格最小值为0' })
-    price: number;
-
-    @IsNotEmpty({ message: '代理利润不能为空' })
-    @IsInt({ message: '代理利润必须是数字' })
-    @Max(99, { message: '代理利润最大值为99' })
-    @Min(0, { message: '代理价格最小值为0' })
-    salerProfit: number;
+    @IsNotEmpty({ message: '顶级代理价格不能为空' })
+    @IsNumber({}, { message: '顶级代理价格必须是数字' })
+    @Max(10000000, { message: '顶级代理价格最大值为1000万' })
+    @Min(0, { message: '顶级代理价格最小值为0' })
+    topSalerPrice: number;
 }

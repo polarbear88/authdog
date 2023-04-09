@@ -27,9 +27,5 @@ export class RechargeCardType extends BaseEntity {
     money: number;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    price: string;
-
-    // 代理利润百分比
-    @Column()
-    salerProfit: number;
+    topSalerPrice: string;
 }
