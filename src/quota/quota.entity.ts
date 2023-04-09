@@ -24,4 +24,7 @@ export class Quota extends BaseEntity {
 
     @Column()
     maxSalerCount: number;
+
+    @Column({ type: 'decimal', precision: 10, scale: 2 })
+    price: string;
 }

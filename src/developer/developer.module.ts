@@ -43,6 +43,7 @@ import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-mac
 import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module';
 import { UserDataModule } from 'src/provide/user-data/user-data.module';
 import { UserDataController } from './controller/user-data.controller';
+import { QuotaCardModule } from 'src/quota/card/quota-card.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -76,6 +77,7 @@ import { UserDataController } from './controller/user-data.controller';
         ManMachineInspectModule,
         SmsValidateModule,
         UserDataModule,
+        QuotaCardModule,
     ],
     controllers: [
         DeveloperController,

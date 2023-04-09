@@ -37,5 +37,8 @@ export class Developer extends BaseEntity {
     @Column({ default: 'default' })
     quota: string;
 
+    @Column({ nullable: true })
+    quotaExpiredAt: Date;
+
     shield = ['password', 'rawPassword', 'salt', 'ip'];
 }

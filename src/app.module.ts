@@ -38,6 +38,7 @@ import { ManMachineInspectModule } from './helpers/man-machine-inspect/man-machi
 import { UserData } from './provide/user-data/user-data.entity';
 import { Quota } from './quota/quota.entity';
 import { QuotaModule } from './quota/quota.module';
+import { QuotaCard } from './quota/card/quota-card.entity';
 
 @Module({
     imports: [
@@ -78,6 +79,7 @@ import { QuotaModule } from './quota/quota.module';
                     PeriodicStatistics,
                     UserData,
                     Quota,
+                    QuotaCard,
                 ],
                 logging: ['error'],
             }),

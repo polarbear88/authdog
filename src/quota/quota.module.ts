@@ -16,6 +16,7 @@ import { UserDataSubscriber } from './subscriber/userdata.subscriber';
 import { SalerModule } from 'src/saler/saler/saler.module';
 import { SalerSubscriber } from './subscriber/saler.subscriber';
 import { DeveloperSubscriber } from './subscriber/developer.subscriber';
+import { QuotaExpiredCheckService } from './quota-expired-check.service';
 // import { DeactivateAppCronService } from './deactivate-app-cron.service';
 
 @Module({
@@ -40,6 +41,7 @@ import { DeveloperSubscriber } from './subscriber/developer.subscriber';
         SalerSubscriber,
         // DeactivateAppCronService,
         DeveloperSubscriber,
+        QuotaExpiredCheckService,
     ],
     exports: [QuotaService],
 })
