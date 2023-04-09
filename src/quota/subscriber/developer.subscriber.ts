@@ -12,7 +12,7 @@ export class DeveloperSubscriber implements EntitySubscriberInterface<Developer>
 
     async afterUpdate(event: UpdateEvent<Developer>) {
         if (event.updatedColumns.find((column) => column.propertyName === 'quota')) {
-            await this.checkQuota(event.databaseEntity);
+            await this.checkQuota(event.entity as Developer);
         }
     }
 
