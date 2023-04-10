@@ -40,9 +40,9 @@ export class QuotaCardService extends BaseService {
         const currentQuota = await this.repo.manager.getRepository(Quota).findOne({ where: { name: developer.quota } });
         const newQuota = await this.repo.manager.getRepository(Quota).findOne({ where: { name: quotaCard.quota } });
         const proportion = Number(currentQuota.price) / Number(newQuota.price);
-        addTime = addTime + Math.floor(addTime * proportion);
+        addTime = addTime + Math.floor((expire.getTime() - nowTime) * proportion);
         developer.quota = quotaCard.quota;
-        developer.quotaExpiredAt = new Date(expire.getTime() + addTime);
+        developer.quotaExpiredAt = new Date(nowTime + addTime);
         await this.repo.manager.getRepository(Developer).save(developer);
         return;
     }
