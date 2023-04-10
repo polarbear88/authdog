@@ -124,4 +124,12 @@ export class CloudfunService extends BaseService {
             },
         });
     }
+
+    async findByDeveloperId(developerId: number): Promise<Cloudfun[]> {
+        return await this.repo.find({
+            where: {
+                developerId,
+            },
+        });
+    }
 }

@@ -10,13 +10,22 @@ import { UserService } from 'src/user/user/user.service';
 import { ApiUserDeviceInterceptor } from '../api-user-device.interceptor';
 import { ApiTakeApp } from '../decorator/api-take-app.decorator';
 import { ApiUserOrDevicePaidGuard } from '../api-user-or-device-paid.guard';
+import { DeveloperService } from 'src/developer/developer.service';
+import { Developer } from 'src/developer/developer.entity';
+import { QuotaService } from 'src/quota/quota.service';
 
 @Public()
 @UseGuards(ApiUserOrDevicePaidGuard)
 @UseInterceptors(ApiUserDeviceInterceptor)
 @Controller({ version: '1' })
 export class ApiCloudfunController extends BaseController {
-    constructor(private cloudfunService: CloudfunService, private userService: UserService, private deviceService: DeviceService) {
+    constructor(
+        private cloudfunService: CloudfunService,
+        private userService: UserService,
+        private deviceService: DeviceService,
+        private developerService: DeveloperService,
+        private quotaService: QuotaService,
+    ) {
         super();
     }
 
@@ -28,6 +37,14 @@ export class ApiCloudfunController extends BaseController {
         }
         if (!cloudfun.isGlobal && cloudfun.applicationId !== app.id) {
             throw new NotAcceptableException('函数不存在');
+        }
+        // 检查配额
+        const funs = await this.cloudfunService.findByDeveloperId(app.developerId);
+        const developer = (await this.developerService.findById(app.developerId)) as Developer;
+        const quota = await this.quotaService.getByName(developer.quota);
+        const index = funs.findIndex((item) => item.id === cloudfun.id);
+        if (index >= quota.maxCloudfunCount) {
+            throw new NotAcceptableException('函数数量超过配额');
         }
         const user = request.user;
         const args = dto.args || [];
