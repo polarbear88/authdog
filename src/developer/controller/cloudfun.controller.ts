@@ -31,6 +31,9 @@ export class CloudfunController extends BaseController {
 
     @Get('list')
     async list(@TakeDeveloper() developer: any, @Query('word') word: string, @Query('appid') appid: string) {
+        if (!appid || isNaN(parseInt(appid))) {
+            throw new NotAcceptableException('参数错误');
+        }
         return await this.cloudfunService.getList(developer.id, word, parseInt(appid));
     }
 

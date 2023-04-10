@@ -16,7 +16,10 @@ export class QuotaCardService extends BaseService {
     }
 
     async recharge(developer: Developer, card: string) {
-        const quotaCard = await this.repo.findOne({ where: { card, status: 'unused' } });
+        if (!card) {
+            throw new NotAcceptableException('卡号不能为空');
+        }
+        const quotaCard = await this.repo.findOne({ where: { card: card, status: 'unused' } });
         if (!quotaCard) {
             throw new NotAcceptableException('卡号不存在');
         }

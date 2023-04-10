@@ -53,6 +53,9 @@ export class ProfileController extends BaseController {
     @Throttle(60, 600)
     @Get('recharge')
     async recharge(@TakeDeveloper(ParseDeveloperPipe) developer: Developer, @Query('card') card: string) {
+        if (!card) {
+            throw new NotAcceptableException('卡号不能为空');
+        }
         await this.quotaCardService.recharge(developer, card);
         return null;
     }
