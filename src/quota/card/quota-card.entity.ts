@@ -1,9 +1,9 @@
 import { BaseEntity } from 'src/common/entity/base.entity';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Unique } from 'typeorm';
 
+@Unique(['card'])
 @Entity()
 export class QuotaCard extends BaseEntity {
-    @Index()
     @Column()
     card: string;
 
