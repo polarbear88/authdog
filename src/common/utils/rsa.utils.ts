@@ -37,7 +37,7 @@ export class RSAUtils {
         return crypto.publicEncrypt(
             {
                 key: this.publicKey,
-                padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                padding: crypto.constants.RSA_PKCS1_PADDING,
             },
             typeof data === 'string' ? Buffer.from(data) : data,
         );
@@ -47,7 +47,7 @@ export class RSAUtils {
         return crypto.privateDecrypt(
             {
                 key: this.privateKey,
-                padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                padding: crypto.constants.RSA_PKCS1_PADDING,
             },
             encryptedData,
         );
