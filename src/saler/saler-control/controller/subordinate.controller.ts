@@ -11,11 +11,12 @@ import { ChangeUserPwdByDevDto, SetUserStatusDto } from 'src/user/user/user.dto'
 import { SalerStatus } from 'src/saler/saler/saler.type';
 import { UpdateQueryBuilder } from 'typeorm';
 import { Developer } from 'src/developer/developer.entity';
+import { DeveloperService } from 'src/developer/developer.service';
 
 @Roles(Role.Saler)
 @Controller({ version: '1', path: 'subordinate' })
 export class SubordinateController extends BaseController {
-    constructor(private salerService: SalerService) {
+    constructor(private salerService: SalerService, private developerService: DeveloperService) {
         super();
     }
 
@@ -54,7 +55,7 @@ export class SubordinateController extends BaseController {
     @Post('fund-transfer')
     async fundTransfer(@TakeSaler(ParseSalerPipe) saler: Saler, @Body() dto: FundTransferDto) {
         const toSaler = await this.salerService.findByIdAndDeveloperId(saler.developerId, dto.id);
-        const developer = (await this.salerService.findById(saler.developerId)) as Developer;
+        const developer = (await this.developerService.findById(saler.developerId)) as Developer;
         await this.salerService.fundTransfer(developer, saler, toSaler, dto.amount);
         return null;
     }
