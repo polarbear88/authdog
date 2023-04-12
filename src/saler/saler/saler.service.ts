@@ -494,7 +494,7 @@ export class SalerService extends BaseService {
                 await this.addBanlance(developer, toSaler, amount, '资金划转', `来自[${fromSaler.name}]`, undefined, manager.getRepository(Saler));
             });
         } catch (e) {
-            Logger.error(e);
+            Logger.error(e.message, e.stack);
             throw new NotAcceptableException('划转失败');
         }
     }
