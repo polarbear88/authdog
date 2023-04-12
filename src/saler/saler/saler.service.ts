@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotAcceptableException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApplicationService } from 'src/provide/application/application.service';
 import { IPAddrAscriptionPlace } from 'src/common/dto/ipaddr-ascription-place';
@@ -494,6 +494,7 @@ export class SalerService extends BaseService {
                 await this.addBanlance(developer, toSaler, amount, '资金划转', `来自[${fromSaler.name}]`, undefined, manager.getRepository(Saler));
             });
         } catch (e) {
+            Logger.error(e);
             throw new NotAcceptableException('划转失败');
         }
     }
