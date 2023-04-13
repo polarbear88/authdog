@@ -91,8 +91,9 @@ export class CryptoUtils {
         try {
             const ecdh = new ECDHUtils();
             ecdh.setPrivateKey(Buffer.from(privateKey, 'hex'));
-            const sharedSecret = ecdh.getSharedSecret(Buffer.from(clientPublicKey, 'hex')).toString('hex');
-            const aesKey = sharedSecret.slice(0, 32);
+            const sharedSecret = ecdh.getSharedSecret(Buffer.from(clientPublicKey, 'hex'));
+            const sha1 = CryptoUtils.sha1(sharedSecret);
+            const aesKey = sha1.slice(0, 32);
             return {
                 data: this.decryptAESJSON(data, aesKey),
                 aesKey,
@@ -222,5 +223,9 @@ export class CryptoUtils {
         } catch (error) {
             throw new InternalServerErrorException('服务器错误');
         }
+    }
+
+    private static sha1(data: string | Buffer) {
+        return crypto.createHash('sha1').update(data).digest('hex');
     }
 }
