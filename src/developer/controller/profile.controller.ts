@@ -13,11 +13,21 @@ import { Repository } from 'typeorm';
 import { Quota } from 'src/quota/quota.entity';
 import { QuotaCardService } from 'src/quota/card/quota-card.service';
 import { Throttle } from '@nestjs/throttler';
+import { UserService } from 'src/user/user/user.service';
+import { User } from 'src/user/user/user.entity';
+import { ApplicationService } from 'src/provide/application/application.service';
+import { Application } from 'src/provide/application/application.entity';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'profile' })
 export class ProfileController extends BaseController {
-    constructor(private developerService: DeveloperService, private jwtService: JwtService, private quotaCardService: QuotaCardService) {
+    constructor(
+        private developerService: DeveloperService,
+        private jwtService: JwtService,
+        private quotaCardService: QuotaCardService,
+        private userService: UserService,
+        private applicationService: ApplicationService,
+    ) {
         super();
     }
 
@@ -58,5 +68,36 @@ export class ProfileController extends BaseController {
         }
         await this.quotaCardService.recharge(developer, card);
         return null;
+    }
+
+    @Post('validate_user_token')
+    async validateUserToken(@TakeDeveloper(ParseDeveloperPipe) developer: Developer, @Body('token') token: string, @Body('appid') appid: string) {
+        const cappid = parseInt(appid);
+        if (!token || !cappid) {
+            throw new NotAcceptableException('token或appid不能为空');
+        }
+        const app = (await this.applicationService.findByDeveloperIdAndId(developer.id, cappid)) as Application;
+        if (!app) {
+            throw new NotAcceptableException('应用不存在');
+        }
+        try {
+            const decode = this.jwtService.verify(token);
+            if (!(decode.roles as Array<string>).includes(Role.User)) {
+                throw new NotAcceptableException('token未登录');
+            }
+            const user = (await this.userService.findById(decode.id)) as User;
+            if (!user || user.appid !== cappid) {
+                throw new NotAcceptableException('token未登录');
+            }
+            if (user.status !== 'normal') {
+                throw new NotAcceptableException('token用户已被禁用');
+            }
+            if (!this.userService.validateUserAuthForDate(user, app).result) {
+                throw new NotAcceptableException('token用户已到期');
+            }
+            return user;
+        } catch (error) {
+            throw new NotAcceptableException('token未登录');
+        }
     }
 }
