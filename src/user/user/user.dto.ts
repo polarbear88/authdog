@@ -170,6 +170,10 @@ export class AddUserBanlanceDto {
     @IsNotEmpty({ message: '次数不能为空' })
     @IsNumber()
     money: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
 }
 
 export class OnlyUserIdDto {

@@ -499,14 +499,34 @@ export class UserService extends BaseService {
         if (addUserBanlanceDto.money === 0) {
             throw new NotAcceptableException('操作失败');
         }
+        let users: User | number[];
+        users = addUserBanlanceDto.ids;
+        if (addUserBanlanceDto.ids.length === 1) {
+            const user = await this.findByAppidAndId(appid, addUserBanlanceDto.ids[0]);
+            if (!user) {
+                throw new NotAcceptableException('用户不存在');
+            }
+            users = user;
+        }
         if (addUserBanlanceDto.money < 0) {
-            return await this.subBanlance(addUserBanlanceDto.ids, -addUserBanlanceDto.money, '管理员操作', true, (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.subBanlance(
+                users,
+                -addUserBanlanceDto.money,
+                addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+                Array.isArray(users),
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         } else {
-            return await this.addBanlance(addUserBanlanceDto.ids, addUserBanlanceDto.money, '管理员操作', (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.addBanlance(
+                users,
+                addUserBanlanceDto.money,
+                addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         }
     }
 
