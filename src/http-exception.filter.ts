@@ -41,6 +41,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 };
             }
         }
+        // 设置禁止缓存
+        response.setHeader('Cache-Control', 'no-cache');
+        response.setHeader('Pragma', 'no-cache');
+        response.setHeader('Expires', '-1');
         response.status(HttpStatus.OK).json(resData);
     }
 }

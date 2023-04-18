@@ -11,6 +11,11 @@ export class ResponseInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         // 强制设置响应状态码为200
         (context.switchToHttp().getResponse() as Response).status(200);
+        // 设置禁止缓存
+        (context.switchToHttp().getResponse() as Response).setHeader('Cache-Control', 'no-cache');
+        (context.switchToHttp().getResponse() as Response).setHeader('Pragma', 'no-cache');
+        (context.switchToHttp().getResponse() as Response).setHeader('Expires', '-1');
+
         // 获取是否是api请求是否需要加密响应
         const isEncrypt = !!request['is_need_encrypt_res'];
         // 修改响应内容以封装和加入基础数据
