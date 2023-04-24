@@ -13,19 +13,21 @@ export class SalerRolesService extends BaseService {
         super(repo);
     }
 
-    async getList(developerId: number) {
+    async getList(developerId: number, salerId: number) {
         return await this.repo.find({
             where: {
                 developerId,
+                salerId,
             },
         });
     }
 
-    async create(developerId: number, name: string) {
+    async create(developerId: number, name: string, salerId: number) {
         const salerRole = new SalerRoles();
         salerRole.developerId = developerId;
         salerRole.name = name;
         salerRole.priceConfig = [];
+        salerRole.salerId = salerId;
         return await this.repo.save(salerRole);
     }
 
@@ -37,11 +39,12 @@ export class SalerRolesService extends BaseService {
         return await this.repo.update(id, { priceConfig });
     }
 
-    async findByDeveloperAndId(developerId: number, id: number) {
+    async findByDeveloperAndId(developerId: number, id: number, salerId: number) {
         return await this.repo.findOne({
             where: {
                 developerId,
                 id,
+                salerId,
             },
         });
     }

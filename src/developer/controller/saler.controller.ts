@@ -85,7 +85,7 @@ export class SalerController extends BaseController {
     @WriteDeveloperActionLog('设置代理角色')
     @Post('set-roles')
     async setRoles(@TakeDeveloper() developer: any, @Body() dto: SalerSetRoleDto) {
-        const role = await this.salerRolesService.findByDeveloperAndId(developer.id, dto.roleId);
+        const role = await this.salerRolesService.findByDeveloperAndId(developer.id, dto.roleId, 0);
         if (!role) {
             throw new NotAcceptableException('角色不存在');
         }

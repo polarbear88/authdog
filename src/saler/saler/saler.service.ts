@@ -416,10 +416,22 @@ export class SalerService extends BaseService {
         let previousPrice = price;
         let lastSaler = topSaler;
         for (const itemSaler of salerLevelList) {
-            const overflowPercentage = lastSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
+            let overflowPercentage = lastSaler.subordinatePrice.find((item) => item.cardTypeId === cardType.id)?.percentage;
             if (!overflowPercentage) {
                 // overflowPercentage = 0;
                 throw new NotAcceptableException('上级代理价格配置异常');
+            }
+            if (itemSaler.salerRoleId) {
+                // 从角色中获取价格配置
+                const salerRole = (await this.salerRoleService.findById(topSaler.salerRoleId)) as SalerRoles;
+                if (salerRole) {
+                    const priceConfig = salerRole.priceConfig.find((item) => {
+                        return item.appid === cardType.appid && item.cardTypeId === cardType.id;
+                    });
+                    if (priceConfig && priceConfig.topSalerPrice) {
+                        overflowPercentage = priceConfig.topSalerPrice;
+                    }
+                }
             }
             previousPrice = price;
             price = price + price * (overflowPercentage / 100);
@@ -461,6 +473,20 @@ export class SalerService extends BaseService {
         await this.repo.update(
             {
                 developerId,
+                salerRoleId: roleId,
+            },
+            {
+                salerRoleId: 0,
+                salerRoleName: '',
+            },
+        );
+    }
+
+    async resetSalerRoleForSaler(developerId: number, salerId: number, roleId: number) {
+        await this.repo.update(
+            {
+                developerId,
+                parentId: salerId,
                 salerRoleId: roleId,
             },
             {
