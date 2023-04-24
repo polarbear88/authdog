@@ -13,6 +13,7 @@ import { UpdateQueryBuilder } from 'typeorm';
 import { Developer } from 'src/developer/developer.entity';
 import { DeveloperService } from 'src/developer/developer.service';
 import { SalerRolesService } from 'src/saler/saler-roles/saler-roles.service';
+import { SalerRoles } from 'src/saler/saler-roles/saler-roles.entity';
 
 @Roles(Role.Saler)
 @Controller({ version: '1', path: 'subordinate' })
@@ -63,9 +64,12 @@ export class SubordinateController extends BaseController {
 
     @Post('set-roles')
     async setRoles(@TakeSaler(ParseSalerPipe) saler: Saler, @Body() dto: SalerSetRoleDto) {
-        const role = await this.salerRolesService.findByDeveloperAndId(saler.developerId, dto.roleId, saler.id);
-        if (!role) {
-            throw new NotAcceptableException('角色不存在');
+        let role: SalerRoles | null = null;
+        if (dto.roleId !== 0) {
+            role = await this.salerRolesService.findByDeveloperAndId(saler.developerId, dto.roleId, saler.id);
+            if (!role) {
+                throw new NotAcceptableException('角色不存在');
+            }
         }
         const affected = await this.salerService.setRoleIdByIds(dto.ids, role, (query: UpdateQueryBuilder<Saler>) => {
             query.andWhere('developerId = :developerId', { developerId: saler.developerId });

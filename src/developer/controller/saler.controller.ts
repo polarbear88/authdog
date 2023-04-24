@@ -14,6 +14,7 @@ import { TakeDeveloper } from '../decorator/take-developer.decorator';
 import { Developer } from '../developer.entity';
 import { DeveloperService } from '../developer.service';
 import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
+import { SalerRoles } from 'src/saler/saler-roles/saler-roles.entity';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'saler' })
@@ -85,9 +86,12 @@ export class SalerController extends BaseController {
     @WriteDeveloperActionLog('设置代理角色')
     @Post('set-roles')
     async setRoles(@TakeDeveloper() developer: any, @Body() dto: SalerSetRoleDto) {
-        const role = await this.salerRolesService.findByDeveloperAndId(developer.id, dto.roleId, 0);
-        if (!role) {
-            throw new NotAcceptableException('角色不存在');
+        let role: SalerRoles | null = null;
+        if (dto.roleId !== 0) {
+            role = await this.salerRolesService.findByDeveloperAndId(developer.id, dto.roleId, 0);
+            if (!role) {
+                throw new NotAcceptableException('角色不存在');
+            }
         }
         const affected = await this.salerService.setRoleIdByIds(dto.ids, role, (query: UpdateQueryBuilder<Saler>) => {
             query.andWhere('developerId = :developerId', { developerId: developer.id });

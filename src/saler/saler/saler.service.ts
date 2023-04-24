@@ -423,7 +423,7 @@ export class SalerService extends BaseService {
             }
             if (itemSaler.salerRoleId) {
                 // 从角色中获取价格配置
-                const salerRole = (await this.salerRoleService.findById(topSaler.salerRoleId)) as SalerRoles;
+                const salerRole = (await this.salerRoleService.findById(itemSaler.salerRoleId)) as SalerRoles;
                 if (salerRole) {
                     const priceConfig = salerRole.priceConfig.find((item) => {
                         return item.appid === cardType.appid && item.cardTypeId === cardType.id;
@@ -457,7 +457,7 @@ export class SalerService extends BaseService {
         const query = this.repo
             .createQueryBuilder()
             .update()
-            .set({ salerRoleId: salerRole.id, salerRoleName: salerRole.name })
+            .set({ salerRoleId: salerRole ? salerRole.id : 0, salerRoleName: salerRole ? salerRole.name : '' })
             .where('id in (:...ids)', { ids });
         if (whereCallback) {
             whereCallback(query);
