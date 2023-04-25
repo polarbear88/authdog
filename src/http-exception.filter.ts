@@ -5,7 +5,7 @@ import { CryptoUtils } from './common/utils/crypyo.utils';
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
     // 拦截所有异常并封装数据来返回
-    catch(exception: HttpException, host: ArgumentsHost) {
+    async catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
@@ -30,7 +30,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             // 加密响应
             try {
                 (resData as any) = {
-                    data: CryptoUtils.encryptRespone(resData, request),
+                    data: await CryptoUtils.encryptRespone(resData, request),
                 };
             } catch (e) {
                 resData = {

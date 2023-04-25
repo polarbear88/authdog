@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsString, Length, Max, Min } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsNotEmpty, IsNumber, IsString, Length, Max, Min } from 'class-validator';
 import { AppAuthMode, AppCryptoMode, AppStatus } from '../application.type';
 
 export class CreateApplicationDto {
@@ -123,4 +123,11 @@ export class SetApplicationVersionDto {
     @IsString({ message: '应用版本必须是字符串' })
     @Length(1, 50, { message: '应用版本长度必须在1-50位之间' })
     version: string;
+}
+
+export class SetCustomCryptFunIdDto {
+    @IsNotEmpty({ message: 'id不能为空' })
+    @IsInt({ message: 'id必须是数字' })
+    @Min(0, { message: 'id不能小于等于0' })
+    funid: number;
 }

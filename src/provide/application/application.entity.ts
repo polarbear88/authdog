@@ -101,4 +101,8 @@ export class Application extends BaseEntity {
     // 是否停用
     @Column({ default: false })
     deactivated: boolean;
+
+    // 自定义加密的云函数
+    @Column({ default: 0 })
+    customCryptFunId: number;
 }

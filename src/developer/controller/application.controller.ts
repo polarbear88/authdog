@@ -19,6 +19,7 @@ import {
     SetApplicationtTrialCountDto,
     SetApplicationAllowForceLoginDto,
     SetApplicationVersionDto,
+    SetCustomCryptFunIdDto,
 } from 'src/provide/application/dto/application.dto';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -30,11 +31,12 @@ import { AppActionGuard } from '../guard/app-action.guard';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
 import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
 import { Developer } from '../developer.entity';
+import { CloudfunService } from 'src/provide/cloudfun/cloudfun.service';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'app' })
 export class ApplicationController extends BaseController {
-    constructor(private applicationService: ApplicationService) {
+    constructor(private applicationService: ApplicationService, private cloudfunService: CloudfunService) {
         super();
     }
 
@@ -231,6 +233,19 @@ export class ApplicationController extends BaseController {
     @Post('set-version')
     async setVersion(@Body() setApplicationVersionDto: SetApplicationVersionDto, @TakeApplication() app: Application) {
         await this.applicationService.setVersion(app.id, setApplicationVersionDto.version);
+        return this.setAffected({}, app.name);
+    }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置自定义加密函数')
+    @Post('set-custom-cryptfun')
+    async setCustomCryptFunId(@Body() dto: SetCustomCryptFunIdDto, @TakeApplication() app: Application) {
+        if (dto.funid !== 0) {
+            if (!(await this.cloudfunService.findByDeveloperIdAndId(app.developerId, dto.funid))) {
+                throw new NotAcceptableException('云函数不存在');
+            }
+        }
+        await this.applicationService.setCustomCryptFunId(app.id, dto.funid);
         return this.setAffected({}, app.name);
     }
 

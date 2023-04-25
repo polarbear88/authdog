@@ -192,6 +192,10 @@ export class ApplicationService extends BaseService {
         await this.applicationRepository.update(id, { version });
     }
 
+    async setCustomCryptFunId(id: number, customCryptFunId: number) {
+        await this.applicationRepository.update(id, { customCryptFunId });
+    }
+
     async delete(app: Application) {
         await this.applicationRepository.delete(app.id);
         // 删除用户

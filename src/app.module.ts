@@ -39,6 +39,7 @@ import { UserData } from './provide/user-data/user-data.entity';
 import { Quota } from './quota/quota.entity';
 import { QuotaModule } from './quota/quota.module';
 import { QuotaCard } from './quota/card/quota-card.entity';
+import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
 
 @Module({
     imports: [
@@ -117,6 +118,7 @@ import { QuotaCard } from './quota/card/quota-card.entity';
         PeriodicStatisticsModule,
         ManMachineInspectModule,
         QuotaModule,
+        CloudfunModule,
     ],
     controllers: [AppController],
     providers: [

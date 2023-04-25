@@ -25,7 +25,7 @@ export class CloudfunRuner {
         });
     }
 
-    async run(args: string[]) {
+    async run(args: string[]): Promise<string> {
         const result = await this.context.evalClosureSync(this.script, args, { timeout: 3000 });
         this.context.release();
         this.isolate.dispose();

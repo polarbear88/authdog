@@ -20,6 +20,7 @@ import { User } from 'src/user/user/user.entity';
 import { DeviceModule } from 'src/user/device/device.module';
 import { UserModule } from 'src/user/user/user.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { CloudfunModule } from 'src/provide/cloudfun/cloudfun.module';
 
 @Module({
     imports: [
@@ -74,6 +75,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
         ApplicationModule,
         DeviceModule,
         UserModule,
+        CloudfunModule,
     ],
     providers: [],
     controllers: [TcpApiController],

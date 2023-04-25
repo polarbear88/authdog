@@ -1,15 +1,17 @@
-import { Injectable, NotAcceptableException, BadRequestException, NestMiddleware } from '@nestjs/common';
+import { Injectable, NotAcceptableException, BadRequestException, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { Application } from 'src/provide/application/application.entity';
 import { ApplicationService } from 'src/provide/application/application.service';
 import { CryptoUtils } from 'src/common/utils/crypyo.utils';
+import { CloudfunService } from 'src/provide/cloudfun/cloudfun.service';
+import { CloudfunRuner } from 'src/provide/cloudfun/cloudfun-runer';
 
 /**
  * API解密中间件-用于解密API请求
  */
 @Injectable()
 export class ApiDecryptMiddleware implements NestMiddleware {
-    constructor(private applicationService: ApplicationService) {}
+    constructor(private applicationService: ApplicationService, private cloudfunService: CloudfunService) {}
 
     async use(req: Request, res: Response, next: NextFunction) {
         const request = req;
@@ -20,7 +22,7 @@ export class ApiDecryptMiddleware implements NestMiddleware {
         if (!body.data) {
             throw new BadRequestException('错误的请求');
         }
-        const decryptData = this.decryptBody(request, app);
+        const decryptData = await this.decryptBody(request, app);
         // 为了方便写api文档又兼容以前的传参新的公用参数放在baseBody中，这里将其合并到data中
         if (decryptData.baseBody) {
             Object.assign(decryptData, decryptData.baseBody);
@@ -56,12 +58,37 @@ export class ApiDecryptMiddleware implements NestMiddleware {
         }
     }
 
-    private decryptBody(request: any, app: Application) {
+    private async decryptBody(request: any, app: Application) {
         const body = request.body;
-        const data = body.data;
-        if (app.cryptoMode === 'none') {
-            if (typeof data !== 'object') {
+        let data = body.data;
+        if (app.customCryptFunId) {
+            const fun = await this.cloudfunService.findByDeveloperIdAndId(app.developerId, app.customCryptFunId);
+            if (!fun) {
+                throw new BadRequestException('错误的请求, 找不到云函数');
+            }
+            if (typeof data !== 'string') {
                 throw new BadRequestException('错误的请求');
+            }
+            request.customCryptScript = fun.script;
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                data = await new CloudfunRuner({}, request.customCryptScript, (balance: number, reason: string) => {}).run(['de', data]);
+            } catch (error) {
+                Logger.error(error.message);
+                throw new BadRequestException('云函数执行错误');
+            }
+        }
+
+        if (app.cryptoMode === 'none') {
+            if (typeof data !== 'object' && typeof data !== 'string') {
+                throw new BadRequestException('错误的请求');
+            }
+            if (typeof data === 'string') {
+                try {
+                    data = JSON.parse(data);
+                } catch (error) {
+                    throw new BadRequestException('错误的请求');
+                }
             }
             return data;
         }

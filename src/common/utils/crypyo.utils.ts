@@ -1,9 +1,10 @@
 import crypto from 'crypto';
 import { RandomUtils } from './random.utils';
 import { ECDHUtils } from './ecdh.utils';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { RSAUtils } from './rsa.utils';
 import { Application } from 'src/provide/application/application.entity';
+import { CloudfunRuner } from 'src/provide/cloudfun/cloudfun-runer';
 const _md5 = require('md5-node');
 
 export class CryptoUtils {
@@ -188,7 +189,24 @@ export class CryptoUtils {
         return hash;
     }
 
-    public static encryptRespone(data: any, request: any): string {
+    public static async encryptRespone(data: any, request: any): Promise<string> {
+        let result = this._encryptRespone(data, request);
+        if (request.customCryptScript) {
+            if (typeof result !== 'string') {
+                result = JSON.stringify(result);
+            }
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                result = await new CloudfunRuner({}, request.customCryptScript, (balance: number, reason: string) => {}).run(['en', result]);
+            } catch (error) {
+                Logger.error(error.message);
+                throw new BadRequestException('云函数执行错误');
+            }
+        }
+        return result;
+    }
+
+    private static _encryptRespone(data: any, request: any): string {
         if (data === null || data === undefined) {
             return data;
         }
