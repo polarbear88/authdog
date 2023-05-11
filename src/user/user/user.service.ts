@@ -484,14 +484,34 @@ export class UserService extends BaseService {
         if (addUserTimeDto.minutes === 0) {
             throw new NotAcceptableException('操作失败');
         }
+        let users: User | number[];
+        users = addUserTimeDto.ids;
+        if (addUserTimeDto.ids.length === 1) {
+            const user = await this.findByAppidAndId(appid, addUserTimeDto.ids[0]);
+            if (!user) {
+                throw new NotAcceptableException('用户不存在');
+            }
+            users = user;
+        }
         if (addUserTimeDto.minutes < 0) {
-            return await this.subExpirationTime(addUserTimeDto.ids, -addUserTimeDto.minutes, '管理员操作', true, (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.subExpirationTime(
+                users,
+                -addUserTimeDto.minutes,
+                addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+                true,
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         } else {
-            return await this.addExpirationTime(addUserTimeDto.ids, addUserTimeDto.minutes, '管理员操作', (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.addExpirationTime(
+                users,
+                addUserTimeDto.minutes,
+                addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         }
     }
 

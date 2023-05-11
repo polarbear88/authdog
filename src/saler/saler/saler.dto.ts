@@ -101,6 +101,10 @@ export class AddSalerBanlanceDto {
     @IsNotEmpty({ message: '金额不能为空' })
     @IsNumber()
     amount: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
 }
 
 export class SetSalerAppsItemDto {

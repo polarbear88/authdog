@@ -74,10 +74,10 @@ export class SalerController extends BaseController {
             throw new NotAcceptableException('操作失败');
         }
         if (dto.amount > 0) {
-            await this.salerService.addBanlance(developer, saler, dto.amount, '后台充值', null);
+            await this.salerService.addBanlance(developer, saler, dto.amount, dto.reason ? dto.reason : '后台充值', null);
             await this.developerService.incIncome(developer.id, dto.amount);
         } else {
-            await this.salerService.subBanlance(developer, saler, -dto.amount, '后台扣减', null, true);
+            await this.salerService.subBanlance(developer, saler, -dto.amount, dto.reason ? dto.reason : '后台扣减', null, true);
             await this.developerService.decIncome(developer.id, -dto.amount);
         }
         return this.setAffected({}, `${saler.name}余额${dto.amount > 0 ? '增加' : '减少'}${Math.abs(dto.amount)}`);

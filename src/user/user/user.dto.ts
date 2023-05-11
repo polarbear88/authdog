@@ -157,6 +157,10 @@ export class AddUserTimeDto {
     @IsNumber()
     @Max(5256000, { message: '时间最大值为十年' })
     minutes: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
 }
 
 export class AddUserBanlanceDto {

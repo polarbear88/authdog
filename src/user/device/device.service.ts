@@ -40,6 +40,10 @@ export class DeviceService extends BaseService {
         });
     }
 
+    async findByAppidAndId(appid: number, id: number) {
+        return this.deviceRepository.findOne({ where: { appid, id } });
+    }
+
     async create(app: Application, deviceDto: DeviceDto, ip: string) {
         const device = new Device();
         device.appid = app.id;
@@ -354,14 +358,34 @@ export class DeviceService extends BaseService {
         if (addDeviceTimeDto.minutes === 0) {
             throw new NotAcceptableException('操作失败');
         }
+        let devices: Device | number[];
+        devices = addDeviceTimeDto.ids;
+        if (addDeviceTimeDto.ids.length === 1) {
+            const device = await this.findByAppidAndId(appid, addDeviceTimeDto.ids[0]);
+            if (!device) {
+                throw new NotAcceptableException('设备不存在');
+            }
+            devices = device;
+        }
         if (addDeviceTimeDto.minutes < 0) {
-            return await this.subExpirationTime(addDeviceTimeDto.ids, -addDeviceTimeDto.minutes, '管理员操作', true, (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.subExpirationTime(
+                devices,
+                -addDeviceTimeDto.minutes,
+                addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+                true,
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         } else {
-            return await this.addExpirationTime(addDeviceTimeDto.ids, addDeviceTimeDto.minutes, '管理员操作', (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.addExpirationTime(
+                devices,
+                addDeviceTimeDto.minutes,
+                addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         }
     }
 
@@ -369,14 +393,34 @@ export class DeviceService extends BaseService {
         if (addDeviceBanlanceDto.money === 0) {
             throw new NotAcceptableException('操作失败');
         }
+        let devices: Device | number[];
+        devices = addDeviceBanlanceDto.ids;
+        if (addDeviceBanlanceDto.ids.length === 1) {
+            const device = await this.findByAppidAndId(appid, addDeviceBanlanceDto.ids[0]);
+            if (!device) {
+                throw new NotAcceptableException('设备不存在');
+            }
+            devices = device;
+        }
         if (addDeviceBanlanceDto.money < 0) {
-            return await this.subBanlance(addDeviceBanlanceDto.ids, -addDeviceBanlanceDto.money, '管理员操作', true, (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.subBanlance(
+                devices,
+                -addDeviceBanlanceDto.money,
+                addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+                true,
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         } else {
-            return await this.addBanlance(addDeviceBanlanceDto.ids, addDeviceBanlanceDto.money, '管理员操作', (query) => {
-                query.andWhere('appid = :appid', { appid });
-            });
+            return await this.addBanlance(
+                devices,
+                addDeviceBanlanceDto.money,
+                addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+                (query) => {
+                    query.andWhere('appid = :appid', { appid });
+                },
+            );
         }
     }
 

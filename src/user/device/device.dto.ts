@@ -96,6 +96,10 @@ export class AddDeviceTimeDto {
     @IsNumber()
     @Max(5256000, { message: '时间最大值为十年' })
     minutes: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
 }
 
 export class AddDeviceBanlanceDto {
@@ -109,6 +113,10 @@ export class AddDeviceBanlanceDto {
     @IsNotEmpty({ message: '次数不能为空' })
     @IsNumber()
     money: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
 }
 
 export class SetDeviceStatusDto {
