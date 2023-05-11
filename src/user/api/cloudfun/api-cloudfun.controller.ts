@@ -38,6 +38,9 @@ export class ApiCloudfunController extends BaseController {
         if (!cloudfun.isGlobal && cloudfun.applicationId !== app.id) {
             throw new NotAcceptableException('函数不存在');
         }
+        if (!this.cloudfunService.checkAllowType(cloudfun.type)) {
+            throw new NotAcceptableException('不允许使用该类型的云函数');
+        }
         // 检查配额
         const funs = await this.cloudfunService.findByDeveloperId(app.developerId);
         const developer = (await this.developerService.findById(app.developerId)) as Developer;
@@ -50,7 +53,7 @@ export class ApiCloudfunController extends BaseController {
         const args = dto.args || [];
         try {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            const result = await new CloudfunRuner(user._serialization(), cloudfun.script, (balance: number, reason: string) => {
+            const result = await CloudfunRuner.run(cloudfun, args, user._serialization(), (balance: number, reason: string) => {
                 if (typeof balance === 'number' && typeof reason === 'string' && balance > 0) {
                     const service = app.authMode === 'user' ? this.userService : this.deviceService;
                     // 由于此函数在虚拟机中运行，并且不支持await，所以这里立即返回然后在后台执行
@@ -63,7 +66,8 @@ export class ApiCloudfunController extends BaseController {
                             //
                         });
                 }
-            }).run(args);
+            });
+
             return {
                 result,
             };

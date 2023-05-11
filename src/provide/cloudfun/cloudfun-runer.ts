@@ -1,37 +1,19 @@
 import { NotAcceptableException } from '@nestjs/common';
-import ivm from 'isolated-vm';
+import { Cloudfun } from './cloudfun.entity';
+import { VMJSExecutor } from './cloudfun-executor/vm-js-executor';
+import { NodeJSExecutor } from './cloudfun-executor/node-js-executor';
+import { NativeLibExecutor } from './cloudfun-executor/native-lib-executor';
 export class CloudfunRuner {
-    private isolate: ivm.Isolate;
-    private context: ivm.Context;
-    private jail: ivm.Reference<Record<string | number | symbol, any>>;
-    private user: any = {};
-    private script = '';
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    private reduceUserBalance: (balance: number, reason: string) => void = () => {};
-
-    constructor(user: any, script: string, reduceUserBalance: (balance: number, reason: string) => void) {
-        this.user = user;
-        this.script = script;
-        this.reduceUserBalance = reduceUserBalance;
-        this.isolate = new ivm.Isolate({ memoryLimit: 32 });
-        this.context = this.isolate.createContextSync();
-        this.jail = this.context.global;
-        this.jail.setSync('global', this.jail.derefInto());
-        this.jail.setSync('$getUser', () => {
-            return this.user;
-        });
-        this.jail.setSync('$reduceUserBalance', (balance: number, reason: string) => {
-            this.reduceUserBalance(balance, reason);
-        });
-    }
-
-    async run(args: string[]): Promise<string> {
-        const result = await this.context.evalClosureSync(this.script, args, { timeout: 3000 });
-        this.context.release();
-        this.isolate.dispose();
-        if (result !== undefined && typeof result !== 'string') {
-            throw new NotAcceptableException('返回值必须为字符串或不返回');
+    static async run(cf: Cloudfun, args: string[], user: any, reduceUserBalance: (balance: number, reason: string) => void): Promise<string> {
+        if (cf.type === 'VM-JS') {
+            return await new VMJSExecutor(user, cf.script, reduceUserBalance).run(args);
         }
-        return result;
+        if (cf.type === 'NODE-JS') {
+            return await new NodeJSExecutor(user, cf.script).run(args);
+        }
+        if (cf.type === 'NATIVE-LIB') {
+            return await new NativeLibExecutor(user, cf.script, cf.funName).run(args);
+        }
+        throw new NotAcceptableException('不支持的类型');
     }
 }

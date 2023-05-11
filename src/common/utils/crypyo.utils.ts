@@ -191,13 +191,13 @@ export class CryptoUtils {
 
     public static async encryptRespone(data: any, request: any): Promise<string> {
         let result = this._encryptRespone(data, request);
-        if (request.customCryptScript) {
+        if (request.cryptcf) {
             if (typeof result !== 'string') {
                 result = JSON.stringify(result);
             }
             try {
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
-                result = await new CloudfunRuner({}, request.customCryptScript, (balance: number, reason: string) => {}).run(['en', result]);
+                result = await CloudfunRuner.run(request.cryptcf, ['en', result], {}, (balance: number, reason: string) => {});
             } catch (error) {
                 Logger.error(error.message);
                 throw new BadRequestException('云函数执行错误');

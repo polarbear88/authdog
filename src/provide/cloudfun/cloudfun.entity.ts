@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity, Index, Unique } from 'typeorm';
+import { CloudfunType } from './cloudfun.type';
 
 @Unique(['developerId', 'name'])
 @Index(['developerId', 'applicationId'])
@@ -12,8 +13,14 @@ export class Cloudfun extends BaseEntity {
     @Column()
     name: string;
 
+    @Column({ default: 'VM-JS' })
+    type: CloudfunType;
+
     @Column({ type: 'longtext' })
     script: string;
+
+    @Column({ default: '' })
+    funName: string;
 
     @Column({ default: '' })
     description: string;

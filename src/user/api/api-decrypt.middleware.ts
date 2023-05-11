@@ -69,10 +69,10 @@ export class ApiDecryptMiddleware implements NestMiddleware {
             if (typeof data !== 'string') {
                 throw new BadRequestException('错误的请求');
             }
-            request.customCryptScript = fun.script;
+            request.cryptcf = fun;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
-                data = await new CloudfunRuner({}, request.customCryptScript, (balance: number, reason: string) => {}).run(['de', data]);
+                data = await CloudfunRuner.run(request.cryptcf, ['de', data], {}, (balance: number, reason: string) => {});
             } catch (error) {
                 Logger.error(error.message);
                 throw new BadRequestException('云函数执行错误');

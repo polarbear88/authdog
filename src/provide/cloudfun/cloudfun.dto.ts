@@ -1,4 +1,4 @@
-import { ArrayMaxSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsBoolean, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 import { BaseUserDeviceDto } from 'src/user/user-device/user-device.dto';
 
 export class CreateCloudfunDto {
@@ -23,6 +23,15 @@ export class CreateCloudfunDto {
     @IsOptional()
     @IsNumber({}, { message: '应用ID必须是数字' })
     applicationId?: number;
+
+    @IsOptional()
+    @IsString()
+    funName?: string;
+
+    @IsNotEmpty({ message: '函数类型不能为空' })
+    @IsString()
+    @Length(1, 32, { message: '函数类型长度必须在1-32位之间' })
+    type: string;
 }
 
 export class UpdateCloudfunDto {
@@ -51,6 +60,15 @@ export class UpdateCloudfunDto {
     @IsOptional()
     @IsNumber({}, { message: '应用ID必须是数字' })
     applicationId?: number;
+
+    @IsOptional()
+    @IsString()
+    funName?: string;
+
+    @IsNotEmpty({ message: '函数类型不能为空' })
+    @IsString()
+    @Length(1, 32, { message: '函数类型长度必须在1-32位之间' })
+    type: string;
 }
 
 export class TryRunCloudfunDto {

@@ -6,6 +6,7 @@ import { BaseService } from 'src/common/service/base.service';
 import { Like, Repository } from 'typeorm';
 import { CreateCloudfunDto, UpdateCloudfunDto } from './cloudfun.dto';
 import { Cloudfun } from './cloudfun.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CloudfunService extends BaseService {
@@ -13,17 +14,25 @@ export class CloudfunService extends BaseService {
         @InjectRepository(Cloudfun)
         private repo: Repository<Cloudfun>,
         private applicationService: ApplicationService,
+        private configService: ConfigService,
     ) {
         super(repo);
     }
 
     async create(cloudfun: CreateCloudfunDto, developerId: number): Promise<Cloudfun> {
+        if (!this.checkAllowType(cloudfun.type)) {
+            throw new NotAcceptableException('不允许使用该类型的云函数');
+        }
         const cf = new Cloudfun();
         cf.name = cloudfun.name;
         if (cloudfun.description) {
             cf.description = cloudfun.description + '';
         }
         cf.script = cloudfun.script;
+        if (cloudfun.funName) {
+            cf.funName = cloudfun.funName;
+        }
+        cf.type = cloudfun.type as any;
         cf.isGlobal = cloudfun.isGlobal;
         if (cloudfun.applicationId && !cloudfun.isGlobal) {
             const app = (await this.applicationService.findById(cloudfun.applicationId)) as Application;
@@ -48,7 +57,7 @@ export class CloudfunService extends BaseService {
             where['applicationId'] = appid;
         }
         return await this.repo.find({
-            select: ['id', 'name', 'description', 'isGlobal', 'applicationId', 'applicationName'],
+            select: ['id', 'name', 'description', 'isGlobal', 'applicationId', 'applicationName', 'funName', 'type'],
             where,
             order: {
                 id: 'DESC',
@@ -104,6 +113,12 @@ export class CloudfunService extends BaseService {
         if (cloudfun.description) {
             cf.description = cloudfun.description + '';
         }
+        if (cloudfun.funName) {
+            cf.funName = cloudfun.funName;
+        } else {
+            cf.funName = '';
+        }
+        cf.type = cloudfun.type as any;
         cf.script = cloudfun.script;
         cf.isGlobal = cloudfun.isGlobal;
         if (cloudfun.applicationId && !cloudfun.isGlobal) {
@@ -131,5 +146,10 @@ export class CloudfunService extends BaseService {
                 developerId,
             },
         });
+    }
+
+    checkAllowType(type: string) {
+        const allows = (this.configService.get('ALLOW_CLOUDFUN_TYPE') + '').split(',');
+        return allows.includes(type);
     }
 }

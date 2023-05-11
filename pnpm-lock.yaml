@@ -43,6 +43,7 @@ specifiers:
   ioredis: ^5.3.1
   isolated-vm: ^4.5.0
   jest: 28.0.3
+  koffi: ^2.3.19
   md5-node: ^1.0.1
   moment: ^2.29.4
   mysql2: ^3.2.0
@@ -93,6 +94,7 @@ dependencies:
   dotenv: 16.0.3
   ioredis: 5.3.1
   isolated-vm: 4.5.0
+  koffi: 2.3.19
   md5-node: 1.0.1
   moment: 2.29.4
   mysql2: 3.2.0
@@ -4195,6 +4197,11 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
     dev: true
+
+  /koffi/2.3.19:
+    resolution: {integrity: sha512-QwxP4UHhOU4byOezBxesT69qWG47+5ZjrEOeHjwywI5WpXfSp5VL6QsdNK37yTii5UjeH3G90B2/sZNdGDKGJA==}
+    requiresBuild: true
+    dev: false
 
   /leven/3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
