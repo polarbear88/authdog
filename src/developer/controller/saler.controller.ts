@@ -118,11 +118,22 @@ export class SalerController extends BaseController {
     @Post('set-notice')
     async setNotice(@TakeDeveloper() developer: any, @Body('content') content: string) {
         if (!content) throw new NotAcceptableException('参数错误');
-        return await this.salerNoticeService.setNotice(developer.id, 0, content);
+        return await this.salerNoticeService.setNotice(developer.id, -1, content);
     }
 
     @Get('get-notice')
     async getNotice(@TakeDeveloper() developer: any) {
+        return await this.salerNoticeService.getNotice(developer.id, -1);
+    }
+
+    @Post('set-notice-topsaler')
+    async setNoticeTopSaler(@TakeDeveloper() developer: any, @Body('content') content: string) {
+        if (!content) throw new NotAcceptableException('参数错误');
+        return await this.salerNoticeService.setNotice(developer.id, 0, content);
+    }
+
+    @Get('get-notice-topsaler')
+    async getNoticeTopSaler(@TakeDeveloper() developer: any) {
         return await this.salerNoticeService.getNotice(developer.id, 0);
     }
 }

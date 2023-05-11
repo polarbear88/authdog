@@ -41,8 +41,8 @@ export class ProfileController extends BaseController {
     @Get('get-notices')
     async getNotices(@TakeSaler(ParseSalerPipe) saler: Saler) {
         return {
-            developer: await this.salerNoticeService.getNotice(saler.developerId, 0),
-            parent: saler.parentId > 0 ? await this.salerNoticeService.getNotice(saler.developerId, saler.parentId) : '',
+            developer: await this.salerNoticeService.getNotice(saler.developerId, -1),
+            parent: await this.salerNoticeService.getNotice(saler.developerId, saler.parentId),
         };
     }
 }
