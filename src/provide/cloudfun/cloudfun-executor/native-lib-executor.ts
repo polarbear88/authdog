@@ -26,21 +26,18 @@ export class NativeLibExecutor {
 
     private getFunction(argsLength: number): koffi.KoffiFunction {
         const lib = this.getLib();
+        const funKey = `${this.fileName}_${this.functionName}_${argsLength}`;
+        let fun = NativeLibExecutor.functionCaches[funKey];
+        if (fun) return fun;
         if (process.platform === 'win32') {
-            let fun = NativeLibExecutor.functionCaches[this.functionName];
-            if (!fun) {
-                const arrTypes = new Array(argsLength + 1).fill('str');
-                fun = lib.stdcall(this.functionName, 'str', arrTypes);
-                NativeLibExecutor.functionCaches[this.functionName] = fun;
-            }
+            const arrTypes = new Array(argsLength + 1).fill('str');
+            fun = lib.stdcall(this.functionName, 'str', arrTypes);
+            NativeLibExecutor.functionCaches[funKey] = fun;
             return fun;
         } else if (process.platform === 'linux') {
-            let fun = NativeLibExecutor.functionCaches[this.functionName];
-            if (!fun) {
-                const arrTypes = new Array(argsLength + 1).fill('str');
-                fun = lib.func(this.functionName, 'str', arrTypes);
-                NativeLibExecutor.functionCaches[this.functionName] = fun;
-            }
+            const arrTypes = new Array(argsLength + 1).fill('str');
+            fun = lib.func(this.functionName, 'str', arrTypes);
+            NativeLibExecutor.functionCaches[funKey] = fun;
             return fun;
         } else {
             throw new BadGatewayException('不支持的系统');
