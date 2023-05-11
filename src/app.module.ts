@@ -40,6 +40,7 @@ import { Quota } from './quota/quota.entity';
 import { QuotaModule } from './quota/quota.module';
 import { QuotaCard } from './quota/card/quota-card.entity';
 import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
+import { SalerNotice } from './saler/saler-notice/saler-notice.entity';
 
 @Module({
     imports: [
@@ -81,6 +82,7 @@ import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
                     UserData,
                     Quota,
                     QuotaCard,
+                    SalerNotice,
                 ],
                 logging: ['error'],
             }),

@@ -15,11 +15,17 @@ import { Developer } from '../developer.entity';
 import { DeveloperService } from '../developer.service';
 import { ParseDeveloperPipe } from '../pipe/parse-developer.pipe';
 import { SalerRoles } from 'src/saler/saler-roles/saler-roles.entity';
+import { SalerNoticeService } from 'src/saler/saler-notice/saler-notice.service';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'saler' })
 export class SalerController extends BaseController {
-    constructor(private salerService: SalerService, private developerService: DeveloperService, private salerRolesService: SalerRolesService) {
+    constructor(
+        private salerService: SalerService,
+        private developerService: DeveloperService,
+        private salerRolesService: SalerRolesService,
+        private salerNoticeService: SalerNoticeService,
+    ) {
         super();
     }
 
@@ -107,5 +113,16 @@ export class SalerController extends BaseController {
         if (!salerId) throw new NotAcceptableException('参数错误');
         const affected = await this.salerService.deleteSaler(developer.id, salerId);
         return this.setAffected({ affectedCount: affected }, `影响${affected}个代理`);
+    }
+
+    @Post('set-notice')
+    async setNotice(@TakeDeveloper() developer: any, @Body('content') content: string) {
+        if (!content) throw new NotAcceptableException('参数错误');
+        return await this.salerNoticeService.setNotice(developer.id, 0, content);
+    }
+
+    @Get('get-notice')
+    async getNotice(@TakeDeveloper() developer: any) {
+        return await this.salerNoticeService.getNotice(developer.id, 0);
     }
 }

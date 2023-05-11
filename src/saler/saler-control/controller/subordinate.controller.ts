@@ -1,4 +1,4 @@
-import { Body, Controller, NotAcceptableException, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotAcceptableException, Post } from '@nestjs/common';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
@@ -14,11 +14,17 @@ import { Developer } from 'src/developer/developer.entity';
 import { DeveloperService } from 'src/developer/developer.service';
 import { SalerRolesService } from 'src/saler/saler-roles/saler-roles.service';
 import { SalerRoles } from 'src/saler/saler-roles/saler-roles.entity';
+import { SalerNoticeService } from 'src/saler/saler-notice/saler-notice.service';
 
 @Roles(Role.Saler)
 @Controller({ version: '1', path: 'subordinate' })
 export class SubordinateController extends BaseController {
-    constructor(private salerService: SalerService, private developerService: DeveloperService, private salerRolesService: SalerRolesService) {
+    constructor(
+        private salerService: SalerService,
+        private developerService: DeveloperService,
+        private salerRolesService: SalerRolesService,
+        private salerNoticeService: SalerNoticeService,
+    ) {
         super();
     }
 
@@ -76,5 +82,16 @@ export class SubordinateController extends BaseController {
             query.andWhere('parentId = :parentId', { parentId: saler.id });
         });
         return { affected };
+    }
+
+    @Post('set-notice')
+    async setNotice(@TakeSaler(ParseSalerPipe) saler: Saler, @Body('content') content: string) {
+        if (!content) throw new NotAcceptableException('参数错误');
+        return await this.salerNoticeService.setNotice(saler.developerId, saler.id, content);
+    }
+
+    @Get('get-notice')
+    async getNotice(@TakeSaler(ParseSalerPipe) saler: Saler) {
+        return await this.salerNoticeService.getNotice(saler.developerId, saler.id);
     }
 }

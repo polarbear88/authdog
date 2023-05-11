@@ -44,6 +44,7 @@ import { SmsValidateModule } from 'src/helpers/sms-validate/sms-validate.module'
 import { UserDataModule } from 'src/provide/user-data/user-data.module';
 import { UserDataController } from './controller/user-data.controller';
 import { QuotaCardModule } from 'src/quota/card/quota-card.module';
+import { SalerNoticeModule } from 'src/saler/saler-notice/saler-notice.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -78,6 +79,7 @@ import { QuotaCardModule } from 'src/quota/card/quota-card.module';
         SmsValidateModule,
         UserDataModule,
         QuotaCardModule,
+        SalerNoticeModule,
     ],
     controllers: [
         DeveloperController,

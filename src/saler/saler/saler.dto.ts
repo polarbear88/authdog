@@ -15,6 +15,7 @@ import {
     Min,
     ValidateNested,
 } from 'class-validator';
+import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 import { GeetestDto } from 'src/helpers/man-machine-inspect/geetest.dto';
@@ -40,7 +41,7 @@ export class RegisterSalerDto extends CreateSalerByDevloperDto {
     token: string;
 }
 
-export class GetSalerListDto {
+export class GetSalerListDto extends GetPageDto {
     @IsOptional()
     @IsString()
     @PaginationWhere('name = :name')
