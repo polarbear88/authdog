@@ -36,8 +36,8 @@ export class ApiDeviceController extends ApiDeviceBaseController {
     @UseGuards(ApiAppVersionCheckGuard)
     @Throttle(200, 3600)
     @Post('recharge')
-    async recharge(@Body() dto: DeviceRechargeDto, @ApiTakeDevice() device: Device) {
-        await this.deviceService.recharge(device, dto);
+    async recharge(@Body() dto: DeviceRechargeDto, @ApiTakeDevice() device: Device, @ApiTakeApp() app: Application) {
+        await this.deviceService.recharge(device, dto, app);
         return null;
     }
 

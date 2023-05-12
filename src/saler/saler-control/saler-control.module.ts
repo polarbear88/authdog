@@ -21,6 +21,8 @@ import { ManMachineInspectModule } from 'src/helpers/man-machine-inspect/man-mac
 import { SalerRolesModule } from '../saler-roles/saler-roles.module';
 import { SalerRolesController } from './controller/saler-roles.controller';
 import { SalerNoticeModule } from '../saler-notice/saler-notice.module';
+import { RechargeRecordController } from './controller/recharge-record.controller';
+import { RechargeRecordModule } from 'src/provide/recharge-record/recharge-record.module';
 
 // saler的控制器不能放在saler模块中，因为saler控制器需要访问developer的service，
 // 而developer又依赖saler的service，这样就会造成循环依赖，所以这里把saler的控制器单独放在一个模块中
@@ -46,6 +48,7 @@ import { SalerNoticeModule } from '../saler-notice/saler-notice.module';
         ManMachineInspectModule,
         SalerRolesModule,
         SalerNoticeModule,
+        RechargeRecordModule,
     ],
     providers: [SalerControlService],
     controllers: [
@@ -57,6 +60,7 @@ import { SalerNoticeModule } from '../saler-notice/saler-notice.module';
         FundFlowController,
         StatisticsController,
         SalerRolesController,
+        RechargeRecordController,
     ],
 })
 export class SalerControlModule {}

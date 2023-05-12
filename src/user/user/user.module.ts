@@ -11,6 +11,7 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UserSubscriber } from './user.subscriber';
 import { UserDataModule } from 'src/provide/user-data/user-data.module';
+import { RechargeRecordModule } from 'src/provide/recharge-record/recharge-record.module';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { UserDataModule } from 'src/provide/user-data/user-data.module';
             }),
         }),
         UserDataModule,
+        RechargeRecordModule,
     ],
     providers: [UserService, IPAddrService, UserSubscriber],
     exports: [UserService],

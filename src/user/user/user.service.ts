@@ -30,6 +30,10 @@ import { UserStatus } from './user.type';
 import { UserFinancial } from 'src/user/user-financial/user-financial.entity';
 import { UserDataService } from 'src/provide/user-data/user-data.service';
 import { UserData } from 'src/provide/user-data/user-data.entity';
+import { RechargeRecordService } from 'src/provide/recharge-record/recharge-record.service';
+import { ApplicationService } from 'src/provide/application/application.service';
+import { as } from 'koffi';
+import { RechargeRecord } from 'src/provide/recharge-record/recharge-record.entity';
 
 @Injectable()
 export class UserService extends BaseService {
@@ -42,6 +46,7 @@ export class UserService extends BaseService {
         private readonly entityManager: EntityManager,
         private jwtService: JwtService,
         private userDataService: UserDataService,
+        private rechargeRecordService: RechargeRecordService,
     ) {
         super(userRepository);
     }
@@ -590,7 +595,7 @@ export class UserService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async recharge(user: User, dto: UserRechargeDto) {
+    async recharge(user: User, dto: UserRechargeDto, app: Application) {
         const card = await this.rechargeCardService.findByCard(user.appid, dto.card);
         if (!card || card.status !== 'unused') {
             throw new NotAcceptableException('未找到该充值卡或已使用');
@@ -621,6 +626,7 @@ export class UserService extends BaseService {
                         await this.addBanlance(user, card.money, '充值卡充值', undefined, manager.getRepository(User));
                     }
                 }
+                await this.rechargeRecordService.createRechargeRecord(user, app, card, manager.getRepository(RechargeRecord));
             });
         } catch (error) {
             throw new InternalServerErrorException('操作失败，系统错误');

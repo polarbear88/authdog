@@ -17,6 +17,8 @@ import { Device } from './device.entity';
 import { UserFinancial } from 'src/user/user-financial/user-financial.entity';
 import { UserDataService } from 'src/provide/user-data/user-data.service';
 import { UserData } from 'src/provide/user-data/user-data.entity';
+import { RechargeRecordService } from 'src/provide/recharge-record/recharge-record.service';
+import { RechargeRecord } from 'src/provide/recharge-record/recharge-record.entity';
 
 @Injectable()
 export class DeviceService extends BaseService {
@@ -27,6 +29,7 @@ export class DeviceService extends BaseService {
         private rechargeCardService: RechargeCardService,
         private readonly entityManager: EntityManager,
         private userDataService: UserDataService,
+        private rechargeRecordService: RechargeRecordService,
     ) {
         super(deviceRepository);
     }
@@ -436,7 +439,7 @@ export class DeviceService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async recharge(device: Device, dto: DeviceRechargeDto) {
+    async recharge(device: Device, dto: DeviceRechargeDto, app: Application) {
         const card = await this.rechargeCardService.findByCard(device.appid, dto.card);
         if (!card || card.status !== 'unused') {
             throw new NotAcceptableException('未找到该充值卡或已使用');
@@ -467,6 +470,7 @@ export class DeviceService extends BaseService {
                         await this.addBanlance(device, card.money, '充值卡充值', undefined, manager.getRepository(Device));
                     }
                 }
+                await this.rechargeRecordService.createRechargeRecord(device, app, card, manager.getRepository(RechargeRecord));
             });
         } catch (error) {
             throw new InternalServerErrorException('操作失败，系统错误');

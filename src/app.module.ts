@@ -42,6 +42,7 @@ import { QuotaCard } from './quota/card/quota-card.entity';
 import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
 import { SalerNotice } from './saler/saler-notice/saler-notice.entity';
 import { AuthdogApiModule } from './helpers/authdog-api/authdog-api.module';
+import { RechargeRecord } from './provide/recharge-record/recharge-record.entity';
 
 @Module({
     imports: [
@@ -84,6 +85,7 @@ import { AuthdogApiModule } from './helpers/authdog-api/authdog-api.module';
                     Quota,
                     QuotaCard,
                     SalerNotice,
+                    RechargeRecord,
                 ],
                 logging: ['error'],
             }),

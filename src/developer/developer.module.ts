@@ -46,6 +46,8 @@ import { UserDataController } from './controller/user-data.controller';
 import { QuotaCardModule } from 'src/quota/card/quota-card.module';
 import { SalerNoticeModule } from 'src/saler/saler-notice/saler-notice.module';
 import { AuthdogApiModule } from 'src/helpers/authdog-api/authdog-api.module';
+import { RechargeRecordModule } from 'src/provide/recharge-record/recharge-record.module';
+import { RechargeRecordController } from './controller/recharge-record.controller';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -82,6 +84,7 @@ import { AuthdogApiModule } from 'src/helpers/authdog-api/authdog-api.module';
         QuotaCardModule,
         SalerNoticeModule,
         AuthdogApiModule,
+        RechargeRecordModule,
     ],
     controllers: [
         DeveloperController,
@@ -103,6 +106,7 @@ import { AuthdogApiModule } from 'src/helpers/authdog-api/authdog-api.module';
         ActionLogController,
         UserController,
         UserDataController,
+        RechargeRecordController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],

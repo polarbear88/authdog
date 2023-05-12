@@ -146,7 +146,7 @@ export class ApiUserPublicController extends ApiUserBaseController {
         if (user.status !== 'normal') {
             throw new NotAcceptableException('用户状态异常');
         }
-        await this.userService.recharge(user, dto);
+        await this.userService.recharge(user, dto, app);
         return null;
     }
 }
