@@ -1,4 +1,18 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsArray,
+    IsIn,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Length,
+    Max,
+    MaxLength,
+    Min,
+} from 'class-validator';
 import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 
@@ -250,6 +264,24 @@ export class RechargeCardQueryByCardsSalerDto {
     cards: string[];
 }
 
+export class RechargeCardRetrieveByCardsSalerDto {
+    @IsNotEmpty({ message: '应用id不能为空' })
+    @IsNumber({}, { message: '应用id必须是数字' })
+    appid: number;
+
+    @IsNotEmpty({ message: '卡数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '卡数组不能为空' })
+    @ArrayMaxSize(200, { message: '卡数组最多200个' })
+    @IsString({ each: true })
+    cards: string[];
+
+    @IsNotEmpty()
+    @IsString()
+    @Length(1, 100)
+    reason: string;
+}
+
 export class RechargeCardDeleteByCardsDto {
     @IsNotEmpty({ message: '卡数组不能为空' })
     @IsArray()
@@ -266,6 +298,20 @@ export class RechargeCardQueryByCardsDto {
     @ArrayMaxSize(200, { message: '卡数组最多200个' })
     @IsString({ each: true })
     cards: string[];
+}
+
+export class RechargeCardRetrieveByCardsDto {
+    @IsNotEmpty({ message: '卡数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '卡数组不能为空' })
+    @ArrayMaxSize(200, { message: '卡数组最多200个' })
+    @IsString({ each: true })
+    cards: string[];
+
+    @IsNotEmpty()
+    @IsString()
+    @Length(1, 100)
+    reason: string;
 }
 
 export class SalerCreateRechargeCardDto {

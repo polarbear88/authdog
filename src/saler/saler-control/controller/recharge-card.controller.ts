@@ -13,6 +13,7 @@ import {
     RechargeCardQueryByCardsSalerDto,
     RechargeCardReBuildByCardsSalerDto,
     RechargeCardReBuildDto,
+    RechargeCardRetrieveByCardsSalerDto,
     RechargeCardSetStatusByCardsSalerDto,
     RechargeCardSetStatusDto,
     SalerCreateRechargeCardDto,
@@ -163,4 +164,29 @@ export class RechargeCardController extends BaseController {
             query.andWhere('creator = :creator', { creator: saler.id });
         });
     }
+
+    // @Post('retrieve-by-cards')
+    // async retrieveByCards(@TakeSaler() saler: any, @Body() dto: RechargeCardRetrieveByCardsSalerDto) {
+    //     const cards = await this.rechargeCardService.findByCards(dto.appid, dto.cards, (query: SelectQueryBuilder<RechargeCard>) => {
+    //         query.andWhere('creator = :creator', { creator: saler.id });
+    //     });
+    //     const uService = app.authMode === 'user' ? this.userService : this.deviceService;
+    //     for (const card of cards) {
+    //         (card as any).retrieve = false;
+    //         if (card.status === 'used') {
+    //             const user: User | Device = (await uService.findById(card.user)) as User | Device;
+    //             if (!user) {
+    //                 continue;
+    //             }
+    //             if (card.money > 0) {
+    //                 await uService.subBanlance(user as any, card.money, dto.reason, true);
+    //             }
+    //             if (card.time > 0) {
+    //                 await uService.subExpirationTime(user as any, card.time, dto.reason, true);
+    //             }
+    //             (card as any).retrieve = true;
+    //         }
+    //     }
+    //     return cards;
+    // }
 }

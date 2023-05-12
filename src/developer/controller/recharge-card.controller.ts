@@ -15,6 +15,7 @@ import {
     RechargeCardQueryByCardsDto,
     RechargeCardReBuildByCardsDto,
     RechargeCardReBuildDto,
+    RechargeCardRetrieveByCardsDto,
     RechargeCardSetStatusByCardsDto,
     RechargeCardSetStatusDto,
 } from 'src/provide/recharge-card/recharge-card.dto';
@@ -25,12 +26,21 @@ import { DeleteQueryBuilder, SelectQueryBuilder, UpdateQueryBuilder } from 'type
 import { WriteDeveloperActionLog } from '../action-log/write-developer-action-log.decorator';
 import { TakeApplication } from '../decorator/take-application.decorator';
 import { AppActionGuard } from '../guard/app-action.guard';
+import { DeviceService } from 'src/user/device/device.service';
+import { UserService } from 'src/user/user/user.service';
+import { User } from 'src/user/user/user.entity';
+import { Device } from 'src/user/device/device.entity';
 
 @UseGuards(AppActionGuard)
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'recharge-card' })
 export class RechargeCardController extends BaseController {
-    constructor(private rechargeCardService: RechargeCardService, private rechargeCardTypeService: RechargeCardTypeService) {
+    constructor(
+        private rechargeCardService: RechargeCardService,
+        private rechargeCardTypeService: RechargeCardTypeService,
+        private userService: UserService,
+        private deviceService: DeviceService,
+    ) {
         super();
     }
 
@@ -143,5 +153,29 @@ export class RechargeCardController extends BaseController {
     @Post('find-by-cards')
     async findByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardQueryByCardsDto) {
         return await this.rechargeCardService.findByCards(app.id, dto.cards);
+    }
+
+    @WriteDeveloperActionLog('追回充值卡')
+    @Post('retrieve-by-cards')
+    async retrieveByCards(@TakeApplication() app: Application, @Body() dto: RechargeCardRetrieveByCardsDto) {
+        const cards = await this.rechargeCardService.findByCards(app.id, dto.cards);
+        const uService = app.authMode === 'user' ? this.userService : this.deviceService;
+        for (const card of cards) {
+            (card as any).retrieve = false;
+            if (card.status === 'used') {
+                const user: User | Device = (await uService.findById(card.user)) as User | Device;
+                if (!user) {
+                    continue;
+                }
+                if (card.money > 0) {
+                    await uService.subBanlance(user as any, card.money, dto.reason, true);
+                }
+                if (card.time > 0) {
+                    await uService.subExpirationTime(user as any, card.time, dto.reason, true);
+                }
+                (card as any).retrieve = true;
+            }
+        }
+        return cards;
     }
 }
