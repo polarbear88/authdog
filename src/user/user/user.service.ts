@@ -14,7 +14,7 @@ import { LoginDeviceManageService } from 'src/user/login-device-manage/login-dev
 import { RechargeCard } from 'src/provide/recharge-card/recharge-card.entity';
 import { RechargeCardService } from 'src/provide/recharge-card/recharge-card.service';
 import { UserFinancialService } from 'src/user/user-financial/user-financial.service';
-import { EntityManager, In, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { EntityManager, In, MoreThan, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import {
     AddUserBanlanceDto,
     AddUserTimeDto,
@@ -667,5 +667,16 @@ export class UserService extends BaseService {
 
     async getCountByDeveloperId(developerId: number) {
         return await this.userRepository.count({ where: { developerId } });
+    }
+
+    async getStat(appid: number) {
+        const tryCount = await this.userRepository.count({ where: { appid, trialExpiration: MoreThan(new Date()) } });
+        const totalCount = await this.userRepository.count({ where: { appid } });
+        const unexpiredCount = await this.userRepository.count({ where: { appid, expirationTime: MoreThan(new Date()) } });
+        return {
+            tryCount,
+            totalCount,
+            unexpiredCount,
+        };
     }
 }

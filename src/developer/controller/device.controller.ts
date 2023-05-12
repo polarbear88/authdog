@@ -59,4 +59,9 @@ export class DeviceController extends BaseController {
         const affected = await this.deviceService.deleteByIds(app.developerId, onlyUserIdDto.ids);
         return this.setAffected({ affectedCount: affected }, `操作${affected}个用户`);
     }
+
+    @Post('stat')
+    async stat(@TakeApplication() app: Application) {
+        return await this.deviceService.getStat(app.id);
+    }
 }
