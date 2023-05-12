@@ -17,6 +17,7 @@ import { UserService } from 'src/user/user/user.service';
 import { User } from 'src/user/user/user.entity';
 import { ApplicationService } from 'src/provide/application/application.service';
 import { Application } from 'src/provide/application/application.entity';
+import { AuthdogApiService } from 'src/helpers/authdog-api/authdog-api.service';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'profile' })
@@ -27,6 +28,7 @@ export class ProfileController extends BaseController {
         private quotaCardService: QuotaCardService,
         private userService: UserService,
         private applicationService: ApplicationService,
+        private authdogApiService: AuthdogApiService,
     ) {
         super();
     }
@@ -99,5 +101,10 @@ export class ProfileController extends BaseController {
         } catch (error) {
             throw new NotAcceptableException('token未登录');
         }
+    }
+
+    @Get('get-authdog-version')
+    async getAuthdogVersion() {
+        return await this.authdogApiService.getVersion();
     }
 }

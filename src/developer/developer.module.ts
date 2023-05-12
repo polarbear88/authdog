@@ -45,6 +45,7 @@ import { UserDataModule } from 'src/provide/user-data/user-data.module';
 import { UserDataController } from './controller/user-data.controller';
 import { QuotaCardModule } from 'src/quota/card/quota-card.module';
 import { SalerNoticeModule } from 'src/saler/saler-notice/saler-notice.module';
+import { AuthdogApiModule } from 'src/helpers/authdog-api/authdog-api.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -80,6 +81,7 @@ import { SalerNoticeModule } from 'src/saler/saler-notice/saler-notice.module';
         UserDataModule,
         QuotaCardModule,
         SalerNoticeModule,
+        AuthdogApiModule,
     ],
     controllers: [
         DeveloperController,

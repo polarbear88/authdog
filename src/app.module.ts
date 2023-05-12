@@ -41,6 +41,7 @@ import { QuotaModule } from './quota/quota.module';
 import { QuotaCard } from './quota/card/quota-card.entity';
 import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
 import { SalerNotice } from './saler/saler-notice/saler-notice.entity';
+import { AuthdogApiModule } from './helpers/authdog-api/authdog-api.module';
 
 @Module({
     imports: [
@@ -121,6 +122,7 @@ import { SalerNotice } from './saler/saler-notice/saler-notice.entity';
         ManMachineInspectModule,
         QuotaModule,
         CloudfunModule,
+        AuthdogApiModule,
     ],
     controllers: [AppController],
     providers: [
