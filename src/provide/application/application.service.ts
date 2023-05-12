@@ -68,12 +68,14 @@ export class ApplicationService extends BaseService {
 
     private makeRSAKeyPair(app: Application) {
         const rsa = new RSAUtils();
+        rsa.generateKeyPair();
         app.cryptoSecret = rsa.getPrivateKey();
         app.cryptoPublicKey = rsa.getPublicKey();
     }
 
     private makeECDHKeyPair(app: Application) {
         const ecdh = new ECDHUtils();
+        ecdh.generateKeys();
         app.cryptoSecret = ecdh.getPrivateKey().toString('hex');
         app.cryptoPublicKey = ecdh.getPublicKey().toString('hex');
     }

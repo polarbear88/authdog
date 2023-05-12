@@ -4,7 +4,7 @@ export class ECDHUtils {
     private publicKey: Buffer;
     private ecdh = crypto.createECDH('secp521r1');
 
-    constructor() {
+    public generateKeys() {
         this.ecdh.generateKeys();
         this.privateKey = this.ecdh.getPrivateKey();
         this.publicKey = this.ecdh.getPublicKey();

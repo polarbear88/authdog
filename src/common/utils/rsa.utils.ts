@@ -4,11 +4,7 @@ export class RSAUtils {
     private privateKey: crypto.KeyObject;
     private publicKey: crypto.KeyObject;
 
-    constructor() {
-        this.generateKeyPair();
-    }
-
-    private generateKeyPair(): void {
+    public generateKeyPair(): void {
         const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
             modulusLength: 2048,
         });
