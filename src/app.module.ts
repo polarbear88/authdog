@@ -167,6 +167,7 @@ export class AppModule implements NestModule {
                 '/v[0-9]/feedback/*',
                 '/v[0-9]/cloudfun/*',
                 '/v[0-9]/userdata/*',
+                '/v[0-9]/user-financial/*',
             );
     }
 }

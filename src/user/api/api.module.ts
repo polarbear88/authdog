@@ -7,6 +7,7 @@ import { ApiFeedbackModule } from './feedback/api-feedback.module';
 import { ApiCloudfunModule } from './cloudfun/api-cloudfun.module';
 import { ApiUserDataModule } from './user-data/api-user-data.module';
 import { CloudfunModule } from 'src/provide/cloudfun/cloudfun.module';
+import { ApiUserFinancialModule } from './user-financial/api-user-financial.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { CloudfunModule } from 'src/provide/cloudfun/cloudfun.module';
         ApiCloudfunModule,
         ApiUserDataModule,
         CloudfunModule,
+        ApiUserFinancialModule,
     ],
     providers: [],
 })

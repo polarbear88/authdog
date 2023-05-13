@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { UserFinancial } from './user-financial.entity';
 import { UserFinancialGetListDto } from './user-financial.dto';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
+import { GetPageDto } from 'src/common/dto/get-page.dto';
 
 @Injectable()
 export class UserFinancialService extends BaseService {
@@ -115,5 +116,11 @@ export class UserFinancialService extends BaseService {
             list: data[0],
             amount_total: amount_total.amount_total,
         };
+    }
+
+    async findByUserId(appid: number, userId: number, dto: GetPageDto) {
+        const page = dto.page || 1;
+        const pageSize = dto.pageSize || 10;
+        return await this.repo.find({ where: { appid, userId }, skip: (page - 1) * pageSize, take: pageSize });
     }
 }
