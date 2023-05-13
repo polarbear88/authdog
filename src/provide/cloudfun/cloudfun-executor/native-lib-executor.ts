@@ -1,5 +1,7 @@
 import { BadGatewayException, NotAcceptableException } from '@nestjs/common';
 import koffi from 'koffi';
+import path from 'path';
+import Piscina from 'piscina';
 
 export class NativeLibExecutor {
     private user: any;
@@ -8,6 +10,11 @@ export class NativeLibExecutor {
 
     private static libCaches: Record<string, koffi.IKoffiLib> = {};
     private static functionCaches: Record<string, koffi.KoffiFunction> = {};
+    private static piscina: Piscina = new Piscina({
+        filename: path.resolve(__dirname, 'narive-lib-worker.js'),
+        minThreads: 5,
+        maxThreads: 20,
+    });
 
     constructor(user: any, fileName: string, functionName: string) {
         this.user = user;
@@ -46,8 +53,8 @@ export class NativeLibExecutor {
 
     async run(args: string[]): Promise<string> {
         const fun = this.getFunction(args.length);
-        // eslint-disable-next-line prefer-spread
-        const result = fun.apply(null, [JSON.stringify(this.user), ...args]);
+        // 为了避免本机库的调用阻塞node主线程导致整个后端服务阻塞，这里使用piscina线程池来调用
+        const result = await NativeLibExecutor.piscina.run({ fun: fun, args: [JSON.stringify(this.user), ...args] });
         if (result !== undefined && typeof result !== 'string') {
             throw new NotAcceptableException('返回值必须为字符串或不返回');
         }
