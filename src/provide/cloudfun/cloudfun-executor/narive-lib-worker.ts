@@ -1,6 +1,7 @@
 import koffi from 'koffi';
 
 function getLib(fileName: string): koffi.IKoffiLib {
+    if (!global.libCaches) global.libCaches = {};
     let lib = global.libCaches[fileName];
     if (!lib) {
         lib = koffi.load(fileName);
@@ -10,6 +11,7 @@ function getLib(fileName: string): koffi.IKoffiLib {
 }
 
 function getFunction(fileName: string, functionName: string, argsLength: number): koffi.KoffiFunction {
+    if (!global.functionCaches) global.functionCaches = {};
     const lib = getLib(fileName);
     const funKey = `${fileName}_${functionName}_${argsLength}`;
     let fun = global.functionCaches[funKey];
@@ -29,7 +31,7 @@ function getFunction(fileName: string, functionName: string, argsLength: number)
     }
 }
 
-export default (fileName: any, functionName: string, args: string[]) => {
+export default ({ fileName, functionName, args }) => {
     const fun = getFunction(fileName, functionName, args.length);
     // eslint-disable-next-line prefer-spread
     return fun.apply(null, args);
