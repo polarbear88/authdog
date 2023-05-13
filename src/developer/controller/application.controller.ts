@@ -241,8 +241,12 @@ export class ApplicationController extends BaseController {
     @Post('set-custom-cryptfun')
     async setCustomCryptFunId(@Body() dto: SetCustomCryptFunIdDto, @TakeApplication() app: Application) {
         if (dto.funid !== 0) {
-            if (!(await this.cloudfunService.findByDeveloperIdAndId(app.developerId, dto.funid))) {
+            const fun = await this.cloudfunService.findByDeveloperIdAndId(app.developerId, dto.funid);
+            if (!fun) {
                 throw new NotAcceptableException('云函数不存在');
+            }
+            if (fun.type === 'VM-JS') {
+                throw new NotAcceptableException('出于性能原因，不可使用虚拟机JS类型的云函数作为自定义加密函数');
             }
         }
         await this.applicationService.setCustomCryptFunId(app.id, dto.funid);
