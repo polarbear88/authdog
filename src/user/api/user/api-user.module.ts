@@ -9,10 +9,20 @@ import { ApiUserController } from './controller/api-user.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { LoginDeviceManageModule } from 'src/user/login-device-manage/login-device-manage.module';
 import { CloudfunModule } from 'src/provide/cloudfun/cloudfun.module';
+import { OnlineUserManagerModule } from 'src/provide/online-user-manager/online-user-manager.module';
 
 @SetMetadata(MODULE_PATH, 'user')
 @Module({
-    imports: [UserModule, UserDeviceModule, ApplicationModule, DeveloperModule, AuthModule, LoginDeviceManageModule, CloudfunModule],
+    imports: [
+        UserModule,
+        UserDeviceModule,
+        ApplicationModule,
+        DeveloperModule,
+        AuthModule,
+        LoginDeviceManageModule,
+        CloudfunModule,
+        OnlineUserManagerModule,
+    ],
     controllers: [ApiUserPublicController, ApiUserController],
 })
 export class ApiUserModule {}

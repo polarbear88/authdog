@@ -12,12 +12,13 @@ import { StringUtils } from 'src/common/utils/string.utils';
 import { ChangePasswordDto, CreateUserDto, LoginUserDto, UserRechargeDto } from 'src/user/user/user.dto';
 import { UserService } from 'src/user/user/user.service';
 import { ApiUserBaseController } from './api-user-base.controller';
+import { OnlineUserManagerService } from 'src/provide/online-user-manager/online-user-manager.service';
 
 @UseGuards(ApiAppVersionCheckGuard)
 @Public()
 @Controller({ version: '1', path: 'public' })
 export class ApiUserPublicController extends ApiUserBaseController {
-    constructor(private userService: UserService, private jwtService: JwtService) {
+    constructor(private userService: UserService, private jwtService: JwtService, private onlineUserManagerService: OnlineUserManagerService) {
         super();
     }
 
@@ -87,6 +88,10 @@ export class ApiUserPublicController extends ApiUserBaseController {
         if (app.bindDevice && !user.currentDeviceId) {
             // 记录绑定的设备
             await this.userService.setCurrentDeviceId(user.id, loginUserDto.deviceId);
+        }
+        // 如果启用在线用户管理器功能则同步心跳
+        if (app.enableOnlineUserMgr) {
+            await this.onlineUserManagerService.poll(app, user, loginUserDto.deviceId);
         }
         return {
             user: user._serialization(),

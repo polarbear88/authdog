@@ -264,4 +264,12 @@ export class ApplicationController extends BaseController {
         await this.applicationService.delete(app);
         return this.setAffected({}, app.name);
     }
+
+    @UseGuards(AppActionGuard)
+    @WriteDeveloperActionLog('设置在线用户管理功能状态')
+    @Post('set-online-user-manager-status')
+    async setOnlineUserManagerStatus(@Body('status') status: boolean, @TakeApplication() app: Application) {
+        await this.applicationService.setOnlineUserManagerStatus(app.id, !!status);
+        return this.setAffected({}, app.name);
+    }
 }

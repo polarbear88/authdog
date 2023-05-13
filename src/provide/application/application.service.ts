@@ -194,6 +194,12 @@ export class ApplicationService extends BaseService {
         await this.applicationRepository.update(id, { version });
     }
 
+    async setOnlineUserManagerStatus(id: number, status: boolean) {
+        await this.applicationRepository.update(id, {
+            enableOnlineUserMgr: status,
+        });
+    }
+
     async setCustomCryptFunId(id: number, customCryptFunId: number) {
         await this.applicationRepository.update(id, { customCryptFunId });
     }

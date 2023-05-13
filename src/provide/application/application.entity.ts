@@ -105,4 +105,8 @@ export class Application extends BaseEntity {
     // 自定义加密的云函数
     @Column({ default: 0 })
     customCryptFunId: number;
+
+    // 是否开启在线用户管理功能
+    @Column({ default: false })
+    enableOnlineUserMgr: boolean;
 }

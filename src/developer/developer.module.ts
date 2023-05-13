@@ -48,6 +48,8 @@ import { SalerNoticeModule } from 'src/saler/saler-notice/saler-notice.module';
 import { AuthdogApiModule } from 'src/helpers/authdog-api/authdog-api.module';
 import { RechargeRecordModule } from 'src/provide/recharge-record/recharge-record.module';
 import { RechargeRecordController } from './controller/recharge-record.controller';
+import { OnlineUserManagerController } from './controller/online-user-manager.controller';
+import { OnlineUserManagerModule } from 'src/provide/online-user-manager/online-user-manager.module';
 
 // 设置此模块路由前缀
 @SetMetadata(MODULE_PATH, 'developer')
@@ -85,6 +87,7 @@ import { RechargeRecordController } from './controller/recharge-record.controlle
         SalerNoticeModule,
         AuthdogApiModule,
         RechargeRecordModule,
+        OnlineUserManagerModule,
     ],
     controllers: [
         DeveloperController,
@@ -107,6 +110,7 @@ import { RechargeRecordController } from './controller/recharge-record.controlle
         UserController,
         UserDataController,
         RechargeRecordController,
+        OnlineUserManagerController,
     ],
     providers: [DeveloperService, DeveloperSubscriber],
     exports: [DeveloperService],
