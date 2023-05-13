@@ -149,7 +149,11 @@ export class CloudfunService extends BaseService {
     }
 
     checkAllowType(type: string) {
-        const allows = (this.configService.get('ALLOW_CLOUDFUN_TYPE') + '').split(',');
+        let cf = this.configService.get('ALLOW_CLOUDFUN_TYPE') + '';
+        if (!cf) {
+            cf = 'VM-JS';
+        }
+        const allows = cf.split(',');
         return allows.includes(type);
     }
 }
