@@ -94,3 +94,16 @@ export class RunCloudfunDto extends BaseUserDeviceDto {
     @IsString({ each: true, message: '参数必须是字符串' })
     args?: string[];
 }
+
+export class RunCloudfunByNameDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: '函数名称不能为空' })
+    @IsString({ message: '函数名称必须是字符串' })
+    @Length(1, 32, { message: '函数名称长度必须在1-32位之间' })
+    funname: string;
+
+    @IsOptional()
+    @IsArray({ message: '参数必须是数组' })
+    @ArrayMaxSize(10, { message: '参数最多支持10个' })
+    @IsString({ each: true, message: '参数必须是字符串' })
+    args?: string[];
+}

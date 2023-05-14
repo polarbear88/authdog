@@ -1,7 +1,7 @@
 import { Body, Controller, InternalServerErrorException, NotAcceptableException, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/provide/application/application.entity';
 import { CloudfunRuner } from 'src/provide/cloudfun/cloudfun-runer';
-import { RunCloudfunDto } from 'src/provide/cloudfun/cloudfun.dto';
+import { RunCloudfunByNameDto, RunCloudfunDto } from 'src/provide/cloudfun/cloudfun.dto';
 import { CloudfunService } from 'src/provide/cloudfun/cloudfun.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
@@ -13,6 +13,7 @@ import { ApiUserOrDevicePaidGuard } from '../api-user-or-device-paid.guard';
 import { DeveloperService } from 'src/developer/developer.service';
 import { Developer } from 'src/developer/developer.entity';
 import { QuotaService } from 'src/quota/quota.service';
+import { Cloudfun } from 'src/provide/cloudfun/cloudfun.entity';
 
 @Public()
 @UseGuards(ApiUserOrDevicePaidGuard)
@@ -32,6 +33,16 @@ export class ApiCloudfunController extends BaseController {
     @Post('run')
     async run(@ApiTakeApp() app: Application, @Body() dto: RunCloudfunDto, @Req() request: any) {
         const cloudfun = await this.cloudfunService.findByDeveloperIdAndId(app.developerId, dto.id);
+        return await this.runCloudfun(cloudfun, app, dto, request);
+    }
+
+    @Post('runByName')
+    async runByName(@ApiTakeApp() app: Application, @Body() dto: RunCloudfunByNameDto, @Req() request: any) {
+        const cloudfun = await this.cloudfunService.findByName(app.developerId, dto.funname);
+        return await this.runCloudfun(cloudfun, app, dto, request);
+    }
+
+    async runCloudfun(cloudfun: Cloudfun, app: Application, dto: RunCloudfunDto | RunCloudfunByNameDto, request: any) {
         if (!cloudfun) {
             throw new NotAcceptableException('函数不存在');
         }

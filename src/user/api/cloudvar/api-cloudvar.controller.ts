@@ -1,6 +1,6 @@
 import { Body, Controller, NotAcceptableException, Post, Req, SetMetadata, UseInterceptors } from '@nestjs/common';
 import { Application } from 'src/provide/application/application.entity';
-import { GetCloudvarDto } from 'src/provide/cloudvar/cloudvar.dto';
+import { GetCloudvarByNameDto, GetCloudvarDto } from 'src/provide/cloudvar/cloudvar.dto';
 import { CloudvarService } from 'src/provide/cloudvar/cloudvar.service';
 import { BaseController } from 'src/common/controller/base.controller';
 import { Public } from 'src/common/decorator/public.decorator';
@@ -29,6 +29,19 @@ export class ApiCloudvarController extends BaseController {
             throw new NotAcceptableException('开发者已被禁用');
         }
         const cloudvar = await this.cloudvarService.findByDeveloperIdAndId(app.developerId, dto.id);
+        return await this.getCloudvar(cloudvar, app, dto, request);
+    }
+
+    @Post('getByName')
+    async getByName(@ApiTakeApp() app: Application, @Body() dto: GetCloudvarByNameDto, @Req() request: any) {
+        if ((await this.developerService.getStatus(app.developerId)) !== 'normal') {
+            throw new NotAcceptableException('开发者已被禁用');
+        }
+        const cloudvar = await this.cloudvarService.findByName(app.developerId, dto.varname);
+        return await this.getCloudvar(cloudvar, app, dto, request);
+    }
+
+    async getCloudvar(cloudvar: any, app: Application, dto: GetCloudvarDto | GetCloudvarByNameDto, request: any) {
         if (!cloudvar) {
             throw new NotAcceptableException('变量不存在');
         }

@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { BaseUserDeviceDto } from 'src/user/user-device/user-device.dto';
 
 export class CreateCloudvarDto {
@@ -65,4 +65,12 @@ export class GetCloudvarDto extends BaseUserDeviceDto {
     @IsNotEmpty({ message: '变量ID不能为空' })
     @IsNumber({}, { message: '变量ID必须是数字' })
     id: number;
+}
+
+export class GetCloudvarByNameDto extends BaseUserDeviceDto {
+    @IsNotEmpty({ message: '变量名称不能为空' })
+    @IsString({ message: '变量名称必须是字符串' })
+    @MinLength(1, { message: '变量名称长度必须在1-32位之间' })
+    @MaxLength(32, { message: '变量名称长度必须在1-32位之间' })
+    varname: string;
 }
