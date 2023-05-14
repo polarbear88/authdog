@@ -107,4 +107,17 @@ export class ProfileController extends BaseController {
     async getAuthdogVersion() {
         return await this.authdogApiService.getVersion();
     }
+
+    @Get('is-open-source-user')
+    async isOpenSourceUser(@TakeDeveloper(ParseDeveloperPipe) developer: Developer) {
+        const quota = await this.developerService
+            .getRepo()
+            .manager.getRepository(Quota)
+            .findOne({
+                where: { name: developer.quota },
+            });
+        return {
+            isOpenSourceUser: quota.chinaName === '开源用户',
+        };
+    }
 }
