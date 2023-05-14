@@ -38,7 +38,7 @@ export class UserDataDeleteByIdsDto {
     @IsNotEmpty()
     @IsArray()
     @IsNumber({}, { each: true })
-    @ArrayMaxSize(100)
+    @ArrayMaxSize(1000)
     @ArrayMinSize(1)
     ids: number[];
 }

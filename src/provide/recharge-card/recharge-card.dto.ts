@@ -93,7 +93,7 @@ export class RechargeCardSetStatusDto {
     @IsNotEmpty({ message: '卡id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '卡id数组不能为空' })
-    @ArrayMaxSize(100, { message: '卡id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '卡id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -107,7 +107,7 @@ export class RechargeCardReBuildDto {
     @IsNotEmpty({ message: '卡id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '卡id数组不能为空' })
-    @ArrayMaxSize(100, { message: '卡id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '卡id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 }
@@ -116,7 +116,7 @@ export class RechargeCardDeleteDto {
     @IsNotEmpty({ message: '卡id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '卡id数组不能为空' })
-    @ArrayMaxSize(100, { message: '卡id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '卡id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 }
@@ -125,7 +125,7 @@ export class RechargeCardExportDto {
     @IsNotEmpty({ message: '卡id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '卡id数组不能为空' })
-    @ArrayMaxSize(100, { message: '卡id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '卡id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 }

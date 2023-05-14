@@ -88,7 +88,7 @@ export class AddDeviceTimeDto {
     @IsNotEmpty({ message: '设备id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '设备id数组不能为空' })
-    @ArrayMaxSize(100, { message: '设备id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '设备id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -106,7 +106,7 @@ export class AddDeviceBanlanceDto {
     @IsNotEmpty({ message: '设备id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '设备id数组不能为空' })
-    @ArrayMaxSize(100, { message: '设备id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '设备id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -123,7 +123,7 @@ export class SetDeviceStatusDto {
     @IsNotEmpty({ message: '设备id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '设备id数组不能为空' })
-    @ArrayMaxSize(100, { message: '设备id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '设备id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 

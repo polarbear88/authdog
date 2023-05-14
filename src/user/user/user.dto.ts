@@ -149,7 +149,7 @@ export class AddUserTimeDto {
     @IsNotEmpty({ message: '用户id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '用户id数组不能为空' })
-    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '用户id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -167,7 +167,7 @@ export class AddUserBanlanceDto {
     @IsNotEmpty({ message: '用户id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '用户id数组不能为空' })
-    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '用户id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -184,7 +184,7 @@ export class OnlyUserIdDto {
     @IsNotEmpty({ message: '用户id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '用户id数组不能为空' })
-    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '用户id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 }
@@ -193,7 +193,7 @@ export class SetUserStatusDto {
     @IsNotEmpty({ message: '用户id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: '用户id数组不能为空' })
-    @ArrayMaxSize(100, { message: '用户id数组最多100个' })
+    @ArrayMaxSize(1000, { message: '用户id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 

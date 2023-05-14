@@ -45,7 +45,7 @@ export class SetFeedbackStatusDto {
     @IsNotEmpty({ message: 'id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: 'id数组不能为空' })
-    @ArrayMaxSize(100, { message: 'id数组最多100个' })
+    @ArrayMaxSize(1000, { message: 'id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 
@@ -59,7 +59,7 @@ export class DeleteFeedbackDto {
     @IsNotEmpty({ message: 'id数组不能为空' })
     @IsArray()
     @ArrayMinSize(1, { message: 'id数组不能为空' })
-    @ArrayMaxSize(100, { message: 'id数组最多100个' })
+    @ArrayMaxSize(1000, { message: 'id数组最多100个' })
     @IsInt({ each: true })
     ids: number[];
 }

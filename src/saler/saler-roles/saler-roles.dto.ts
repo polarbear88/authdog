@@ -25,6 +25,6 @@ export class SalerRolesSetPriceConfigDto {
     @ValidateNested({ each: true })
     @Type(() => SalerRolesSetPriceConfigItemDto)
     @ArrayMinSize(1)
-    @ArrayMaxSize(100)
+    @ArrayMaxSize(1000)
     priceConfig: SalerRolesSetPriceConfigItemDto[];
 }
