@@ -19,6 +19,15 @@ import { GetPageDto } from 'src/common/dto/get-page.dto';
 import { PaginationWhere } from 'src/common/pagination/pagination.decorator';
 import { UserName } from 'src/common/validate/username.validate';
 import { GeetestDto } from 'src/helpers/man-machine-inspect/geetest.dto';
+
+export class SalerBatchActionDto {
+    @IsNotEmpty({ message: '用户id数组不能为空' })
+    @IsArray()
+    @ArrayMinSize(1, { message: '用户id数组不能为空' })
+    @ArrayMaxSize(1000, { message: '用户id数组最多100个' })
+    @IsInt({ each: true })
+    ids: number[];
+}
 export class CreateSalerByDevloperDto {
     @UserName('name', { message: '用户名只能包含字母和数字并以字母开头' })
     name: string;
@@ -107,6 +116,16 @@ export class AddSalerBanlanceDto {
     reason?: string;
 }
 
+export class AddSalerBanlanceBatchDto extends SalerBatchActionDto {
+    @IsNotEmpty({ message: '金额不能为空' })
+    @IsNumber()
+    amount: number;
+
+    @IsOptional()
+    @IsString()
+    reason?: string;
+}
+
 export class SetSalerAppsItemDto {
     @IsNotEmpty()
     @IsNumber()
@@ -123,6 +142,14 @@ export class SetSalerAppsDto {
     @IsNumber()
     id: number;
 
+    @ValidateNested({ each: true })
+    @Type(() => SetSalerAppsItemDto)
+    @ArrayMinSize(1)
+    @ArrayMaxSize(1000)
+    apps: SetSalerAppsItemDto[];
+}
+
+export class SetSalerAppsBatchDto extends SalerBatchActionDto {
     @ValidateNested({ each: true })
     @Type(() => SetSalerAppsItemDto)
     @ArrayMinSize(1)

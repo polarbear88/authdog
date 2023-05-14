@@ -15,7 +15,15 @@ import { SalerRolesService } from 'src/saler/saler-roles/saler-roles.service';
 import { ChangeUserPwdByDevDto } from 'src/user/user/user.dto';
 import { EntityManager, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { SalerEntryLink } from './entry-link/entry-link.entity';
-import { CreateSalerByDevloperDto, GetSalerListDto, RegisterSalerDto, SalerLoginDto, SetSalerAppsDto, SetSubordinatePriceDto } from './saler.dto';
+import {
+    CreateSalerByDevloperDto,
+    GetSalerListDto,
+    RegisterSalerDto,
+    SalerLoginDto,
+    SetSalerAppsDto,
+    SetSalerAppsItemDto,
+    SetSubordinatePriceDto,
+} from './saler.dto';
 import { Saler } from './saler.entity';
 import { SalerStatus } from './saler.type';
 import { NumberUtils } from 'src/common/utils/number.utils';
@@ -305,10 +313,10 @@ export class SalerService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
-    async setApps(developerId: number, dto: SetSalerAppsDto) {
-        const saler = await this.findByIdAndDeveloperId(developerId, dto.id);
-        if (saler) {
-            saler.apps = dto.apps;
+    async setApps(developerId: number, salerId: number, apps: SetSalerAppsItemDto[]) {
+        const saler = await this.findByIdAndDeveloperId(developerId, salerId);
+        if (saler && saler.parentId === 0) {
+            saler.apps = apps;
             return await this.repo.save(saler);
         }
         throw new NotAcceptableException('代理不存在');
