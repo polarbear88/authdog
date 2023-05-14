@@ -357,74 +357,158 @@ export class DeviceService extends BaseService {
         throw new NotAcceptableException('操作失败');
     }
 
+    // async addTimeByDev(appid: number, addDeviceTimeDto: AddDeviceTimeDto) {
+    //     if (addDeviceTimeDto.minutes === 0) {
+    //         throw new NotAcceptableException('操作失败');
+    //     }
+    //     let devices: Device | number[];
+    //     devices = addDeviceTimeDto.ids;
+    //     if (addDeviceTimeDto.ids.length === 1) {
+    //         const device = await this.findByAppidAndId(appid, addDeviceTimeDto.ids[0]);
+    //         if (!device) {
+    //             throw new NotAcceptableException('设备不存在');
+    //         }
+    //         devices = device;
+    //     }
+    //     if (addDeviceTimeDto.minutes < 0) {
+    //         return await this.subExpirationTime(
+    //             devices,
+    //             -addDeviceTimeDto.minutes,
+    //             addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+    //             true,
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     } else {
+    //         return await this.addExpirationTime(
+    //             devices,
+    //             addDeviceTimeDto.minutes,
+    //             addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     }
+    // }
+
     async addTimeByDev(appid: number, addDeviceTimeDto: AddDeviceTimeDto) {
         if (addDeviceTimeDto.minutes === 0) {
             throw new NotAcceptableException('操作失败');
         }
-        let devices: Device | number[];
-        devices = addDeviceTimeDto.ids;
-        if (addDeviceTimeDto.ids.length === 1) {
-            const device = await this.findByAppidAndId(appid, addDeviceTimeDto.ids[0]);
-            if (!device) {
-                throw new NotAcceptableException('设备不存在');
+        const devices = await this.deviceRepository.find({
+            where: {
+                appid: appid,
+                id: In(addDeviceTimeDto.ids),
+            },
+        });
+        if (devices.length <= 0) {
+            throw new NotAcceptableException('没有符合条件的用户');
+        }
+        for (const device of devices) {
+            try {
+                if (addDeviceTimeDto.minutes < 0) {
+                    await this.subExpirationTime(
+                        device,
+                        -addDeviceTimeDto.minutes,
+                        addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+                        true,
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                } else {
+                    await this.addExpirationTime(
+                        device,
+                        addDeviceTimeDto.minutes,
+                        addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                }
+            } catch (error) {
+                // 忽略错误
             }
-            devices = device;
         }
-        if (addDeviceTimeDto.minutes < 0) {
-            return await this.subExpirationTime(
-                devices,
-                -addDeviceTimeDto.minutes,
-                addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
-                true,
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        } else {
-            return await this.addExpirationTime(
-                devices,
-                addDeviceTimeDto.minutes,
-                addDeviceTimeDto.reason ? addDeviceTimeDto.reason : '管理员操作',
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        }
+        return devices.length;
     }
+
+    // async addBanlanceByDev(appid: number, addDeviceBanlanceDto: AddDeviceBanlanceDto) {
+    //     if (addDeviceBanlanceDto.money === 0) {
+    //         throw new NotAcceptableException('操作失败');
+    //     }
+    //     let devices: Device | number[];
+    //     devices = addDeviceBanlanceDto.ids;
+    //     if (addDeviceBanlanceDto.ids.length === 1) {
+    //         const device = await this.findByAppidAndId(appid, addDeviceBanlanceDto.ids[0]);
+    //         if (!device) {
+    //             throw new NotAcceptableException('设备不存在');
+    //         }
+    //         devices = device;
+    //     }
+    //     if (addDeviceBanlanceDto.money < 0) {
+    //         return await this.subBanlance(
+    //             devices,
+    //             -addDeviceBanlanceDto.money,
+    //             addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+    //             true,
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     } else {
+    //         return await this.addBanlance(
+    //             devices,
+    //             addDeviceBanlanceDto.money,
+    //             addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     }
+    // }
 
     async addBanlanceByDev(appid: number, addDeviceBanlanceDto: AddDeviceBanlanceDto) {
         if (addDeviceBanlanceDto.money === 0) {
             throw new NotAcceptableException('操作失败');
         }
-        let devices: Device | number[];
-        devices = addDeviceBanlanceDto.ids;
-        if (addDeviceBanlanceDto.ids.length === 1) {
-            const device = await this.findByAppidAndId(appid, addDeviceBanlanceDto.ids[0]);
-            if (!device) {
-                throw new NotAcceptableException('设备不存在');
+        const devices = await this.deviceRepository.find({
+            where: {
+                appid: appid,
+                id: In(addDeviceBanlanceDto.ids),
+            },
+        });
+        if (devices.length <= 0) {
+            throw new NotAcceptableException('没有符合条件的用户');
+        }
+        for (const device of devices) {
+            try {
+                if (addDeviceBanlanceDto.money < 0) {
+                    await this.subBanlance(
+                        device,
+                        -addDeviceBanlanceDto.money,
+                        addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+                        true,
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                } else {
+                    await this.addBanlance(
+                        device,
+                        addDeviceBanlanceDto.money,
+                        addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                }
+            } catch (error) {
+                //
             }
-            devices = device;
         }
-        if (addDeviceBanlanceDto.money < 0) {
-            return await this.subBanlance(
-                devices,
-                -addDeviceBanlanceDto.money,
-                addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
-                true,
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        } else {
-            return await this.addBanlance(
-                devices,
-                addDeviceBanlanceDto.money,
-                addDeviceBanlanceDto.reason ? addDeviceBanlanceDto.reason : '管理员操作',
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        }
+        return devices.length;
     }
 
     async setStatusByIds(ids: Array<number>, status: UserStatus, whereCallback?: (query: UpdateQueryBuilder<Device>) => void) {

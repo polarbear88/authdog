@@ -274,8 +274,12 @@ export class UserService extends BaseService {
             })
             .execute();
         if (affected.affected > 0) {
-            await this.userFinancialService.createSubUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
-            await this.userFinancialService.createSubUserBalance(user, balance, reason, user.balance + '');
+            if (minute > 0) {
+                await this.userFinancialService.createSubUserTime(user, minute, reason, DateUtils.formatDateTime(user.expirationTime));
+            }
+            if (balance > 0) {
+                await this.userFinancialService.createSubUserBalance(user, balance, reason, user.balance + '');
+            }
             return true;
         }
         throw new NotAcceptableException('操作失败');
@@ -347,7 +351,7 @@ export class UserService extends BaseService {
             }
             return affected.affected;
         }
-        throw new NotAcceptableException('操作失败');
+        throw new NotAcceptableException('操作失败，可能用户时间不足');
     }
 
     async addBanlance(
@@ -489,71 +493,161 @@ export class UserService extends BaseService {
         if (addUserTimeDto.minutes === 0) {
             throw new NotAcceptableException('操作失败');
         }
-        let users: User | number[];
-        users = addUserTimeDto.ids;
-        if (addUserTimeDto.ids.length === 1) {
-            const user = await this.findByAppidAndId(appid, addUserTimeDto.ids[0]);
-            if (!user) {
-                throw new NotAcceptableException('用户不存在');
+        const users = await this.userRepository.find({
+            where: {
+                appid: appid,
+                id: In(addUserTimeDto.ids),
+            },
+        });
+        if (users.length <= 0) {
+            throw new NotAcceptableException('没有符合条件的用户');
+        }
+        for (const user of users) {
+            try {
+                if (addUserTimeDto.minutes < 0) {
+                    await this.subExpirationTime(
+                        user,
+                        -addUserTimeDto.minutes,
+                        addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+                        true,
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                } else {
+                    await this.addExpirationTime(
+                        user,
+                        addUserTimeDto.minutes,
+                        addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                }
+            } catch (error) {
+                //
+                // if (users.length === 1) {
+                //     throw error;
+                // }
             }
-            users = user;
         }
-        if (addUserTimeDto.minutes < 0) {
-            return await this.subExpirationTime(
-                users,
-                -addUserTimeDto.minutes,
-                addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
-                true,
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        } else {
-            return await this.addExpirationTime(
-                users,
-                addUserTimeDto.minutes,
-                addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        }
+        return users.length;
     }
+
+    // async addTimeByDev(appid: number, addUserTimeDto: AddUserTimeDto) {
+    //     if (addUserTimeDto.minutes === 0) {
+    //         throw new NotAcceptableException('操作失败');
+    //     }
+    //     let users: User | number[];
+    //     users = addUserTimeDto.ids;
+    //     if (addUserTimeDto.ids.length === 1) {
+    //         const user = await this.findByAppidAndId(appid, addUserTimeDto.ids[0]);
+    //         if (!user) {
+    //             throw new NotAcceptableException('用户不存在');
+    //         }
+    //         users = user;
+    //     }
+    //     if (addUserTimeDto.minutes < 0) {
+    //         return await this.subExpirationTime(
+    //             users,
+    //             -addUserTimeDto.minutes,
+    //             addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+    //             true,
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     } else {
+    //         return await this.addExpirationTime(
+    //             users,
+    //             addUserTimeDto.minutes,
+    //             addUserTimeDto.reason ? addUserTimeDto.reason : '管理员操作',
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     }
+    // }
 
     async addBanlanceByDev(appid: number, addUserBanlanceDto: AddUserBanlanceDto) {
         if (addUserBanlanceDto.money === 0) {
             throw new NotAcceptableException('操作失败');
         }
-        let users: User | number[];
-        users = addUserBanlanceDto.ids;
-        if (addUserBanlanceDto.ids.length === 1) {
-            const user = await this.findByAppidAndId(appid, addUserBanlanceDto.ids[0]);
-            if (!user) {
-                throw new NotAcceptableException('用户不存在');
+        const users = await this.userRepository.find({
+            where: {
+                appid: appid,
+                id: In(addUserBanlanceDto.ids),
+            },
+        });
+        if (users.length <= 0) {
+            throw new NotAcceptableException('没有符合条件的用户');
+        }
+        for (const user of users) {
+            try {
+                if (addUserBanlanceDto.money < 0) {
+                    await this.subBanlance(
+                        user,
+                        -addUserBanlanceDto.money,
+                        addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+                        true,
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                } else {
+                    await this.addBanlance(
+                        user,
+                        addUserBanlanceDto.money,
+                        addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+                        (query) => {
+                            query.andWhere('appid = :appid', { appid });
+                        },
+                    );
+                }
+            } catch (error) {
+                //
+                // if (users.length === 1) {
+                //     throw error;
+                // }
             }
-            users = user;
         }
-        if (addUserBanlanceDto.money < 0) {
-            return await this.subBanlance(
-                users,
-                -addUserBanlanceDto.money,
-                addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
-                Array.isArray(users),
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        } else {
-            return await this.addBanlance(
-                users,
-                addUserBanlanceDto.money,
-                addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
-                (query) => {
-                    query.andWhere('appid = :appid', { appid });
-                },
-            );
-        }
+        return users.length;
     }
+
+    // async addBanlanceByDev(appid: number, addUserBanlanceDto: AddUserBanlanceDto) {
+    //     if (addUserBanlanceDto.money === 0) {
+    //         throw new NotAcceptableException('操作失败');
+    //     }
+    //     let users: User | number[];
+    //     users = addUserBanlanceDto.ids;
+    //     if (addUserBanlanceDto.ids.length === 1) {
+    //         const user = await this.findByAppidAndId(appid, addUserBanlanceDto.ids[0]);
+    //         if (!user) {
+    //             throw new NotAcceptableException('用户不存在');
+    //         }
+    //         users = user;
+    //     }
+    //     if (addUserBanlanceDto.money < 0) {
+    //         return await this.subBanlance(
+    //             users,
+    //             -addUserBanlanceDto.money,
+    //             addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+    //             Array.isArray(users),
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     } else {
+    //         return await this.addBanlance(
+    //             users,
+    //             addUserBanlanceDto.money,
+    //             addUserBanlanceDto.reason ? addUserBanlanceDto.reason : '管理员操作',
+    //             (query) => {
+    //                 query.andWhere('appid = :appid', { appid });
+    //             },
+    //         );
+    //     }
+    // }
 
     async setUnbindCount(id: number, count: number) {
         await this.userRepository.update(id, { unbindCount: count });

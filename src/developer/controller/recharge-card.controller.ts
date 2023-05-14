@@ -168,10 +168,18 @@ export class RechargeCardController extends BaseController {
                     continue;
                 }
                 if (card.money > 0) {
-                    await uService.subBanlance(user as any, card.money, dto.reason, true);
+                    try {
+                        await uService.subBanlance(user as any, card.money, dto.reason, true);
+                    } catch (e: any) {
+                        //
+                    }
                 }
                 if (card.time > 0) {
-                    await uService.subExpirationTime(user as any, card.time, dto.reason, true);
+                    try {
+                        await uService.subExpirationTime(user as any, card.time, dto.reason, true);
+                    } catch (error) {
+                        //
+                    }
                 }
                 (card as any).retrieve = true;
             }
