@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { catchError, firstValueFrom } from 'rxjs';
 import { IPAddrAscriptionPlace } from '../../common/dto/ipaddr-ascription-place';
+import { Ip2RegionHelpers } from '../ip2region/ip2region.helpers';
 
 @Injectable()
 export class IPAddrService {
@@ -28,13 +29,15 @@ export class IPAddrService {
             return iap;
         }
         if (this.isDisable) {
-            const iap = new IPAddrAscriptionPlace();
-            iap.isp = 'Disable';
-            iap.region = 'Disable';
-            iap.city = 'Disable';
-            iap.district = 'Disable';
-            iap.country = 'Disable';
-            return iap;
+            // 使用内置的IP数据库代替
+            return Ip2RegionHelpers.getRegion(ip);
+            // const iap = new IPAddrAscriptionPlace();
+            // iap.isp = 'Disable';
+            // iap.region = 'Disable';
+            // iap.city = 'Disable';
+            // iap.district = 'Disable';
+            // iap.country = 'Disable';
+            // return iap;
         }
         const { data } = await firstValueFrom(
             this.httpService

@@ -1,10 +1,10 @@
 {
     "name": "authdog",
-    "version": "0.0.1",
-    "description": "",
-    "author": "",
+    "version": "1.6.0",
+    "description": "Authdog是一个开源的用于收费应用的网络验证授权系统,提供HTTP API支持所有快速语言接入,支持强大的无限级别代理和代理角色功能.",
+    "author": "polarbear",
     "private": true,
-    "license": "UNLICENSED",
+    "license": "Apache License 2.0",
     "scripts": {
         "prebuild": "rimraf dist",
         "build": "nest build",
