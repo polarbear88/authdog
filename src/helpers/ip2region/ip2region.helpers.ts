@@ -21,6 +21,12 @@ export class Ip2RegionHelpers {
                 return iap;
             }
         }
-        return null;
+        const iap = new IPAddrAscriptionPlace();
+        iap.country = '未知';
+        iap.city = '未知';
+        iap.district = '未知';
+        iap.isp = '未知';
+        iap.region = '未知';
+        return iap;
     }
 }
