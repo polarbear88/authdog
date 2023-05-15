@@ -18,7 +18,7 @@ export class User extends BaseEntity {
     @Column({ length: 16 })
     name: string;
 
-    @Column({ default: '' })
+    @Column({ nullable: true })
     mobile: string;
 
     @Column({ default: '' })

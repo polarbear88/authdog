@@ -108,7 +108,7 @@ export class UserService extends BaseService {
         user.appid = app.id;
         user.developerId = app.developerId;
         user.name = createUserDto.name;
-        user.mobile = StringUtils.toString(createUserDto.mobile);
+        user.mobile = StringUtils.toString(createUserDto.mobile) || null;
         user.otherInfo = StringUtils.toString(createUserDto.otherInfo);
         user.salt = CryptoUtils.makeSalt();
         user.password = CryptoUtils.encryptPassword(createUserDto.password, user.salt);
