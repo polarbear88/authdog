@@ -7,6 +7,7 @@ import { Like, Repository } from 'typeorm';
 import { CreateCloudfunDto, UpdateCloudfunDto } from './cloudfun.dto';
 import { Cloudfun } from './cloudfun.entity';
 import { ConfigService } from '@nestjs/config';
+import { AuthdogApiService } from 'src/helpers/authdog-api/authdog-api.service';
 
 @Injectable()
 export class CloudfunService extends BaseService {
@@ -15,6 +16,7 @@ export class CloudfunService extends BaseService {
         private repo: Repository<Cloudfun>,
         private applicationService: ApplicationService,
         private configService: ConfigService,
+        private authdogApiService: AuthdogApiService,
     ) {
         super(repo);
     }
@@ -22,6 +24,12 @@ export class CloudfunService extends BaseService {
     async create(cloudfun: CreateCloudfunDto, developerId: number): Promise<Cloudfun> {
         if (!this.checkAllowType(cloudfun.type)) {
             throw new NotAcceptableException('不允许使用该类型的云函数');
+        }
+        if (cloudfun.type === 'NODE-JS' || cloudfun.type === 'NATIVE-LIB') {
+            const authResult = await this.authdogApiService.getAuthResult();
+            if (!authResult.auth) {
+                throw new NotAcceptableException('此功能为Pro版本功能，您未授权无法使用');
+            }
         }
         const cf = new Cloudfun();
         cf.name = cloudfun.name;

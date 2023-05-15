@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
 import { OnlineUser } from './online-user.entity';
@@ -9,6 +9,7 @@ import { Device } from 'src/user/device/device.entity';
 import { User } from 'src/user/user/user.entity';
 import { GetOnlineUserListDto } from './online-user.dto';
 import { PaginationUtils } from 'src/common/pagination/pagination.utils';
+import { AuthdogApiService } from 'src/helpers/authdog-api/authdog-api.service';
 
 @Injectable()
 export class OnlineUserManagerService extends BaseService {
@@ -16,6 +17,7 @@ export class OnlineUserManagerService extends BaseService {
         @InjectRepository(OnlineUser)
         private repo: Repository<OnlineUser>,
         @InjectRedis() private readonly redis: Redis,
+        private authdogApiService: AuthdogApiService,
     ) {
         super(repo);
     }
@@ -75,6 +77,10 @@ export class OnlineUserManagerService extends BaseService {
     }
 
     async getList(developerId: number, dto: GetOnlineUserListDto) {
+        const authResult = await this.authdogApiService.getAuthResult();
+        if (!authResult.auth) {
+            throw new NotAcceptableException('此功能为Pro版本功能，您未授权无法使用');
+        }
         const data = await super.getPage(
             PaginationUtils.objectToDto(dto, new GetOnlineUserListDto()),
             [
