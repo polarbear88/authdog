@@ -44,7 +44,6 @@
         "class-validator": "^0.14.0",
         "dotenv": "^16.0.3",
         "ioredis": "^5.3.1",
-        "isolated-vm": "^4.5.0",
         "koffi": "^2.3.19",
         "md5-node": "^1.0.1",
         "moment": "^2.29.4",

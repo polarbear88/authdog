@@ -41,7 +41,6 @@ import { QuotaModule } from './quota/quota.module';
 import { QuotaCard } from './quota/card/quota-card.entity';
 import { CloudfunModule } from './provide/cloudfun/cloudfun.module';
 import { SalerNotice } from './saler/saler-notice/saler-notice.entity';
-import { AuthdogApiModule } from './helpers/authdog-api/authdog-api.module';
 import { RechargeRecord } from './provide/recharge-record/recharge-record.entity';
 import { OnlineUser } from './provide/online-user-manager/online-user.entity';
 
@@ -126,7 +125,6 @@ import { OnlineUser } from './provide/online-user-manager/online-user.entity';
         ManMachineInspectModule,
         QuotaModule,
         CloudfunModule,
-        AuthdogApiModule,
     ],
     controllers: [AppController],
     providers: [

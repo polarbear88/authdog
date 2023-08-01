@@ -17,7 +17,6 @@ import { UserService } from 'src/user/user/user.service';
 import { User } from 'src/user/user/user.entity';
 import { ApplicationService } from 'src/provide/application/application.service';
 import { Application } from 'src/provide/application/application.entity';
-import { AuthdogApiService } from 'src/helpers/authdog-api/authdog-api.service';
 
 @Roles(Role.Developer)
 @Controller({ version: '1', path: 'profile' })
@@ -28,7 +27,6 @@ export class ProfileController extends BaseController {
         private quotaCardService: QuotaCardService,
         private userService: UserService,
         private applicationService: ApplicationService,
-        private authdogApiService: AuthdogApiService,
     ) {
         super();
     }
@@ -101,27 +99,6 @@ export class ProfileController extends BaseController {
         } catch (error) {
             throw new NotAcceptableException('token未登录');
         }
-    }
-
-    @Get('get-authdog-version')
-    async getAuthdogVersion() {
-        return {
-            version: await this.authdogApiService.getVersion(),
-            proVersionInfo: {
-                ...(await this.authdogApiService.getAuthResult()),
-                buyUrl: await this.authdogApiService.getBuyUrl(),
-            },
-        };
-    }
-
-    @Throttle(60, 600)
-    @Get('recharge-pro')
-    async rechargePro(@Query('card') card: string) {
-        if (!card) {
-            throw new NotAcceptableException('卡号不能为空');
-        }
-        await this.authdogApiService.recharge(card);
-        return null;
     }
 
     @Get('is-open-source-user')

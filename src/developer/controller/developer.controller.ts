@@ -15,7 +15,6 @@ import { ConfigService } from '@nestjs/config';
 import { SendSmsDto } from 'src/helpers/sms-validate/sms-validate.dto';
 import { SMSValidateService } from 'src/helpers/sms-validate/sms-validate.service';
 import { ManMachineInspectService } from 'src/helpers/man-machine-inspect/man-machine-inspect.service';
-// import ivm from 'isolated-vm';
 
 @Public()
 @Controller({ version: '1', path: 'auth' })
@@ -96,20 +95,4 @@ export class DeveloperController extends BaseController {
         await this.developerService.setPassword(developer.id, dto.password);
         return null;
     }
-
-    // @Post('test')
-    // async test(@Request() req: any) {
-    //     const isolate = new ivm.Isolate({ memoryLimit: 128 });
-    //     const context = isolate.createContextSync();
-    //     const jail = context.global;
-    //     jail.setSync('global', jail.derefInto());
-    //     jail.setSync('log', (...args) => {
-    //         console.log(req.ip);
-    //         console.log(...args);
-    //     });
-    //     jail.setSync('getPm', (...args) => {
-    //         return { a: 'wdw' };
-    //     });
-    //     console.log(context.evalClosureSync('log($0); log(getPm()); log($1);return {a: "ecec"}', ['wdw', 1]));
-    // }
 }
